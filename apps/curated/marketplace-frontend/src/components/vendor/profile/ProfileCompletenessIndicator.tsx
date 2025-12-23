@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@jade/ui/components';
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@jade/ui/components';
 import { Badge } from '@jade/ui/components';
 import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 

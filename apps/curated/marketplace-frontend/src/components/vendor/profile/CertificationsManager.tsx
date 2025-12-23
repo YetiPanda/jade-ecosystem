@@ -34,7 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@jade/ui/components';
 import {
   Select,
   SelectContent,

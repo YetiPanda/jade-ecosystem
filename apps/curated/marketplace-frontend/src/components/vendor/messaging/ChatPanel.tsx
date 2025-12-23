@@ -12,13 +12,13 @@ import { useQuery, useMutation } from '@apollo/client';
 import { Loader2, MoreVertical, Archive, Flag, Wifi, WifiOff } from 'lucide-react';
 
 import { Button } from '@jade/ui/components';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@jade/ui/components';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@jade/ui/components';
 
 import { MessageBubble } from './MessageBubble';
 import { MessageComposer } from './MessageComposer';

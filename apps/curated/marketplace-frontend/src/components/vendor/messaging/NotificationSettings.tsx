@@ -13,7 +13,7 @@ import { Bell, Mail, Volume2, Clock } from 'lucide-react';
 import { Button } from '@jade/ui/components';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
 import { Label } from '@jade/ui/components';
-import { Switch } from '@/components/ui/switch';
+import { Switch } from '@jade/ui/components';
 import {
   Select,
   SelectContent,

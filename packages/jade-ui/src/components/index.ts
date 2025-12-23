@@ -89,3 +89,58 @@ export {
   type SelectScrollUpButtonProps,
   type SelectScrollDownButtonProps,
 } from './Select';
+
+export {
+  Progress,
+  type ProgressProps,
+} from './Progress';
+
+export {
+  Switch,
+  type SwitchProps,
+} from './Switch';
+
+export {
+  ScrollArea,
+  ScrollBar,
+  type ScrollAreaProps,
+  type ScrollBarProps,
+} from './ScrollArea';
+
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  type TabsProps,
+  type TabsListProps,
+  type TabsTriggerProps,
+  type TabsContentProps,
+} from './Tabs';
+
+export {
+  DropdownMenu,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  type DropdownMenuContentProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuCheckboxItemProps,
+  type DropdownMenuRadioItemProps,
+  type DropdownMenuLabelProps,
+  type DropdownMenuSeparatorProps,
+  type DropdownMenuShortcutProps,
+  type DropdownMenuSubTriggerProps,
+  type DropdownMenuSubContentProps,
+} from './DropdownMenu';

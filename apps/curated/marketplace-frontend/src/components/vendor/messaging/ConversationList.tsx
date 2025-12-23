@@ -15,7 +15,7 @@ import { MessageSquare, Search, Archive, Loader2 } from 'lucide-react';
 import { Input } from '@jade/ui/components';
 import { Button } from '@jade/ui/components';
 import { Badge } from '@jade/ui/components';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@jade/ui/components';
 import { UnreadBadge } from './UnreadBadge';
 import { VENDOR_CONVERSATIONS_QUERY } from '@/graphql/queries/messaging';
 
