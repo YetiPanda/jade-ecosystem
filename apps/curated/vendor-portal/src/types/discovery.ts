@@ -181,3 +181,146 @@ export function calculateConversionRate(orders: number, clicks: number): number 
   if (clicks === 0) return 0;
   return (orders / clicks) * 100;
 }
+
+/**
+ * Search Query Analytics Types
+ */
+
+export interface SearchQuery {
+  query: string;
+  impressions: number;
+  clicks: number;
+  orders: number;
+  revenue: number; // in cents
+  clickThroughRate: number;
+  conversionRate: number;
+  averagePosition: number; // 1-based position in search results
+  trend: number; // Percentage change from previous period
+}
+
+export interface SearchQueryTrend {
+  date: string; // ISO 8601
+  query: string;
+  impressions: number;
+  clicks: number;
+}
+
+export interface ProductQueryMatch {
+  productId: string;
+  productName: string;
+  query: string;
+  impressions: number;
+  clicks: number;
+  position: number;
+  relevanceScore: number; // 0-100
+}
+
+export enum OptimizationOpportunityType {
+  HIGH_IMPRESSIONS_LOW_CTR = 'high_impressions_low_ctr',
+  TRENDING_QUERY = 'trending_query',
+  COMPETITOR_QUERY = 'competitor_query',
+  UNDERUTILIZED_KEYWORD = 'underutilized_keyword',
+  SEASONAL_OPPORTUNITY = 'seasonal_opportunity',
+}
+
+export const OPTIMIZATION_OPPORTUNITY_LABELS: Record<OptimizationOpportunityType, string> = {
+  [OptimizationOpportunityType.HIGH_IMPRESSIONS_LOW_CTR]: 'High Impressions, Low CTR',
+  [OptimizationOpportunityType.TRENDING_QUERY]: 'Trending Query',
+  [OptimizationOpportunityType.COMPETITOR_QUERY]: 'Competitor Advantage',
+  [OptimizationOpportunityType.UNDERUTILIZED_KEYWORD]: 'Underutilized Keyword',
+  [OptimizationOpportunityType.SEASONAL_OPPORTUNITY]: 'Seasonal Opportunity',
+};
+
+export interface OptimizationOpportunity {
+  id: string;
+  type: OptimizationOpportunityType;
+  query: string;
+  currentImpressions: number;
+  currentCTR: number;
+  potentialImpressions: number;
+  potentialRevenue: number; // in cents
+  recommendation: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+export interface SearchAnalytics {
+  // Period
+  periodStart: string;
+  periodEnd: string;
+
+  // Top queries
+  topQueries: SearchQuery[];
+  totalQueries: number;
+
+  // Trends
+  queryTrends: SearchQueryTrend[];
+
+  // Product matching
+  productQueryMatches: ProductQueryMatch[];
+
+  // Optimization
+  opportunities: OptimizationOpportunity[];
+
+  // Summary stats
+  totalSearchImpressions: number;
+  totalSearchClicks: number;
+  averageSearchCTR: number;
+  averageSearchPosition: number;
+}
+
+export interface SearchAnalyticsFilters {
+  startDate?: string;
+  endDate?: string;
+  query?: string;
+  productId?: string;
+  minImpressions?: number;
+}
+
+export interface SearchAnalyticsQueryInput {
+  filters?: SearchAnalyticsFilters;
+  limit?: number;
+  offset?: number;
+}
+
+export interface SearchAnalyticsQueryResult {
+  analytics: SearchAnalytics;
+}
+
+/**
+ * Helper to get optimization opportunity color
+ */
+export function getOpportunityColor(type: OptimizationOpportunityType): string {
+  switch (type) {
+    case OptimizationOpportunityType.HIGH_IMPRESSIONS_LOW_CTR:
+      return '#ef4444'; // red - urgent
+    case OptimizationOpportunityType.TRENDING_QUERY:
+      return '#22c55e'; // green - good opportunity
+    case OptimizationOpportunityType.COMPETITOR_QUERY:
+      return '#f59e0b'; // amber - competitive
+    case OptimizationOpportunityType.UNDERUTILIZED_KEYWORD:
+      return '#3b82f6'; // blue - potential
+    case OptimizationOpportunityType.SEASONAL_OPPORTUNITY:
+      return '#8b5cf6'; // purple - timely
+  }
+}
+
+/**
+ * Helper to get difficulty badge color
+ */
+export function getDifficultyColor(difficulty: 'easy' | 'medium' | 'hard'): string {
+  switch (difficulty) {
+    case 'easy':
+      return '#22c55e';
+    case 'medium':
+      return '#f59e0b';
+    case 'hard':
+      return '#ef4444';
+  }
+}
+
+/**
+ * Helper to format search position
+ */
+export function formatPosition(position: number): string {
+  return `#${position.toFixed(1)}`;
+}

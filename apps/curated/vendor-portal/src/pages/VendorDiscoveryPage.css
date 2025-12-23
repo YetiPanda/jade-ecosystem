@@ -4,6 +4,39 @@
   gap: 2rem;
 }
 
+/* Tab Navigation */
+.discovery-tabs {
+  display: flex;
+  gap: 0.75rem;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #888;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  top: 2px;
+}
+
+.tab-btn:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  color: #646cff;
+  border-bottom-color: #646cff;
+}
+
 .discovery-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

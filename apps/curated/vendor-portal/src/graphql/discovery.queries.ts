@@ -125,3 +125,60 @@ export const DISMISS_RECOMMENDATION = gql`
     }
   }
 `;
+
+export const GET_SEARCH_ANALYTICS = gql`
+  query GetSearchAnalytics($input: SearchAnalyticsQueryInput!) {
+    vendorSearchAnalytics(input: $input) {
+      periodStart
+      periodEnd
+
+      topQueries {
+        query
+        impressions
+        clicks
+        orders
+        revenue
+        clickThroughRate
+        conversionRate
+        averagePosition
+        trend
+      }
+
+      totalQueries
+
+      queryTrends {
+        date
+        query
+        impressions
+        clicks
+      }
+
+      productQueryMatches {
+        productId
+        productName
+        query
+        impressions
+        clicks
+        position
+        relevanceScore
+      }
+
+      opportunities {
+        id
+        type
+        query
+        currentImpressions
+        currentCTR
+        potentialImpressions
+        potentialRevenue
+        recommendation
+        difficulty
+      }
+
+      totalSearchImpressions
+      totalSearchClicks
+      averageSearchCTR
+      averageSearchPosition
+    }
+  }
+`;
