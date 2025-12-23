@@ -202,3 +202,40 @@ export {
   type TableCellProps,
   type TableCaptionProps,
 } from './Table';
+
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+  type FormItemProps,
+  type FormLabelProps,
+  type FormControlProps,
+  type FormDescriptionProps,
+  type FormMessageProps,
+} from './Form';
+
+export {
+  Calendar,
+  type CalendarProps,
+} from './Calendar';
+
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  type InputOTPProps,
+  type InputOTPGroupProps,
+  type InputOTPSlotProps,
+  type InputOTPSeparatorProps,
+} from './InputOTP';
+
+export {
+  Slider,
+  type SliderProps,
+} from './Slider';
