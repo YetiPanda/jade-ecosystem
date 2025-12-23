@@ -1,0 +1,114 @@
+.metric-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.metric-card:hover {
+  border-color: #444;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.metric-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.metric-icon {
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+.metric-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  gap: 0.25rem;
+}
+
+.trend-icon {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.trend-value {
+  font-weight: 600;
+}
+
+.trend-period {
+  color: #888;
+}
+
+.metric-trend-positive {
+  color: #22c55e;
+}
+
+.metric-trend-negative {
+  color: #ef4444;
+}
+
+.metric-trend-neutral {
+  color: #888;
+}
+
+/* Loading skeleton */
+.metric-card-skeleton {
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 0%,
+    #252525 50%,
+    #1a1a1a 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+.skeleton-label {
+  width: 60%;
+  height: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-value {
+  width: 80%;
+  height: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-trend {
+  width: 50%;
+  height: 0.875rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

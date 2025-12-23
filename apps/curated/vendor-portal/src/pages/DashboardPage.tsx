@@ -1,51 +1,164 @@
+import { useState } from 'react';
+import { MetricCard } from '../components/MetricCard';
+import { useDashboardMetrics, getDateRangeForPeriod } from '../hooks/useDashboardMetrics';
+import { formatCurrency, formatPercentage, getTrendDirection } from '../types/dashboard';
 import './Page.css';
 
+type Period = 'today' | 'week' | 'month' | 'quarter' | 'year';
+
 export function DashboardPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('month');
+  const dateRange = getDateRangeForPeriod(selectedPeriod);
+  const { metrics, loading, error } = useDashboardMetrics(dateRange);
+
+  const periods: { value: Period; label: string }[] = [
+    { value: 'today', label: 'Today' },
+    { value: 'week', label: '7 Days' },
+    { value: 'month', label: '30 Days' },
+    { value: 'quarter', label: '90 Days' },
+    { value: 'year', label: '1 Year' },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
-        <h1>Dashboard</h1>
-        <p>Welcome to your vendor dashboard</p>
+        <div>
+          <h1>Dashboard</h1>
+          <p>Welcome to your vendor dashboard</p>
+        </div>
+
+        {/* Period Selector */}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {periods.map((period) => (
+            <button
+              key={period.value}
+              onClick={() => setSelectedPeriod(period.value)}
+              style={{
+                padding: '0.5rem 1rem',
+                backgroundColor: selectedPeriod === period.value ? '#646cff' : '#333',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                fontWeight: selectedPeriod === period.value ? 600 : 400,
+                transition: 'all 0.2s',
+              }}
+            >
+              {period.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="page-content">
+        {/* Error State */}
+        {error && (
+          <div className="info-box" style={{ borderColor: '#ef4444' }}>
+            <h3>⚠️ Error Loading Dashboard</h3>
+            <p style={{ color: '#ef4444' }}>
+              {error.message || 'Failed to load dashboard metrics. Please try again.'}
+            </p>
+            <p className="info-note">
+              <strong>Tip:</strong> Make sure the backend GraphQL server is running and accessible.
+            </p>
+          </div>
+        )}
+
+        {/* Metrics Grid */}
         <div className="metrics-grid">
-          <div className="metric-card">
-            <div className="metric-label">Total Revenue (30d)</div>
-            <div className="metric-value">$12,450</div>
-            <div className="metric-trend positive">+12% from last month</div>
-          </div>
+          {/* Revenue Metric */}
+          <MetricCard
+            label={`Total Revenue (${periods.find((p) => p.value === selectedPeriod)?.label})`}
+            value={metrics ? formatCurrency(metrics.totalRevenue) : '$0'}
+            trend={
+              metrics
+                ? {
+                    value: metrics.revenueChange,
+                    direction: getTrendDirection(metrics.revenueChange),
+                    period: 'last period',
+                  }
+                : undefined
+            }
+            icon="💰"
+            loading={loading}
+          />
 
-          <div className="metric-card">
-            <div className="metric-label">Orders (30d)</div>
-            <div className="metric-value">47</div>
-            <div className="metric-trend positive">+8% from last month</div>
-          </div>
+          {/* Orders Metric */}
+          <MetricCard
+            label={`Orders (${periods.find((p) => p.value === selectedPeriod)?.label})`}
+            value={metrics?.totalOrders || 0}
+            trend={
+              metrics
+                ? {
+                    value: metrics.ordersChange,
+                    direction: getTrendDirection(metrics.ordersChange),
+                    period: 'last period',
+                  }
+                : undefined
+            }
+            icon="📦"
+            loading={loading}
+          />
 
-          <div className="metric-card">
-            <div className="metric-label">Active Spas</div>
-            <div className="metric-value">23</div>
-            <div className="metric-trend neutral">No change</div>
-          </div>
+          {/* Active Spas Metric */}
+          <MetricCard
+            label="Active Spas"
+            value={metrics?.activeSpas || 0}
+            trend={
+              metrics
+                ? {
+                    value: metrics.spasChange,
+                    direction: getTrendDirection(metrics.spasChange),
+                    period: 'last period',
+                  }
+                : undefined
+            }
+            icon="🏢"
+            loading={loading}
+          />
 
-          <div className="metric-card">
-            <div className="metric-label">Reorder Rate</div>
-            <div className="metric-value">68%</div>
-            <div className="metric-trend positive">+5% from last month</div>
-          </div>
+          {/* Reorder Rate Metric */}
+          <MetricCard
+            label="Reorder Rate"
+            value={metrics ? formatPercentage(metrics.reorderRate) : '0%'}
+            trend={
+              metrics
+                ? {
+                    value: metrics.reorderRateChange,
+                    direction: getTrendDirection(metrics.reorderRateChange),
+                    period: 'last period',
+                  }
+                : undefined
+            }
+            icon="🔄"
+            loading={loading}
+          />
         </div>
 
-        <div className="info-box">
-          <h3>🚧 Feature in Development</h3>
-          <p>
-            This dashboard is part of Feature 011: Vendor Portal MVP (Sprint B.1).
-            Full analytics, charts, and tables will be implemented next.
-          </p>
-          <p className="info-note">
-            <strong>Next steps:</strong> Implement RevenueChart, OrdersChart, SpaLeaderboard,
-            and ProductPerformanceTable components.
-          </p>
-        </div>
+        {/* Info Box */}
+        {!loading && !error && (
+          <div className="info-box">
+            <h3>✅ Sprint B.1 Complete - Dashboard Metrics</h3>
+            <p>
+              Dashboard metrics are now connected to the GraphQL backend. The metrics update
+              based on the selected time period and show trend indicators.
+            </p>
+            {metrics && (
+              <div style={{ marginTop: '1rem' }}>
+                <strong>Period:</strong> {metrics.periodStart} to {metrics.periodEnd}
+                <br />
+                <strong>Average Order Value:</strong> {formatCurrency(metrics.averageOrderValue)}
+                <br />
+                <strong>New Spas:</strong> {metrics.newSpas} this period
+              </div>
+            )}
+            <p className="info-note">
+              <strong>Next Sprint (B.2):</strong> Add charts (RevenueChart, OrdersChart),
+              DateRangePicker, SpaLeaderboard, and ProductPerformanceTable.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
