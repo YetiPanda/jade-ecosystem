@@ -16,6 +16,8 @@ import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { VendorApplicationPage } from './pages/VendorApplicationPage';
 import { VendorOnboardingPage } from './pages/VendorOnboardingPage';
+import { AdminApplicationQueuePage } from './pages/AdminApplicationQueuePage';
+import { AdminApplicationDetailPage } from './pages/AdminApplicationDetailPage';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="application" element={<VendorApplicationPage />} />
           <Route path="onboarding" element={<VendorOnboardingPage />} />
+          <Route path="admin/applications" element={<AdminApplicationQueuePage />} />
+          <Route path="admin/applications/:id" element={<AdminApplicationDetailPage />} />
         </Route>
 
         {/* 404 */}
