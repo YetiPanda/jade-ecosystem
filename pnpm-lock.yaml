@@ -432,6 +432,67 @@ importers:
         specifier: ^1.4.0
         version: 1.6.1(@types/node@20.19.27)(@vitest/ui@1.6.1)
 
+  apps/sanctuary/community-frontend:
+    dependencies:
+      '@jade/ui':
+        specifier: workspace:*
+        version: link:../../../packages/jade-ui
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^7.5.0
+        version: 7.11.0(react-dom@18.3.1)(react@18.3.1)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.2
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.27
+      '@types/react-dom':
+        specifier: ^18.3.5
+        version: 18.3.7(@types/react@18.3.27)
+      '@vitejs/plugin-react':
+        specifier: ^5.1.1
+        version: 5.1.2(vite@7.3.0)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.23(postcss@8.5.6)
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.1
+        version: 7.0.1(eslint@9.39.2)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.24
+        version: 0.4.26(eslint@9.39.2)
+      globals:
+        specifier: ^16.5.0
+        version: 16.5.0
+      postcss:
+        specifier: ^8.4.49
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^3.4.16
+        version: 3.4.19
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.46.4
+        version: 8.50.1(eslint@9.39.2)(typescript@5.9.3)
+      vite:
+        specifier: ^7.2.4
+        version: 7.3.0(@types/node@24.10.4)
+
   packages/eslint-config:
     dependencies:
       '@typescript-eslint/eslint-plugin':
@@ -551,7 +612,7 @@ importers:
         version: 18.3.7(@types/react@18.3.27)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.7.0(vite@6.4.1)
+        version: 4.7.0(vite@7.3.0)
       jsdom:
         specifier: ^23.0.1
         version: 23.2.0
@@ -7840,6 +7901,23 @@ packages:
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
       vite: 6.4.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@vitejs/plugin-react@4.7.0(vite@7.3.0):
+    resolution: {integrity: sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+    dependencies:
+      '@babel/core': 7.28.5
+      '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
+      '@babel/plugin-transform-react-jsx-source': 7.27.1(@babel/core@7.28.5)
+      '@rolldown/pluginutils': 1.0.0-beta.27
+      '@types/babel__core': 7.20.5
+      react-refresh: 0.17.0
+      vite: 7.3.0(@types/node@24.10.4)
     transitivePeerDependencies:
       - supports-color
     dev: true
