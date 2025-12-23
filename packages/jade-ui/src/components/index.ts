@@ -144,3 +144,61 @@ export {
   type DropdownMenuSubTriggerProps,
   type DropdownMenuSubContentProps,
 } from './DropdownMenu';
+
+export {
+  Checkbox,
+  type CheckboxProps,
+} from './Checkbox';
+
+export {
+  Separator,
+  type SeparatorProps,
+} from './Separator';
+
+export {
+  Skeleton,
+  type SkeletonProps,
+} from './Skeleton';
+
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  type TooltipProviderProps,
+  type TooltipContentProps,
+} from './Tooltip';
+
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverAnchor,
+  type PopoverContentProps,
+} from './Popover';
+
+export {
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupProps,
+  type RadioGroupItemProps,
+} from './RadioGroup';
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+  type TableProps,
+  type TableHeaderProps,
+  type TableBodyProps,
+  type TableFooterProps,
+  type TableRowProps,
+  type TableHeadProps,
+  type TableCellProps,
+  type TableCaptionProps,
+} from './Table';
