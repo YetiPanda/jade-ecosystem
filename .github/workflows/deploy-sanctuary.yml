@@ -1,0 +1,62 @@
+name: Deploy Sanctuary
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/sanctuary/**'
+      - 'packages/jade-ui/**'
+      - 'packages/feature-flags/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-sanctuary-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Sanctuary Community
+    runs-on: ubuntu-latest
+    environment:
+      name: sanctuary-production
+      url: https://sanctuary.jade-beauty.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Sanctuary community frontend
+        run: pnpm --filter sanctuary-community-frontend build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          VITE_API_URL: ${{ secrets.SANCTUARY_API_URL }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_SANCTUARY_PROJECT_ID }}
+          working-directory: apps/sanctuary/community-frontend
+          vercel-args: '--prod'
+
+      - name: Notify deployment
+        if: success()
+        run: |
+          echo "✅ Sanctuary community frontend deployed successfully to production"
+          echo "URL: https://sanctuary.jade-beauty.com"
