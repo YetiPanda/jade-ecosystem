@@ -12,6 +12,9 @@ import {
   getThreadStatusColor,
 } from '../types/messages';
 import { MessageBubble } from './MessageBubble';
+import { FileUploadButton, FileWithPreview } from './FileUploadButton';
+import { MessageSearch } from './MessageSearch';
+import { ConversationExport } from './ConversationExport';
 import './MessageThread.css';
 
 export interface MessageThreadProps {
@@ -22,6 +25,9 @@ export interface MessageThreadProps {
 
 export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProps) {
   const [messageContent, setMessageContent] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([]);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, loading, error, refetch } = useQuery(GET_THREAD_MESSAGES, {
@@ -32,6 +38,7 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
   const [sendMessage, { loading: sending }] = useMutation(SEND_MESSAGE, {
     onCompleted: () => {
       setMessageContent('');
+      setSelectedFiles([]);
       refetch();
       onUpdate?.();
     },
@@ -73,13 +80,14 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
   }, [thread, threadId, markRead]);
 
   const handleSend = async () => {
-    if (!messageContent.trim() || sending) return;
+    if ((!messageContent.trim() && selectedFiles.length === 0) || sending) return;
 
     await sendMessage({
       variables: {
         input: {
           threadId,
           content: messageContent.trim(),
+          attachments: selectedFiles.length > 0 ? selectedFiles.map((f) => f.file) : undefined,
         },
       },
     });
@@ -128,6 +136,24 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
           )}
         </div>
         <div className="thread-header-actions">
+          {thread && (
+            <>
+              <button
+                className="thread-action-btn"
+                onClick={() => setShowSearch(true)}
+                title="Search Messages"
+              >
+                🔍 Search
+              </button>
+              <button
+                className="thread-action-btn"
+                onClick={() => setShowExport(true)}
+                title="Export Conversation"
+              >
+                ⬇️ Export
+              </button>
+            </>
+          )}
           {thread && thread.status === MessageThreadStatus.ACTIVE && (
             <>
               <button
@@ -211,7 +237,12 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
             rows={3}
           />
           <div className="composer-actions">
-            <div className="composer-info">
+            <div className="composer-left">
+              <FileUploadButton
+                selectedFiles={selectedFiles}
+                onFilesSelected={setSelectedFiles}
+                disabled={sending}
+              />
               {messageContent.length > 0 && (
                 <span className="char-count">{messageContent.length} characters</span>
               )}
@@ -219,7 +250,7 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
             <button
               className="composer-send-btn"
               onClick={handleSend}
-              disabled={!messageContent.trim() || sending}
+              disabled={(!messageContent.trim() && selectedFiles.length === 0) || sending}
             >
               {sending ? 'Sending...' : 'Send Message'}
             </button>
@@ -231,6 +262,23 @@ export function MessageThread({ threadId, onClose, onUpdate }: MessageThreadProp
         <div className="thread-archived-notice">
           <p>This thread is archived. Unarchive it to send new messages.</p>
         </div>
+      )}
+
+      {/* Search Modal */}
+      {showSearch && thread && (
+        <MessageSearch
+          threadId={threadId}
+          onMessageSelect={(messageId) => {
+            // Could scroll to message here if we had message refs
+            console.log('Selected message:', messageId);
+          }}
+          onClose={() => setShowSearch(false)}
+        />
+      )}
+
+      {/* Export Modal */}
+      {showExport && thread && (
+        <ConversationExport thread={thread} onClose={() => setShowExport(false)} />
       )}
     </div>
   );

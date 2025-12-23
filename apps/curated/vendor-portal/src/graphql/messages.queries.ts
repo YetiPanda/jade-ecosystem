@@ -100,6 +100,14 @@ export const SEND_MESSAGE = gql`
       senderType
       status
       createdAt
+      readAt
+      attachments {
+        id
+        fileName
+        fileUrl
+        fileType
+        fileSize
+      }
     }
   }
 `;
@@ -133,6 +141,32 @@ export const GET_UNREAD_MESSAGE_COUNT = gql`
         threadId
         count
       }
+    }
+  }
+`;
+
+export const SEARCH_MESSAGES = gql`
+  query SearchMessages($threadId: ID!, $searchQuery: String!) {
+    searchMessages(threadId: $threadId, searchQuery: $searchQuery) {
+      messages {
+        id
+        threadId
+        senderId
+        senderName
+        senderType
+        content
+        status
+        createdAt
+        readAt
+        attachments {
+          id
+          fileName
+          fileUrl
+          fileType
+          fileSize
+        }
+      }
+      totalCount
     }
   }
 `;
