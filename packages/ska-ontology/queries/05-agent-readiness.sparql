@@ -1,0 +1,62 @@
+# =============================================================================
+# QUERY 5: AGENT READINESS CAPABILITIES
+# Use Case: Assess SKA's readiness for 2026 agentic workloads
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Query 5a: List all agent readiness capabilities with their metrics
+SELECT ?capability ?label ?metric ?value WHERE {
+  ?capability a ?capType .
+  ?capType rdfs:subClassOf skaa:AgentReadinessCapability .
+  ?capability rdfs:label ?label .
+  
+  OPTIONAL {
+    ?capability ?metric ?value .
+    FILTER(?metric IN (
+      skaa:queriesPerSecondCapacity,
+      skaa:burstCapacity,
+      skaa:maxTraversalDepth,
+      skaa:transitivePropertyCount,
+      skaa:contextPersistenceMode
+    ))
+  }
+}
+ORDER BY ?capability
+
+# Expected Results:
+# | capability                   | label                      | metric                       | value       |
+# |------------------------------|----------------------------|------------------------------|-------------|
+# | skaa:SKAAgentSpeedCapability | SKA Agent-Speed Capability | skaa:queriesPerSecondCapacity| 50000       |
+# | skaa:SKAAgentSpeedCapability | SKA Agent-Speed Capability | skaa:burstCapacity           | 1000        |
+# | skaa:SKAMultiHopCapability   | SKA Multi-Hop Capability   | skaa:maxTraversalDepth       | 99          |
+# | skaa:SKAMultiHopCapability   | SKA Multi-Hop Capability   | skaa:transitivePropertyCount | 3           |
+# | skaa:SKAMultiAgentCapability | SKA Multi-Agent Capability | skaa:contextPersistenceMode  | graph-backed|
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 5b: Agent-speed workload capacity check
+# Verify if SKA meets minimum requirements for agentic workloads
+SELECT ?capability ?qps ?burst 
+       (IF(?qps >= 10000, "PASS", "FAIL") AS ?qpsStatus)
+       (IF(?burst >= 100, "PASS", "FAIL") AS ?burstStatus)
+WHERE {
+  ?capability a skaa:AgentSpeedWorkloadSupport .
+  ?capability skaa:queriesPerSecondCapacity ?qps .
+  ?capability skaa:burstCapacity ?burst .
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 5c: Multi-hop reasoning depth verification
+SELECT ?capability ?maxDepth ?transitiveProps
+       (IF(?maxDepth >= 10, "SUFFICIENT", "LIMITED") AS ?depthStatus)
+WHERE {
+  ?capability a skaa:MultiHopReasoningSupport .
+  ?capability skaa:maxTraversalDepth ?maxDepth .
+  ?capability skaa:transitivePropertyCount ?transitiveProps .
+}

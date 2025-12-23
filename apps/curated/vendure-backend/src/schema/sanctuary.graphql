@@ -1,0 +1,376 @@
+# JADE Spa Marketplace - Spa-ce Sanctuary Community Schema
+# Feature: Community Platform with SKA Integration
+
+#######################################
+# Sanctuary Member Types
+#######################################
+
+"""
+Community member profile for Spa-ce Sanctuary
+"""
+type SanctuaryMember {
+  id: ID!
+  displayName: String!
+  bio: String
+  expertiseAreas: [String!]!
+  certifications: [String!]!
+  yearsExperience: Int
+  profileImageUrl: String
+  isVerified: Boolean!
+  reputationScore: Int!
+  joinedAt: DateTime!
+  lastActiveAt: DateTime
+  postCount: Int!
+  commentCount: Int!
+}
+
+#######################################
+# Community Post Types
+#######################################
+
+"""
+Community post (discussion, question, article, case study)
+"""
+type CommunityPost {
+  id: ID!
+  author: SanctuaryMember!
+  title: String!
+  content: String!
+  postType: PostType!
+  category: String
+  tags: [String!]!
+  skaAtoms: [SkincareAtom!]!
+  viewCount: Int!
+  likeCount: Int!
+  commentCount: Int!
+  isPinned: Boolean!
+  isFeatured: Boolean!
+  status: PostStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  comments(limit: Int, offset: Int): [CommunityComment!]!
+  hasLiked: Boolean!
+}
+
+"""
+Post type categorization
+"""
+enum PostType {
+  DISCUSSION
+  QUESTION
+  ARTICLE
+  CASE_STUDY
+}
+
+"""
+Post publication status
+"""
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  MODERATED
+}
+
+"""
+Paginated post connection
+"""
+type CommunityPostConnection {
+  items: [CommunityPost!]!
+  totalCount: Int!
+  hasMore: Boolean!
+}
+
+"""
+Sorting options for posts
+"""
+enum PostSortOption {
+  NEWEST
+  MOST_LIKED
+  MOST_DISCUSSED
+  TRENDING
+}
+
+#######################################
+# Comment Types
+#######################################
+
+"""
+Comment on a community post
+"""
+type CommunityComment {
+  id: ID!
+  author: SanctuaryMember!
+  content: String!
+  likeCount: Int!
+  isAcceptedAnswer: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  replies: [CommunityComment!]!
+  hasLiked: Boolean!
+}
+
+#######################################
+# Event Types
+#######################################
+
+"""
+Community event (workshop, webinar, meetup, conference)
+"""
+type CommunityEvent {
+  id: ID!
+  organizer: SanctuaryMember!
+  title: String!
+  description: String
+  eventType: EventType!
+  format: EventFormat!
+  location: String
+  virtualLink: String
+  startTime: DateTime!
+  endTime: DateTime
+  maxAttendees: Int
+  registrationDeadline: DateTime
+  priceCents: Int!
+  skaTopics: [SkincareAtom!]!
+  attendeeCount: Int!
+  isRegistered: Boolean!
+  status: EventStatus!
+  createdAt: DateTime!
+}
+
+"""
+Event type categorization
+"""
+enum EventType {
+  WORKSHOP
+  WEBINAR
+  MEETUP
+  CONFERENCE
+}
+
+"""
+Event format
+"""
+enum EventFormat {
+  VIRTUAL
+  IN_PERSON
+  HYBRID
+}
+
+"""
+Event status
+"""
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+"""
+Paginated event connection
+"""
+type CommunityEventConnection {
+  items: [CommunityEvent!]!
+  totalCount: Int!
+  hasMore: Boolean!
+}
+
+#######################################
+# Trending Topics
+#######################################
+
+"""
+Trending topic in the community
+"""
+type TrendingTopic {
+  name: String!
+  postCount: Int!
+  skaAtom: SkincareAtom
+}
+
+#######################################
+# Input Types
+#######################################
+
+"""
+Input for creating a new post
+"""
+input CreatePostInput {
+  title: String!
+  content: String!
+  postType: PostType!
+  category: String
+  tags: [String!]
+  skaAtomIds: [ID!]
+  status: PostStatus
+}
+
+"""
+Input for updating a post
+"""
+input UpdatePostInput {
+  title: String
+  content: String
+  category: String
+  tags: [String!]
+  skaAtomIds: [ID!]
+  status: PostStatus
+}
+
+"""
+Input for creating a new event
+"""
+input CreateEventInput {
+  title: String!
+  description: String
+  eventType: EventType!
+  format: EventFormat!
+  location: String
+  virtualLink: String
+  startTime: DateTime!
+  endTime: DateTime
+  maxAttendees: Int
+  registrationDeadline: DateTime
+  priceCents: Int
+  skaTopicIds: [ID!]
+}
+
+"""
+Input for updating member profile
+"""
+input UpdateSanctuaryProfileInput {
+  displayName: String
+  bio: String
+  expertiseAreas: [String!]
+  certifications: [String!]
+  yearsExperience: Int
+  profileImageUrl: String
+}
+
+#######################################
+# Query Extensions
+#######################################
+
+extend type Query {
+  # Posts
+  """Get paginated community posts with optional filters"""
+  communityPosts(
+    category: String
+    postType: PostType
+    tags: [String!]
+    skaAtomId: ID
+    limit: Int
+    offset: Int
+    sortBy: PostSortOption
+  ): CommunityPostConnection!
+
+  """Get a single post by ID"""
+  communityPost(id: ID!): CommunityPost
+
+  """Get featured posts"""
+  featuredPosts(limit: Int): [CommunityPost!]!
+
+  """Get trending topics in the community"""
+  trendingTopics(limit: Int): [TrendingTopic!]!
+
+  # Events
+  """Get paginated community events"""
+  communityEvents(
+    eventType: EventType
+    upcoming: Boolean
+    limit: Int
+    offset: Int
+  ): CommunityEventConnection!
+
+  """Get a single event by ID"""
+  communityEvent(id: ID!): CommunityEvent
+
+  # Members
+  """Get a sanctuary member by ID"""
+  sanctuaryMember(id: ID!): SanctuaryMember
+
+  """Get current user's sanctuary profile"""
+  mySanctuaryProfile: SanctuaryMember
+
+  """Get top contributors by reputation"""
+  topContributors(limit: Int): [SanctuaryMember!]!
+
+  # SKA Integration
+  """Get AI-suggested SKA topics for content"""
+  suggestedSkaTopics(content: String!): [SkincareAtom!]!
+
+  """Get discussions related to a SKA atom"""
+  relatedDiscussions(skaAtomId: ID!, limit: Int): [CommunityPost!]!
+}
+
+#######################################
+# Mutation Extensions
+#######################################
+
+extend type Mutation {
+  # Posts
+  """Create a new community post"""
+  createPost(input: CreatePostInput!): CommunityPost!
+
+  """Update an existing post"""
+  updatePost(id: ID!, input: UpdatePostInput!): CommunityPost!
+
+  """Delete a post"""
+  deletePost(id: ID!): Boolean!
+
+  """Like a post"""
+  likePost(id: ID!): CommunityPost!
+
+  """Unlike a post"""
+  unlikePost(id: ID!): CommunityPost!
+
+  """Increment view count for a post"""
+  viewPost(id: ID!): CommunityPost!
+
+  # Comments
+  """Create a comment on a post"""
+  createComment(
+    postId: ID!
+    content: String!
+    parentCommentId: ID
+  ): CommunityComment!
+
+  """Update a comment"""
+  updateComment(id: ID!, content: String!): CommunityComment!
+
+  """Delete a comment"""
+  deleteComment(id: ID!): Boolean!
+
+  """Like a comment"""
+  likeComment(id: ID!): CommunityComment!
+
+  """Unlike a comment"""
+  unlikeComment(id: ID!): CommunityComment!
+
+  """Mark a comment as accepted answer (for question posts)"""
+  acceptAnswer(commentId: ID!): CommunityComment!
+
+  # Events
+  """Create a new community event"""
+  createEvent(input: CreateEventInput!): CommunityEvent!
+
+  """Update an event"""
+  updateEvent(id: ID!, input: CreateEventInput!): CommunityEvent!
+
+  """Cancel an event"""
+  cancelEvent(id: ID!): CommunityEvent!
+
+  """Register for an event"""
+  registerForEvent(eventId: ID!): CommunityEvent!
+
+  """Cancel event registration"""
+  cancelRegistration(eventId: ID!): CommunityEvent!
+
+  # Member Profile
+  """Update sanctuary profile"""
+  updateSanctuaryProfile(input: UpdateSanctuaryProfileInput!): SanctuaryMember!
+
+  """Create or get sanctuary member for current user"""
+  joinSanctuary(displayName: String!): SanctuaryMember!
+}

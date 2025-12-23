@@ -1,0 +1,96 @@
+# =============================================================================
+# QUERY 7: JADE SKINCARE MARKETPLACE QUERIES
+# Use Case: JADE-specific queries combining regulatory and chemistry domains
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skar: <https://w3id.org/ska/regulatory/>
+PREFIX jade: <https://jade.eco/ontology/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Query 7a: Find skin concerns with their parent hierarchy
+SELECT ?concern ?label WHERE {
+  ?concern a jade:SkinConcern .
+  ?concern skos:prefLabel ?label .
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7b: Cross-domain patterns linking regulatory and skincare
+SELECT ?pattern ?label ?confidence ?domains WHERE {
+  ?pattern a ska:PatternAtom .
+  ?pattern skos:prefLabel ?label .
+  ?pattern ska:patternConfidence ?confidence .
+  ?pattern ska:discoveredInDomains ?domains .
+  FILTER(CONTAINS(?domains, "skincare") || CONTAINS(?domains, "regulatory"))
+}
+ORDER BY DESC(?confidence)
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7c: Product recommendation compliance requirements
+# Find what regulatory requirements apply to AI recommendations
+SELECT ?constraint ?label ?appliesTo WHERE {
+  ?constraint a ska:ComplianceConstraintAtom .
+  ?constraint skos:prefLabel ?label .
+  OPTIONAL { ?constraint ska:appliesTo ?appliesTo }
+  FILTER(CONTAINS(LCASE(STR(?label)), "recommendation") || 
+         CONTAINS(LCASE(STR(?label)), "transparency"))
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7d: Ingredient Transparency Pattern analysis
+# Links regulatory disclosure requirements to skincare transparency
+SELECT ?pattern ?linkedAtom ?atomLabel WHERE {
+  jade:Pattern_IngredientTransparency ska:linksAtoms ?linkedAtom .
+  ?linkedAtom skos:prefLabel ?atomLabel .
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7e: Risk-Based Formulation Pattern
+# Links regulatory risk assessment to skincare formulation safety
+SELECT ?pattern ?confidence ?linkedAtom ?atomLabel WHERE {
+  jade:Pattern_RiskBasedFormulation ska:patternConfidence ?confidence .
+  jade:Pattern_RiskBasedFormulation ska:linksAtoms ?linkedAtom .
+  ?linkedAtom skos:prefLabel ?atomLabel .
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7f: JADE Knowledge Graph network effect potential
+# Count connections to estimate appreciation value
+SELECT ?atom (COUNT(DISTINCT ?related) AS ?connectionCount) WHERE {
+  ?atom a ska:SemanticKnowledgeAtom .
+  {
+    ?atom ?p ?related .
+    ?related a ska:SemanticKnowledgeAtom .
+  }
+  UNION
+  {
+    ?related ?p ?atom .
+    ?related a ska:SemanticKnowledgeAtom .
+  }
+}
+GROUP BY ?atom
+ORDER BY DESC(?connectionCount)
+LIMIT 20
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 7g: Reasoning mode selection for JADE use cases
+SELECT ?useCase ?reasoningMode ?reliability WHERE {
+  VALUES (?useCase ?class) {
+    ("Product Recommendations" jade:ProductRecommendation)
+    ("Ingredient Interactions" ska:InteractionAxiomAtom)
+    ("Compliance Validation" ska:ComplianceConstraintAtom)
+    ("Pattern Discovery" ska:PatternAtom)
+  }
+  ?class skaa:preferredReasoningMode ?reasoningMode .
+  ?reasoningMode skaa:reasoningReliability ?reliability .
+}
+ORDER BY DESC(?reliability)

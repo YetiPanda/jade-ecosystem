@@ -1,0 +1,234 @@
+@prefix ska: <https://w3id.org/ska/> .
+@prefix skam: <https://w3id.org/ska/meta/> .
+@prefix skaa: <https://w3id.org/ska/agentic/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# =============================================================================
+# SKA AGENTIC ARCHITECTURE EXTENSION
+# Version: 1.0.0
+# =============================================================================
+
+<https://w3id.org/ska/agentic/>
+    a owl:Ontology ;
+    owl:versionIRI <https://w3id.org/ska/agentic/1.0.0> ;
+    dcterms:title "SKA Agentic Architecture Extension"@en ;
+    owl:imports <https://w3id.org/ska/meta/> .
+
+# =============================================================================
+# PART 1: ASSET VALUE DYNAMICS
+# =============================================================================
+
+skaa:AssetValueDynamic a owl:Class ;
+    rdfs:label "Asset Value Dynamic"@en ;
+    skos:definition "Value trajectory of AI components as models improve."@en .
+
+skaa:AppreciatingAsset a owl:Class ;
+    rdfs:subClassOf skaa:AssetValueDynamic ;
+    rdfs:label "Appreciating Asset"@en ;
+    skos:definition "Components that increase in value with model improvements."@en ;
+    owl:disjointWith skaa:DepreciatingAsset .
+
+skaa:DepreciatingAsset a owl:Class ;
+    rdfs:subClassOf skaa:AssetValueDynamic ;
+    rdfs:label "Depreciating Asset"@en ;
+    skos:definition "Components that decrease in value with model improvements."@en ;
+    owl:disjointWith skaa:AppreciatingAsset .
+
+skaa:hasAssetValueDynamic a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:range skaa:AssetValueDynamic .
+
+skaa:appreciationFactor a owl:DatatypeProperty ;
+    rdfs:domain skaa:AppreciatingAsset ;
+    rdfs:range xsd:decimal .
+
+skaa:depreciationRate a owl:DatatypeProperty ;
+    rdfs:domain skaa:DepreciatingAsset ;
+    rdfs:range xsd:decimal .
+
+skaa:networkEffectStrength a owl:DatatypeProperty ;
+    rdfs:domain skaa:AppreciatingAsset ;
+    rdfs:range xsd:decimal .
+
+ska:SemanticKnowledgeAtom skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+
+# =============================================================================
+# PART 2: THREE-LAYER AGENTIC ARCHITECTURE
+# =============================================================================
+
+skaa:AgenticArchitectureLayer a owl:Class ;
+    rdfs:label "Agentic Architecture Layer"@en .
+
+skaa:ModelLayer a owl:Class ;
+    rdfs:subClassOf skaa:AgenticArchitectureLayer ;
+    rdfs:label "Model Layer"@en ;
+    skaa:hasAssetValueDynamic skaa:DepreciatingAsset .
+
+skaa:KnowledgeLayer a owl:Class ;
+    rdfs:subClassOf skaa:AgenticArchitectureLayer ;
+    rdfs:label "Knowledge Layer"@en ;
+    skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+
+skaa:CoordinationLayer a owl:Class ;
+    rdfs:subClassOf skaa:AgenticArchitectureLayer ;
+    rdfs:label "Coordination Layer"@en ;
+    skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+
+skaa:modelLayerComponent a owl:ObjectProperty ; rdfs:range skaa:ModelLayer .
+skaa:knowledgeLayerComponent a owl:ObjectProperty ; rdfs:range skaa:KnowledgeLayer .
+skaa:coordinationLayerComponent a owl:ObjectProperty ; rdfs:range skaa:CoordinationLayer .
+
+skaa:dependsOnLayer a owl:ObjectProperty, owl:TransitiveProperty .
+skaa:enablesLayer a owl:ObjectProperty ; owl:inverseOf skaa:dependsOnLayer .
+
+skaa:ModelLayer skaa:dependsOnLayer skaa:KnowledgeLayer .
+skaa:KnowledgeLayer skaa:dependsOnLayer skaa:CoordinationLayer .
+
+ska:SemanticKnowledgeAtom skaa:knowledgeLayerComponent skaa:KnowledgeLayer .
+
+# =============================================================================
+# PART 3: NEUROSYMBOLIC REASONING MODES
+# =============================================================================
+
+skaa:ReasoningMode a owl:Class ;
+    rdfs:label "Reasoning Mode"@en .
+
+skaa:SymbolicReasoning a owl:Class ;
+    rdfs:subClassOf skaa:ReasoningMode ;
+    rdfs:label "Symbolic Reasoning"@en ;
+    skaa:reasoningReliability "0.99"^^xsd:decimal ;
+    owl:disjointWith skaa:NeuralReasoning .
+
+skaa:NeuralReasoning a owl:Class ;
+    rdfs:subClassOf skaa:ReasoningMode ;
+    rdfs:label "Neural Reasoning"@en ;
+    skaa:reasoningReliability "0.85"^^xsd:decimal ;
+    owl:disjointWith skaa:SymbolicReasoning .
+
+skaa:HybridReasoning a owl:Class ;
+    rdfs:subClassOf skaa:ReasoningMode ;
+    rdfs:label "Hybrid Reasoning"@en ;
+    skaa:reasoningReliability "0.95"^^xsd:decimal .
+
+skaa:preferredReasoningMode a owl:ObjectProperty ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range skaa:ReasoningMode .
+
+skaa:reasoningReliability a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+skaa:reasoningLatency a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+
+skam:AxiomAtom skaa:preferredReasoningMode skaa:SymbolicReasoning .
+skam:ConstraintAtom skaa:preferredReasoningMode skaa:SymbolicReasoning .
+skam:EntityAtom skaa:preferredReasoningMode skaa:HybridReasoning .
+ska:PatternAtom skaa:preferredReasoningMode skaa:NeuralReasoning .
+
+# =============================================================================
+# PART 4: QUERY COMPLEXITY
+# =============================================================================
+
+skaa:QueryComplexityClass a owl:Class .
+
+skaa:RelationalQueryComplexity a owl:Class ;
+    rdfs:subClassOf skaa:QueryComplexityClass ;
+    skaa:modelGenerationReliability "0.45"^^xsd:decimal .
+
+skaa:GraphQueryComplexity a owl:Class ;
+    rdfs:subClassOf skaa:QueryComplexityClass ;
+    skaa:modelGenerationReliability "0.82"^^xsd:decimal .
+
+skaa:structuralSimplicityRatio a owl:DatatypeProperty .
+skaa:modelGenerationReliability a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+
+# =============================================================================
+# PART 5: AGENT READINESS CAPABILITIES
+# =============================================================================
+
+skaa:AgentReadinessCapability a owl:Class .
+
+skaa:AgentSpeedWorkloadSupport a owl:Class ;
+    rdfs:subClassOf skaa:AgentReadinessCapability .
+
+skaa:MultiAgentCollaborationSupport a owl:Class ;
+    rdfs:subClassOf skaa:AgentReadinessCapability .
+
+skaa:ProactiveInterventionSupport a owl:Class ;
+    rdfs:subClassOf skaa:AgentReadinessCapability .
+
+skaa:MultiHopReasoningSupport a owl:Class ;
+    rdfs:subClassOf skaa:AgentReadinessCapability .
+
+skaa:queriesPerSecondCapacity a owl:DatatypeProperty ; rdfs:range xsd:integer .
+skaa:burstCapacity a owl:DatatypeProperty ; rdfs:range xsd:integer .
+skaa:maxTraversalDepth a owl:DatatypeProperty ; rdfs:range xsd:integer .
+skaa:transitivePropertyCount a owl:DatatypeProperty ; rdfs:range xsd:integer .
+skaa:contextPersistenceMode a owl:DatatypeProperty ; rdfs:range xsd:string .
+skaa:sharedSubstrateProtocol a owl:ObjectProperty .
+skaa:interventionTrigger a owl:ObjectProperty ; rdfs:range skam:ConstraintAtom .
+skaa:validActionSpace a owl:ObjectProperty ; rdfs:range skam:AxiomAtom .
+
+# Instance declarations
+skaa:SKAAgentSpeedCapability a skaa:AgentSpeedWorkloadSupport ;
+    skaa:queriesPerSecondCapacity 50000 ;
+    skaa:burstCapacity 1000 .
+
+skaa:SKAMultiAgentCapability a skaa:MultiAgentCollaborationSupport ;
+    skaa:contextPersistenceMode "graph-backed" .
+
+skaa:SKAMultiHopCapability a skaa:MultiHopReasoningSupport ;
+    skaa:maxTraversalDepth 99 ;
+    skaa:transitivePropertyCount 3 .
+
+# =============================================================================
+# PART 6: DATA ENTROPY
+# =============================================================================
+
+skaa:DataEntropyState a owl:Class .
+skaa:HighEntropy a owl:Class ; rdfs:subClassOf skaa:DataEntropyState .
+skaa:LowEntropy a owl:Class ; rdfs:subClassOf skaa:DataEntropyState .
+
+skaa:entropyLevel a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+skaa:structureEnforcement a owl:ObjectProperty ; rdfs:range skam:ConstraintAtom .
+skaa:freshnessDecayRate a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+
+ska:SemanticKnowledgeAtom skaa:entropyLevel "0.05"^^xsd:decimal .
+
+# =============================================================================
+# PART 7: CONTEXT ENGINEERING PATTERNS (Depreciating)
+# =============================================================================
+
+skaa:ContextEngineeringPattern a owl:Class ;
+    skaa:hasAssetValueDynamic skaa:DepreciatingAsset .
+
+skaa:RAGPipeline a owl:Class ;
+    rdfs:subClassOf skaa:ContextEngineeringPattern ;
+    skaa:depreciationRate "0.25"^^xsd:decimal .
+
+skaa:SearchTree a owl:Class ;
+    rdfs:subClassOf skaa:ContextEngineeringPattern ;
+    skaa:depreciationRate "0.30"^^xsd:decimal .
+
+skaa:ChainOfThoughtFramework a owl:Class ;
+    rdfs:subClassOf skaa:ContextEngineeringPattern ;
+    skaa:depreciationRate "0.35"^^xsd:decimal .
+
+skaa:PromptScaffolding a owl:Class ;
+    rdfs:subClassOf skaa:ContextEngineeringPattern ;
+    skaa:depreciationRate "0.40"^^xsd:decimal .
+
+skaa:replacesPattern a owl:ObjectProperty ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range skaa:ContextEngineeringPattern .
+
+# =============================================================================
+# PART 8: META-LEVEL ALIGNMENTS
+# =============================================================================
+
+skam:DomainConcept skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+skam:InformationArtifact skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+skam:RepresentationConstruct skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+skam:InfrastructureComponent skaa:hasAssetValueDynamic skaa:DepreciatingAsset .

@@ -1,0 +1,700 @@
+# Scheduling & Appointment Operations
+# Phase 4: User Story 2 - Appointment Scheduling & Client Management
+# Task: T110
+#
+# Based on: /specs/004-spa-marketplace-platform/contracts/scheduling.graphql
+# Covers FR-008 to FR-014: Appointment scheduling, calendar management
+
+scalar DateTime
+scalar Date
+scalar Money
+
+extend type Query {
+  """
+  Get provider availability for date range
+  FR-008: Maintain provider calendars
+  """
+  providerAvailability(
+    providerId: ID!
+    startDate: DateTime!
+    endDate: DateTime!
+    serviceType: String
+  ): ProviderAvailability!
+
+  """
+  Search available time slots for service
+  FR-010: Client online booking
+  """
+  availableSlots(
+    serviceType: String!
+    locationId: ID
+    startDate: DateTime!
+    endDate: DateTime!
+    preferredProviderId: ID
+  ): [AvailableSlot!]!
+
+  """
+  Get appointments for spa organization
+  FR-013: Track client treatment histories
+  """
+  appointments(
+    filters: AppointmentFilters
+    pagination: PaginationInput
+  ): AppointmentConnection!
+
+  """
+  Get single appointment details
+  """
+  appointment(id: ID!): Appointment
+
+  """
+  Get client treatment history
+  FR-013: Track services, products, outcomes
+  """
+  clientTreatmentHistory(
+    clientId: ID!
+    startDate: DateTime
+    endDate: DateTime
+    serviceType: String
+    providerId: ID
+  ): TreatmentHistory!
+}
+
+extend type Mutation {
+  """
+  Book new appointment
+  FR-010, FR-012: Client booking with validation
+  """
+  bookAppointment(input: BookAppointmentInput!): AppointmentResult!
+
+  """
+  Reschedule existing appointment
+  FR-014: Appointment rescheduling
+  """
+  rescheduleAppointment(input: RescheduleInput!): AppointmentResult!
+
+  """
+  Cancel appointment
+  FR-014: Cancellation with notice period
+  """
+  cancelAppointment(
+    appointmentId: ID!
+    reason: String!
+    cancelledBy: CancelledBy!
+  ): AppointmentResult!
+
+  """
+  Block provider time slot
+  FR-008: Block time for PTO, breaks
+  """
+  blockProviderTime(input: BlockTimeInput!): BlockTimeResult!
+
+  """
+  Unblock provider time slot
+  """
+  unblockProviderTime(availabilityId: ID!): SuccessResult!
+
+  """
+  Check in client for appointment
+  """
+  checkInAppointment(appointmentId: ID!): AppointmentResult!
+
+  """
+  Complete appointment with treatment notes
+  FR-013: Post-service documentation
+  """
+  completeAppointment(input: CompleteAppointmentInput!): AppointmentResult!
+
+  """
+  Add consent form for client
+  """
+  addClientConsent(input: AddConsentInput!): Client!
+
+  """
+  Update client medical history
+  """
+  updateClientMedicalHistory(input: UpdateMedicalHistoryInput!): Client!
+
+  """
+  Update client skin profile
+  """
+  updateClientSkinProfile(input: UpdateSkinProfileInput!): Client!
+
+  """
+  Export appointment to iCal format
+  Task: T129
+  """
+  exportAppointmentIcal(
+    appointmentId: ID!
+    options: ICalExportOptions
+  ): String!
+
+  """
+  Export multiple appointments to iCal format
+  Task: T129
+  """
+  exportAppointmentsIcal(
+    appointmentIds: [ID!]!
+    options: ICalExportOptions
+  ): String!
+
+  """
+  Export provider calendar to iCal format
+  Task: T129
+  """
+  exportProviderCalendar(
+    providerId: ID!
+    startDate: DateTime!
+    endDate: DateTime!
+    options: ICalExportOptions
+  ): String!
+}
+
+#######################################
+# Subscriptions
+#######################################
+
+extend type Subscription {
+  """
+  Subscribe to appointment updates
+  Real-time notifications for appointment changes
+  """
+  appointmentUpdated(
+    appointmentId: ID
+    clientId: ID
+    providerId: ID
+  ): AppointmentUpdate!
+
+  """
+  Subscribe to provider schedule changes
+  Real-time notifications for availability changes
+  """
+  providerScheduleUpdated(providerId: ID!): ProviderScheduleUpdate!
+
+  """
+  Subscribe to calendar updates for a date range
+  Real-time notifications for any appointment changes in the range
+  """
+  calendarUpdated(
+    providerId: ID
+    startDate: DateTime!
+    endDate: DateTime!
+  ): CalendarUpdate!
+}
+
+type AppointmentUpdate {
+  eventType: AppointmentEventType!
+  appointment: Appointment!
+  previousStatus: AppointmentStatus
+  timestamp: DateTime!
+}
+
+enum AppointmentEventType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  RESCHEDULED
+  CANCELLED
+  CHECKED_IN
+  COMPLETED
+}
+
+type ProviderScheduleUpdate {
+  eventType: ScheduleEventType!
+  providerId: ID!
+  affectedSlots: [AvailableSlot!]!
+  blockedTime: BlockedTime
+  timestamp: DateTime!
+}
+
+enum ScheduleEventType {
+  TIME_BLOCKED
+  TIME_UNBLOCKED
+  APPOINTMENT_ADDED
+  APPOINTMENT_REMOVED
+  SCHEDULE_CHANGED
+}
+
+type CalendarUpdate {
+  eventType: CalendarEventType!
+  appointments: [Appointment!]!
+  affectedDate: DateTime!
+  providerId: ID
+  timestamp: DateTime!
+}
+
+enum CalendarEventType {
+  APPOINTMENT_CREATED
+  APPOINTMENT_UPDATED
+  APPOINTMENT_CANCELLED
+  BULK_UPDATE
+}
+
+#######################################
+# Appointment Types
+#######################################
+
+"""
+Scheduled service booking
+"""
+type Appointment {
+  id: ID!
+  appointmentNumber: String!
+
+  # Relationships
+  clientId: ID!
+  providerId: ID!
+
+  # Service details
+  serviceType: String!
+  duration: Int! # minutes
+  price: Float
+
+  # Scheduling
+  startTime: DateTime!
+  endTime: DateTime!
+  timezone: String!
+  status: AppointmentStatus!
+
+  # Booking details
+  notes: String
+  requestedProducts: [String!]!
+
+  # Treatment data (post-service)
+  productsUsed: [ProductUsed!]!
+  treatmentOutcome: TreatmentOutcome
+
+  # Payment
+  paymentStatus: PaymentStatus!
+  paymentInfo: PaymentInfo
+
+  # Cancellation
+  cancellationInfo: CancellationInfo
+
+  # Metadata
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  DEPOSIT_PAID
+  PAID
+  REFUNDED
+  CANCELLED
+}
+
+enum CancelledBy {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+type ProductUsed {
+  productId: String!
+  productName: String!
+  amountUsed: String
+  cost: Float
+  notes: String
+}
+
+type TreatmentOutcome {
+  skinConditionBefore: String!
+  skinConditionAfter: String!
+  productsRecommended: [String!]!
+  homeCarePlan: String!
+  clientSatisfactionRating: Int
+  photos: [TreatmentPhoto!]!
+}
+
+type TreatmentPhoto {
+  url: String!
+  type: PhotoType!
+  takenAt: String!
+  notes: String
+}
+
+enum PhotoType {
+  BEFORE
+  AFTER
+  DURING
+  PROGRESS
+}
+
+type PaymentInfo {
+  amount: Float!
+  depositAmount: Float
+  method: String
+  transactionId: String
+  paidAt: String
+}
+
+type CancellationInfo {
+  cancelledBy: CancelledBy!
+  cancelledAt: String!
+  reason: String!
+  cancellationFee: Float
+  refundIssued: Boolean!
+}
+
+#######################################
+# Availability Types
+#######################################
+
+type ProviderAvailability {
+  providerId: ID!
+  providerName: String!
+  availableSlots: [AvailableSlot!]!
+  timezone: String!
+}
+
+type AvailableSlot {
+  startTime: DateTime!
+  endTime: DateTime!
+  duration: Int! # minutes
+  capacity: Int!
+  bookedCount: Int!
+  isAvailable: Boolean!
+  slotId: String!
+}
+
+type BlockedTime {
+  id: ID!
+  providerId: ID!
+  type: BlockedTimeType!
+  startTime: DateTime!
+  endTime: DateTime!
+  reason: String
+  isRecurring: Boolean!
+  recurrenceRule: RecurrenceRule
+}
+
+enum BlockedTimeType {
+  BLOCKED_TIME
+  SPECIAL_HOURS
+  VACATION
+  UNAVAILABLE
+  AVAILABLE
+  GROUP_SESSION
+}
+
+type RecurrenceRule {
+  frequency: RecurrenceFrequency!
+  interval: Int!
+  count: Int
+  until: String
+  byDay: [String!]
+}
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+#######################################
+# Client Types
+#######################################
+
+type Client {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  dateOfBirth: DateTime
+
+  # Profile data
+  skinProfile: SkinProfile
+  medicalHistory: MedicalHistory
+  preferences: ClientPreferences
+
+  # Consent & compliance
+  consentForms: [ConsentForm!]!
+  emergencyContact: EmergencyContact
+
+  # Business data
+  tags: [String!]!
+  loyaltyPoints: Int!
+  totalSpent: Float!
+  notes: String
+
+  # Status
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SkinProfile {
+  skinType: SkinType!
+  concerns: [String!]!
+  allergies: [String!]!
+  sensitivities: [String!]!
+  currentProducts: [String!]
+  previousTreatments: [String!]
+}
+
+enum SkinType {
+  DRY
+  OILY
+  COMBINATION
+  SENSITIVE
+  NORMAL
+}
+
+type MedicalHistory {
+  medications: [String!]!
+  conditions: [String!]!
+  allergies: [String!]!
+  contraindications: [String!]!
+  lastUpdated: String
+}
+
+type ClientPreferences {
+  communicationMethod: CommunicationMethod!
+  reminderSettings: ReminderSettings!
+  marketingOptIn: Boolean!
+  preferredProviders: [String!]
+  preferredTimes: [String!]
+}
+
+enum CommunicationMethod {
+  EMAIL
+  SMS
+  PHONE
+  APP
+}
+
+type ReminderSettings {
+  enabled: Boolean!
+  daysBeforeAppointment: Int!
+  method: CommunicationMethod!
+}
+
+type ConsentForm {
+  formId: String!
+  formType: String!
+  signedAt: String!
+  expiresAt: String
+  documentUrl: String!
+}
+
+type EmergencyContact {
+  name: String!
+  relationship: String!
+  phone: String!
+}
+
+#######################################
+# Treatment History
+#######################################
+
+type TreatmentHistory {
+  client: Client!
+  appointments: [Appointment!]!
+  totalTreatments: Int!
+  favoriteServices: [String!]!
+  lastVisit: DateTime
+  lifetimeValue: Float!
+}
+
+#######################################
+# Connection Types
+#######################################
+
+type AppointmentConnection {
+  edges: [AppointmentEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AppointmentEdge {
+  node: Appointment!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+#######################################
+# Input Types
+#######################################
+
+input AppointmentFilters {
+  clientId: ID
+  providerId: ID
+  locationId: ID
+  status: AppointmentStatus
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input PaginationInput {
+  first: Int
+  after: String
+  last: Int
+  before: String
+}
+
+input BookAppointmentInput {
+  clientId: ID!
+  providerId: ID!
+  serviceType: String!
+  startTime: DateTime!
+  endTime: DateTime!
+  notes: String
+  requestedProducts: [String!]
+}
+
+input RescheduleInput {
+  appointmentId: ID!
+  newStartTime: DateTime!
+  newEndTime: DateTime!
+  reason: String
+}
+
+input BlockTimeInput {
+  providerId: ID!
+  startTime: DateTime!
+  endTime: DateTime!
+  type: BlockedTimeType!
+  reason: String!
+  isRecurring: Boolean
+  recurrenceRule: RecurrenceRuleInput
+}
+
+input RecurrenceRuleInput {
+  frequency: RecurrenceFrequency!
+  interval: Int!
+  count: Int
+  until: DateTime
+  byDay: [String!]
+}
+
+input CompleteAppointmentInput {
+  appointmentId: ID!
+  productsUsed: [ProductUsedInput!]
+  treatmentOutcome: TreatmentOutcomeInput!
+}
+
+input ProductUsedInput {
+  productId: String!
+  productName: String!
+  amountUsed: String
+  cost: Float
+  notes: String
+}
+
+input TreatmentOutcomeInput {
+  skinConditionBefore: String!
+  skinConditionAfter: String!
+  productsRecommended: [String!]!
+  homeCarePlan: String!
+  clientSatisfactionRating: Int
+  photos: [TreatmentPhotoInput!]
+}
+
+input TreatmentPhotoInput {
+  url: String!
+  type: PhotoType!
+  takenAt: String!
+  notes: String
+}
+
+input AddConsentInput {
+  clientId: ID!
+  formType: String!
+  documentUrl: String!
+  expiresAt: DateTime
+}
+
+input UpdateMedicalHistoryInput {
+  clientId: ID!
+  medications: [String!]!
+  conditions: [String!]!
+  allergies: [String!]!
+  contraindications: [String!]!
+}
+
+input UpdateSkinProfileInput {
+  clientId: ID!
+  skinType: SkinType!
+  concerns: [String!]!
+  allergies: [String!]!
+  sensitivities: [String!]!
+  currentProducts: [String!]
+  previousTreatments: [String!]
+}
+
+input ICalExportOptions {
+  includeReminders: Boolean
+  reminderMinutes: Int
+  timezone: String
+  method: ICalMethod
+}
+
+enum ICalMethod {
+  PUBLISH
+  REQUEST
+  REPLY
+  CANCEL
+}
+
+#######################################
+# Result Types
+#######################################
+
+type AppointmentResult {
+  success: Boolean!
+  appointment: Appointment
+  errors: [AppointmentError!]
+  warnings: [String!]
+}
+
+type AppointmentError {
+  code: AppointmentErrorCode!
+  message: String!
+  field: String
+}
+
+enum AppointmentErrorCode {
+  PROVIDER_NOT_FOUND
+  CLIENT_NOT_FOUND
+  PROVIDER_UNAVAILABLE
+  PROVIDER_AT_CAPACITY
+  CLIENT_CONFLICT
+  OUTSIDE_WORKING_HOURS
+  BLOCKED_TIME
+  INVALID_TIME_RANGE
+  MISSING_CONSENT
+  SERVICE_NOT_OFFERED
+  CONTRAINDICATION
+}
+
+type BlockTimeResult {
+  success: Boolean!
+  blockedTime: BlockedTime
+  errors: [String!]
+}
+
+type SuccessResult {
+  success: Boolean!
+  message: String
+  errors: [String!]
+}

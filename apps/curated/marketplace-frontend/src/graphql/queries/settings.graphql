@@ -1,0 +1,144 @@
+# User Settings Queries and Mutations
+
+# Fragment for profile settings
+fragment ProfileSettingsFields on ProfileSettings {
+  displayName
+  timezone
+  language
+  dateFormat
+  timeFormat
+  phoneNumber
+  phoneVerified
+}
+
+# Fragment for notification settings
+fragment NotificationSettingsFields on NotificationSettings {
+  emailEnabled
+  pushEnabled
+  smsEnabled
+  appointmentReminders
+  reminderHours
+  orderUpdates
+  marketingEmails
+  weeklyDigest
+  productAnnouncements
+  communityActivity
+}
+
+# Fragment for app preferences
+fragment AppPreferencesFields on AppPreferences {
+  theme
+  defaultView
+  sidebarCollapsed
+  showPricesWithTax
+  currency
+  itemsPerPage
+  keyboardShortcuts
+  compactMode
+}
+
+# Fragment for complete user settings
+fragment UserSettingsFields on UserSettings {
+  id
+  userId
+  profile {
+    ...ProfileSettingsFields
+  }
+  notifications {
+    ...NotificationSettingsFields
+  }
+  preferences {
+    ...AppPreferencesFields
+  }
+  createdAt
+  updatedAt
+}
+
+# Query: Get current user's settings
+query MySettings {
+  mySettings {
+    ...UserSettingsFields
+  }
+}
+
+# Query: Get user settings by ID (admin)
+query UserSettings($userId: ID!) {
+  userSettings(userId: $userId) {
+    ...UserSettingsFields
+  }
+}
+
+# Mutation: Update profile settings
+mutation UpdateProfileSettings($input: UpdateProfileSettingsInput!) {
+  updateProfileSettings(input: $input) {
+    success
+    settings {
+      ...UserSettingsFields
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+# Mutation: Update notification settings
+mutation UpdateNotificationSettings($input: UpdateNotificationSettingsInput!) {
+  updateNotificationSettings(input: $input) {
+    success
+    settings {
+      ...UserSettingsFields
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+# Mutation: Update app preferences
+mutation UpdateAppPreferences($input: UpdateAppPreferencesInput!) {
+  updateAppPreferences(input: $input) {
+    success
+    settings {
+      ...UserSettingsFields
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+# Mutation: Update all settings at once
+mutation UpdateUserSettings($input: UpdateUserSettingsInput!) {
+  updateUserSettings(input: $input) {
+    success
+    settings {
+      ...UserSettingsFields
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+# Mutation: Reset settings to defaults
+mutation ResetUserSettings {
+  resetUserSettings {
+    success
+    settings {
+      ...UserSettingsFields
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}

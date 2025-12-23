@@ -1,0 +1,877 @@
+# Vendor Portal API Schema
+# Feature 011: Vendor Portal MVP
+# Sprint A.4: GraphQL Contracts
+
+# This schema defines the vendor-facing portal for profile management,
+# application submission, onboarding, and analytics dashboard.
+
+##############################################################################
+# QUERIES
+##############################################################################
+
+extend type Query {
+  """
+  Get current vendor's profile
+  Requires: Vendor authentication
+  Sprint A.1: Vendor Profile Schema
+  """
+  vendorProfile: VendorProfile
+
+  """
+  Get vendor application by ID
+  Requires: Vendor authentication (own application) or Admin
+  Sprint A.2: Application & Onboarding
+  """
+  vendorApplication(id: ID!): VendorApplication
+
+  """
+  Get all vendor applications (Admin only)
+  Requires: Admin authentication
+  Sprint E.2: Admin Tools
+  """
+  adminVendorApplications(
+    statusFilter: ApplicationStatus
+    assigneeFilter: String
+    limit: Int
+    offset: Int
+  ): [VendorApplication!]!
+
+  """
+  Get vendor onboarding progress
+  Requires: Vendor authentication
+  Sprint A.2: Application & Onboarding
+  """
+  vendorOnboarding: VendorOnboarding
+
+  """
+  Get vendor dashboard metrics
+  Requires: Vendor authentication
+  Sprint A.3: Analytics Schema
+  """
+  vendorDashboard(dateRange: DateRangeInput!): VendorDashboardMetrics!
+
+  """
+  Get discovery analytics (how spas find you)
+  Requires: Vendor authentication
+  Sprint A.3: Analytics Schema
+  """
+  discoveryAnalytics(dateRange: DateRangeInput!): DiscoveryAnalytics!
+
+  """
+  Get spa-vendor relationships (customer list)
+  Requires: Vendor authentication
+  Sprint A.3: Analytics Schema
+  """
+  spaRelationships(
+    status: RelationshipStatus
+    limit: Int = 10
+  ): [SpaVendorRelationship!]!
+
+  """
+  Get product performance metrics
+  Requires: Vendor authentication
+  Sprint A.3: Analytics Schema
+  """
+  productPerformance(
+    dateRange: DateRangeInput!
+    productIds: [ID!]
+    limit: Int = 10
+  ): [ProductPerformance!]!
+}
+
+##############################################################################
+# MUTATIONS
+##############################################################################
+
+extend type Mutation {
+  """
+  Create vendor profile (first-time setup after application approval)
+  Requires: Vendor authentication
+  Sprint A.1: Vendor Profile Schema
+  """
+  createVendorProfile(input: CreateVendorProfileInput!): VendorProfileResult!
+
+  """
+  Update vendor profile
+  Requires: Vendor authentication
+  Sprint A.1: Vendor Profile Schema
+  """
+  updateVendorProfile(input: UpdateVendorProfileInput!): VendorProfileResult!
+
+  """
+  Add certification to profile
+  Requires: Vendor authentication
+  Sprint A.1: Vendor Profile Schema
+  """
+  addCertification(input: AddCertificationInput!): CertificationResult!
+
+  """
+  Submit vendor application to join marketplace
+  Public mutation (no auth required)
+  Sprint A.2: Application & Onboarding
+  """
+  submitVendorApplication(input: SubmitVendorApplicationInput!): VendorApplicationResult!
+
+  """
+  Complete an onboarding step
+  Requires: Vendor authentication
+  Sprint A.2: Application & Onboarding
+  """
+  completeOnboardingStep(input: CompleteOnboardingStepInput!): OnboardingStepResult!
+
+  """
+  Skip an optional onboarding step
+  Requires: Vendor authentication
+  Sprint A.2: Application & Onboarding
+  """
+  skipOnboardingStep(stepId: ID!): OnboardingStepResult!
+}
+
+##############################################################################
+# ADMIN MUTATIONS
+##############################################################################
+
+extend type Mutation {
+  """
+  Review and approve/reject vendor application (Admin only)
+  Requires: Admin authentication
+  Sprint A.2: Application & Onboarding
+  """
+  reviewVendorApplication(input: ApplicationReviewDecisionInput!): VendorApplicationResult!
+
+  """
+  Assign reviewer to vendor application (Admin only)
+  Requires: Admin authentication
+  Sprint E.2: Admin Tools
+  """
+  assignApplicationReviewer(applicationId: ID!, reviewerId: ID!): VendorApplicationResult!
+
+  """
+  Verify vendor certification (Admin only)
+  Requires: Admin authentication
+  Sprint A.1: Vendor Profile Schema
+  """
+  verifyCertification(input: CertificationVerificationInput!): CertificationResult!
+}
+
+##############################################################################
+# VENDOR PROFILE TYPES (Sprint A.1)
+##############################################################################
+
+type VendorProfile {
+  id: ID!
+  vendorId: ID!
+
+  # Brand Identity
+  brandName: String!
+  tagline: String
+  founderStory: String
+  missionStatement: String
+  brandVideoUrl: String
+
+  # Visual Identity
+  logoUrl: String
+  heroImageUrl: String
+  brandColorPrimary: String
+  brandColorSecondary: String
+  galleryImages: [String!]
+
+  # Contact & Links
+  websiteUrl: String
+  socialLinks: SocialLinks
+
+  # Business Info
+  foundedYear: Int
+  headquarters: String
+  teamSize: TeamSize
+
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [VendorCertification!]!
+
+  # Metadata
+  completenessScore: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SocialLinks {
+  instagram: String
+  facebook: String
+  tiktok: String
+  linkedin: String
+}
+
+type VendorCertification {
+  id: ID!
+  type: CertificationType!
+  certificateNumber: String
+  issuingBody: String!
+  expirationDate: DateTime
+  documentUrl: String!
+
+  verificationStatus: CertificationStatus!
+  verifiedAt: DateTime
+  verifiedBy: String
+  rejectionReason: String
+
+  submittedAt: DateTime!
+  slaDeadline: DateTime
+}
+
+"""
+Vendor Values - Searchable attributes (25 total)
+Categories: Ingredient Philosophy (8), Sustainability (6), Founder Identity (6), Specialization (5)
+"""
+enum VendorValue {
+  # Ingredient Philosophy
+  CLEAN_BEAUTY
+  ORGANIC
+  NATURAL
+  VEGAN
+  CRUELTY_FREE
+  FRAGRANCE_FREE
+  PARABEN_FREE
+  SULFATE_FREE
+
+  # Sustainability
+  SUSTAINABLE
+  ECO_PACKAGING
+  REFILLABLE
+  ZERO_WASTE
+  CARBON_NEUTRAL
+  REEF_SAFE
+
+  # Founder Identity
+  WOMAN_FOUNDED
+  BIPOC_OWNED
+  LGBTQ_OWNED
+  VETERAN_OWNED
+  FAMILY_OWNED
+  SMALL_BATCH
+
+  # Specialization
+  MEDICAL_GRADE
+  ESTHETICIAN_DEVELOPED
+  DERMATOLOGIST_TESTED
+  CLINICAL_RESULTS
+  PROFESSIONAL_ONLY
+}
+
+"""
+Certification Types - Require human verification (13 total)
+"""
+enum CertificationType {
+  # Organic & Eco
+  USDA_ORGANIC
+  ECOCERT
+  COSMOS_ORGANIC
+  COSMOS_NATURAL
+
+  # Animal Welfare
+  LEAPING_BUNNY
+  PETA_CERTIFIED
+
+  # Social & Environmental
+  B_CORP
+  FAIR_TRADE
+  FSC_CERTIFIED
+
+  # Safety & Quality
+  MADE_SAFE
+  EWG_VERIFIED
+
+  # Business Ownership
+  WOMEN_OWNED_WBENC
+  MINORITY_OWNED_NMSDC
+}
+
+enum CertificationStatus {
+  PENDING
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum TeamSize {
+  SOLO
+  TWO_TO_TEN
+  ELEVEN_TO_FIFTY
+  FIFTY_ONE_TO_TWO_HUNDRED
+  TWO_HUNDRED_PLUS
+}
+
+##############################################################################
+# VENDOR PROFILE INPUTS (Sprint A.1)
+##############################################################################
+
+input CreateVendorProfileInput {
+  vendorId: ID!
+  brandName: String!
+}
+
+input UpdateVendorProfileInput {
+  # Brand Identity
+  brandName: String
+  tagline: String
+  founderStory: String
+  missionStatement: String
+  brandVideoUrl: String
+
+  # Visual Identity
+  logoUrl: String
+  heroImageUrl: String
+  brandColorPrimary: String
+  brandColorSecondary: String
+  galleryImages: [String!]
+
+  # Contact & Links
+  websiteUrl: String
+  socialLinks: SocialLinksInput
+
+  # Business Info
+  foundedYear: Int
+  headquarters: String
+  teamSize: TeamSize
+
+  # Values
+  values: [VendorValue!]
+}
+
+input SocialLinksInput {
+  instagram: String
+  facebook: String
+  tiktok: String
+  linkedin: String
+}
+
+input AddCertificationInput {
+  type: CertificationType!
+  certificateNumber: String
+  expirationDate: DateTime
+  documentUrl: String!
+  issuingBody: String!
+}
+
+input CertificationVerificationInput {
+  certificationId: ID!
+  decision: CertificationVerificationDecision!
+  note: String
+  rejectionReason: String
+}
+
+enum CertificationVerificationDecision {
+  APPROVE
+  REJECT
+  REQUEST_CLEARER_DOCUMENT
+}
+
+##############################################################################
+# VENDOR PROFILE RESULTS (Sprint A.1)
+##############################################################################
+
+type VendorProfileResult {
+  success: Boolean!
+  profile: VendorProfile
+  errors: [VendorPortalError!]
+}
+
+type CertificationResult {
+  success: Boolean!
+  certification: VendorCertification
+  errors: [VendorPortalError!]
+}
+
+##############################################################################
+# VENDOR APPLICATION TYPES (Sprint A.2)
+##############################################################################
+
+type VendorApplication {
+  id: ID!
+
+  # Contact Info
+  contactFirstName: String!
+  contactLastName: String!
+  contactEmail: String!
+  contactPhone: String
+  contactRole: String!
+
+  # Company Info
+  brandName: String!
+  legalName: String!
+  website: String!
+  yearFounded: Int!
+  headquarters: String!
+  employeeCount: String!
+  annualRevenue: String
+
+  # Product Info
+  productCategories: [String!]!
+  skuCount: String!
+  priceRange: String!
+  targetMarket: [String!]!
+  currentDistribution: [String!]
+
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [CertificationType!]
+
+  # Why Jade
+  whyJade: String!
+
+  # Documents
+  documents: ApplicationDocuments
+
+  # Application Status
+  status: ApplicationStatus!
+  assignedReviewerId: String
+  assignedReviewerName: String
+  riskLevel: RiskLevel
+  riskAssessment: JSON
+
+  # Approval Decision
+  decidedAt: DateTime
+  approvalConditions: [String!]
+  rejectionReason: String
+
+  # SLA Tracking
+  submittedAt: DateTime!
+  slaDeadline: DateTime
+
+  # Onboarding
+  onboarding: VendorOnboarding
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ApplicationDocuments {
+  productCatalogUrl: String
+  lineSheetUrl: String
+  insuranceCertificateUrl: String
+  businessLicenseUrl: String
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ADDITIONAL_INFO_REQUESTED
+  APPROVED
+  CONDITIONALLY_APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+##############################################################################
+# VENDOR APPLICATION INPUTS (Sprint A.2)
+##############################################################################
+
+input SubmitVendorApplicationInput {
+  # Contact Information
+  contactFirstName: String!
+  contactLastName: String!
+  contactEmail: String!
+  contactPhone: String
+  contactRole: String!
+
+  # Company Information
+  brandName: String!
+  legalName: String!
+  website: String!
+  yearFounded: Int!
+  headquarters: String!
+  employeeCount: String!
+  annualRevenue: String
+
+  # Product Information
+  productCategories: [String!]!
+  skuCount: String!
+  priceRange: String!
+  targetMarket: [String!]!
+  currentDistribution: [String!]
+
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [CertificationType!]
+
+  # Why Jade
+  whyJade: String!
+
+  # Documents (optional at submission)
+  productCatalogUrl: String
+  lineSheetUrl: String
+  insuranceCertificateUrl: String
+  businessLicenseUrl: String
+}
+
+input ApplicationReviewDecisionInput {
+  applicationId: ID!
+  decision: ApplicationReviewDecision!
+  decisionNote: String
+  rejectionReason: String
+  approvalConditions: [String!]
+}
+
+enum ApplicationReviewDecision {
+  APPROVE
+  CONDITIONALLY_APPROVE
+  REJECT
+  REQUEST_INFO
+}
+
+type VendorApplicationResult {
+  success: Boolean!
+  application: VendorApplication
+  errors: [VendorPortalError!]
+}
+
+##############################################################################
+# VENDOR ONBOARDING TYPES (Sprint A.2)
+##############################################################################
+
+type VendorOnboarding {
+  id: ID!
+  applicationId: ID!
+
+  # Progress Tracking
+  completedSteps: Int!
+  totalSteps: Int!
+  requiredStepsRemaining: Int!
+  percentComplete: Int!
+
+  # Steps
+  steps: [OnboardingStep!]!
+
+  # Success Manager
+  successManagerName: String
+  successManagerEmail: String
+
+  # Timeline
+  startedAt: DateTime
+  targetCompletionDate: DateTime
+  completedAt: DateTime
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type OnboardingStep {
+  id: ID!
+  onboardingId: ID!
+
+  name: String!
+  description: String
+  order: Int!
+  required: Boolean!
+  helpArticleUrl: String
+
+  status: OnboardingStepStatus!
+  completedAt: DateTime
+
+  createdAt: DateTime!
+}
+
+enum OnboardingStepStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+##############################################################################
+# VENDOR ONBOARDING INPUTS (Sprint A.2)
+##############################################################################
+
+input CompleteOnboardingStepInput {
+  stepId: ID!
+  data: JSON
+}
+
+type OnboardingStepResult {
+  success: Boolean!
+  step: OnboardingStep
+  onboarding: VendorOnboarding
+  errors: [VendorPortalError!]
+}
+
+##############################################################################
+# VENDOR DASHBOARD TYPES (Sprint A.3)
+##############################################################################
+
+type VendorDashboardMetrics {
+  # Date Range
+  dateRange: DateRange!
+
+  # Revenue Metrics
+  revenue: RevenueMetrics!
+
+  # Order Metrics
+  orders: OrderMetrics!
+
+  # Spa Metrics
+  spas: SpaMetrics!
+
+  # Discovery Metrics
+  impressions: ImpressionMetrics!
+
+  # Top Performers
+  topProducts: [ProductPerformance!]!
+  topCustomers: [SpaVendorRelationship!]!
+
+  # Charts Data
+  revenueTimeSeries: [TimeSeriesDataPoint!]!
+  ordersTimeSeries: [TimeSeriesDataPoint!]!
+}
+
+type RevenueMetrics {
+  total: Float!
+  fromNewSpas: Float!
+  fromRepeatSpas: Float!
+  trend: TrendIndicator!
+  percentChange: Float!
+}
+
+type OrderMetrics {
+  count: Int!
+  fromNewSpas: Int!
+  fromRepeatSpas: Int!
+  avgOrderValue: Float!
+  trend: TrendIndicator!
+  percentChange: Float!
+}
+
+type SpaMetrics {
+  active: Int!
+  new: Int!
+  repeat: Int!
+  reorderRate: Float!
+  trend: TrendIndicator!
+  percentChange: Float!
+}
+
+type ImpressionMetrics {
+  total: Int!
+  bySource: ImpressionsBySource!
+  trend: TrendIndicator!
+  percentChange: Float!
+}
+
+type ImpressionsBySource {
+  search: Int!
+  browse: Int!
+  values: Int!
+  recommendation: Int!
+  direct: Int!
+}
+
+type TimeSeriesDataPoint {
+  date: String!
+  value: Float!
+}
+
+enum TrendIndicator {
+  UP
+  FLAT
+  DOWN
+}
+
+##############################################################################
+# DISCOVERY ANALYTICS TYPES (Sprint A.3)
+##############################################################################
+
+type DiscoveryAnalytics {
+  # How Spas Find You
+  impressions: ImpressionMetrics!
+
+  # Search Insights
+  queriesLeadingToYou: [SearchQueryInsight!]!
+  missedQueries: [SearchQueryInsight!]!
+
+  # Values Performance
+  valuesPerformance: [ValuePerformance!]!
+
+  # Profile Engagement
+  profileEngagement: ProfileEngagement!
+
+  # Recommendations
+  recommendations: [DiscoveryRecommendation!]!
+}
+
+type SearchQueryInsight {
+  query: String!
+  volume: Int!
+  yourPosition: Int
+  topCompetitor: String
+}
+
+type ValuePerformance {
+  value: VendorValue!
+  impressions: Int!
+  clicks: Int!
+  conversions: Int!
+  rank: Int
+}
+
+type ProfileEngagement {
+  profileViews: Int!
+  avgTimeOnProfile: Int!
+  catalogBrowses: Int!
+  productClicks: Int!
+  contactClicks: Int!
+  bounceRate: Float!
+}
+
+type DiscoveryRecommendation {
+  type: RecommendationType!
+  priority: RecommendationPriority!
+  title: String!
+  description: String!
+  actionLabel: String!
+  actionRoute: String!
+  potentialImpact: String!
+}
+
+enum RecommendationType {
+  PROFILE
+  VALUES
+  PRODUCTS
+  CONTENT
+}
+
+enum RecommendationPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+##############################################################################
+# SPA-VENDOR RELATIONSHIP TYPES (Sprint A.3)
+##############################################################################
+
+type SpaVendorRelationship {
+  id: ID!
+  vendorId: ID!
+  spaId: ID!
+  spaName: String
+
+  status: RelationshipStatus!
+
+  # Lifetime Metrics
+  lifetimeValue: Float!
+  orderCount: Int!
+  avgOrderValue: Float!
+
+  # Order Timing
+  firstOrderAt: DateTime
+  lastOrderAt: DateTime
+  avgDaysBetweenOrders: Int
+  daysSinceLastOrder: Int
+
+  # Product Preferences
+  favoriteCategories: [String!]
+  topProducts: [ID!]
+
+  # Engagement
+  profileViews: Int!
+  messageCount: Int!
+  lastMessageAt: DateTime
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum RelationshipStatus {
+  ACTIVE
+  CHURNED
+  AT_RISK
+  NEW
+}
+
+##############################################################################
+# PRODUCT PERFORMANCE TYPES (Sprint A.3)
+##############################################################################
+
+type ProductPerformance {
+  productId: ID!
+  productName: String!
+  productSku: String
+  category: String
+
+  # Sales Metrics
+  unitsSold: Int!
+  revenue: Float!
+  orderCount: Int!
+  uniqueSpas: Int!
+
+  # Engagement Metrics
+  views: Int!
+  addToCartClicks: Int!
+  conversionRate: Float
+
+  # Context
+  price: Float
+}
+
+##############################################################################
+# ERROR TYPES
+##############################################################################
+
+type VendorPortalError {
+  code: VendorPortalErrorCode!
+  message: String!
+  field: String
+}
+
+enum VendorPortalErrorCode {
+  # Profile Errors
+  PROFILE_NOT_FOUND
+  PROFILE_ALREADY_EXISTS
+  INVALID_BRAND_NAME
+  INVALID_URL
+  INVALID_COLOR
+  INVALID_YEAR
+
+  # Certification Errors
+  CERTIFICATION_NOT_FOUND
+  INVALID_CERTIFICATION_TYPE
+  EXPIRED_CERTIFICATION
+  INVALID_DOCUMENT_URL
+  DUPLICATE_CERTIFICATION
+
+  # Application Errors
+  APPLICATION_NOT_FOUND
+  INVALID_APPLICATION_STATUS
+  MISSING_REQUIRED_FIELD
+  INVALID_EMAIL
+  DUPLICATE_APPLICATION
+  SLA_BREACH
+
+  # Onboarding Errors
+  ONBOARDING_NOT_FOUND
+  STEP_NOT_FOUND
+  STEP_ALREADY_COMPLETED
+  CANNOT_SKIP_REQUIRED_STEP
+
+  # Authorization Errors
+  UNAUTHORIZED
+  FORBIDDEN
+
+  # General Errors
+  INTERNAL_ERROR
+  VALIDATION_ERROR
+}
+
+##############################################################################
+# SCALAR TYPES
+##############################################################################
+
+scalar DateTime
+scalar JSON

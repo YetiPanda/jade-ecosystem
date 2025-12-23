@@ -1,0 +1,35 @@
+{
+  "name": "@jade/vector-db",
+  "version": "0.1.0",
+  "description": "Zilliz Cloud client library for JADE Spa Marketplace",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "require": "./dist/client.js",
+      "import": "./dist/client.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "setup": "tsx src/setup-collections.ts"
+  },
+  "dependencies": {
+    "@zilliz/milvus2-sdk-node": "^2.4.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.4.3"
+  }
+}

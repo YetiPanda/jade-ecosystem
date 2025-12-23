@@ -1,0 +1,221 @@
+@prefix ska: <https://w3id.org/ska/> .
+@prefix skam: <https://w3id.org/ska/meta/> .
+@prefix skaa: <https://w3id.org/ska/agentic/> .
+@prefix skar: <https://w3id.org/ska/regulatory/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# =============================================================================
+# SKA REGULATORY ATOMS - INSTANCE DATA
+# Frameworks: NIST CSF 2.0, ISO 42001:2023, EU AI Act 2024
+# =============================================================================
+
+<https://w3id.org/ska/regulatory/>
+    a owl:Ontology ;
+    owl:imports <https://w3id.org/ska/meta/> ;
+    owl:imports <https://w3id.org/ska/agentic/> ;
+    dcterms:title "SKA Regulatory Atoms"@en .
+
+# =============================================================================
+# FRAMEWORK ATOMS
+# =============================================================================
+
+skar:NIST_CSF_2_0 a ska:FrameworkAtom ;
+    skos:prefLabel "NIST Cybersecurity Framework 2.0"@en ;
+    skos:definition "US federal guidance for managing cybersecurity risk"@en ;
+    ska:hasJurisdiction "United States" ;
+    ska:hasEffectiveDate "2024-02-26"^^xsd:date ;
+    skam:hasMetaType skam:InformationArtifact ;
+    skam:hasStructuralType skam:EntityAtom .
+
+skar:ISO42001_2023 a ska:FrameworkAtom ;
+    skos:prefLabel "ISO/IEC 42001:2023"@en ;
+    skos:definition "International standard for AI management systems"@en ;
+    ska:hasJurisdiction "International" ;
+    ska:hasEffectiveDate "2023-12-18"^^xsd:date ;
+    skam:hasMetaType skam:InformationArtifact ;
+    skam:hasStructuralType skam:EntityAtom .
+
+skar:EU_AI_Act_2024 a ska:FrameworkAtom ;
+    skos:prefLabel "EU Artificial Intelligence Act"@en ;
+    skos:definition "European Union comprehensive AI regulation"@en ;
+    ska:hasJurisdiction "European Union" ;
+    ska:hasEffectiveDate "2024-08-01"^^xsd:date ;
+    skam:hasMetaType skam:InformationArtifact ;
+    skam:hasStructuralType skam:EntityAtom .
+
+# =============================================================================
+# REQUIREMENT ATOMS - NIST CSF 2.0
+# =============================================================================
+
+skar:NIST_MAP_1_1 a ska:RequirementAtom ;
+    skos:prefLabel "NIST MAP-1.1: Context Establishment"@en ;
+    skos:definition "Establish context for AI system risk assessment"@en ;
+    dcterms:source skar:NIST_CSF_2_0 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom ;
+    skaa:preferredReasoningMode skaa:HybridReasoning .
+
+skar:NIST_GOV_1_1 a ska:RequirementAtom ;
+    skos:prefLabel "NIST GOV-1.1: AI Governance Structure"@en ;
+    skos:definition "Establish governance structure for AI systems"@en ;
+    dcterms:source skar:NIST_CSF_2_0 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+skar:NIST_MAN_2_1 a ska:RequirementAtom ;
+    skos:prefLabel "NIST MAN-2.1: Risk Documentation"@en ;
+    skos:definition "Document AI system risks and mitigation strategies"@en ;
+    dcterms:source skar:NIST_CSF_2_0 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+# =============================================================================
+# REQUIREMENT ATOMS - ISO 42001
+# =============================================================================
+
+skar:ISO42001_6_1_2 a ska:RequirementAtom ;
+    skos:prefLabel "ISO 42001 6.1.2: AI Risk Assessment"@en ;
+    skos:definition "Identify and assess risks from AI system development and use"@en ;
+    dcterms:source skar:ISO42001_2023 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+skar:ISO42001_5_3 a ska:RequirementAtom ;
+    skos:prefLabel "ISO 42001 5.3: Organizational Roles"@en ;
+    skos:definition "Define roles and responsibilities for AI management"@en ;
+    dcterms:source skar:ISO42001_2023 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+skar:ISO42001_7_2 a ska:RequirementAtom ;
+    skos:prefLabel "ISO 42001 7.2: Competence"@en ;
+    skos:definition "Ensure personnel competence for AI system management"@en ;
+    dcterms:source skar:ISO42001_2023 ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+# =============================================================================
+# REQUIREMENT ATOMS - EU AI ACT
+# =============================================================================
+
+skar:EUAIA_Article9 a ska:RequirementAtom ;
+    skos:prefLabel "EU AI Act Article 9: Risk Management System"@en ;
+    skos:definition "Establish risk management system for high-risk AI"@en ;
+    dcterms:source skar:EU_AI_Act_2024 ;
+    ska:hasJurisdiction "European Union" ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+skar:EUAIA_Article13 a ska:RequirementAtom ;
+    skos:prefLabel "EU AI Act Article 13: Transparency"@en ;
+    skos:definition "Ensure transparency and provision of information to users"@en ;
+    dcterms:source skar:EU_AI_Act_2024 ;
+    ska:hasJurisdiction "European Union" ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+skar:EUAIA_Article14 a ska:RequirementAtom ;
+    skos:prefLabel "EU AI Act Article 14: Human Oversight"@en ;
+    skos:definition "Enable appropriate human oversight of AI systems"@en ;
+    dcterms:source skar:EU_AI_Act_2024 ;
+    ska:hasJurisdiction "European Union" ;
+    ska:hasSeverity "mandatory" ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom .
+
+# =============================================================================
+# AXIOM ATOMS - CROSS-FRAMEWORK ENTAILMENTS
+# =============================================================================
+
+skar:Axiom_ISO42001_entails_NIST_MAP a ska:ComplianceAxiomAtom ;
+    skos:prefLabel "ISO 42001 6.1.2 entails NIST MAP-1.1"@en ;
+    skos:definition "Satisfying ISO 42001 risk assessment implies NIST context establishment"@en ;
+    ska:entailmentSource skar:ISO42001_6_1_2 ;
+    ska:entailmentTarget skar:NIST_MAP_1_1 ;
+    ska:entailmentConfidence "0.92"^^xsd:decimal ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+skar:Axiom_EUAIA_entails_ISO42001 a ska:ComplianceAxiomAtom ;
+    skos:prefLabel "EU AI Act Article 9 entails ISO 42001 6.1.2"@en ;
+    skos:definition "EU AI Act risk management implies ISO 42001 risk assessment"@en ;
+    ska:entailmentSource skar:EUAIA_Article9 ;
+    ska:entailmentTarget skar:ISO42001_6_1_2 ;
+    ska:entailmentConfidence "0.95"^^xsd:decimal ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+# Establish the transitive entailment chain
+skar:ISO42001_6_1_2 ska:entails skar:NIST_MAP_1_1 .
+skar:EUAIA_Article9 ska:entails skar:ISO42001_6_1_2 .
+# By transitivity: EUAIA_Article9 ska:entails NIST_MAP_1_1
+
+skar:EUAIA_Article13 ska:mapsToControl skar:NIST_MAN_2_1 .
+skar:ISO42001_5_3 ska:mapsToControl skar:NIST_GOV_1_1 .
+
+# =============================================================================
+# CONSTRAINT ATOMS - COMPLIANCE VALIDATION
+# =============================================================================
+
+skar:Constraint_RequirementEvidence a ska:ComplianceConstraintAtom ;
+    skos:prefLabel "Requirement Evidence Constraint"@en ;
+    skos:definition "All requirements must have compliance evidence with attestation"@en ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:ConstraintAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning ;
+    skam:hasShaclSerialization """
+        skar:RequirementEvidenceShape a sh:NodeShape ;
+            sh:targetClass ska:RequirementAtom ;
+            sh:property [
+                sh:path ska:hasComplianceEvidence ;
+                sh:minCount 1 ;
+                sh:message "Requirements must have compliance evidence"
+            ] .
+    """ .
+
+skar:Constraint_FrameworkDate a ska:ComplianceConstraintAtom ;
+    skos:prefLabel "Framework Effective Date Constraint"@en ;
+    skos:definition "All frameworks must specify an effective date"@en ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:ConstraintAtom ;
+    skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+# =============================================================================
+# PATTERN ATOMS - CROSS-DOMAIN PATTERNS
+# =============================================================================
+
+skar:Pattern_RiskBasedProportionality a ska:PatternAtom ;
+    skos:prefLabel "Risk-Based Proportionality Pattern"@en ;
+    skos:definition "Pattern: Higher risk requires stronger controls across all frameworks"@en ;
+    ska:discoveredInDomains '["regulatory", "ai-governance", "cybersecurity"]' ;
+    ska:patternConfidence "0.94"^^xsd:decimal ;
+    ska:linksAtoms skar:NIST_MAP_1_1, skar:ISO42001_6_1_2, skar:EUAIA_Article9 ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skaa:preferredReasoningMode skaa:NeuralReasoning .
+
+skar:Pattern_DocumentationRequirement a ska:PatternAtom ;
+    skos:prefLabel "Documentation Requirement Pattern"@en ;
+    skos:definition "Pattern: All frameworks require documented evidence and audit trails"@en ;
+    ska:discoveredInDomains '["regulatory", "compliance", "governance"]' ;
+    ska:patternConfidence "0.91"^^xsd:decimal ;
+    ska:linksAtoms skar:NIST_MAN_2_1, skar:EUAIA_Article13 ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skaa:preferredReasoningMode skaa:NeuralReasoning .

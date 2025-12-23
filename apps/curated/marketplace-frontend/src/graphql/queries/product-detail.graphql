@@ -1,0 +1,85 @@
+# Comprehensive Product Query with Full Progressive Disclosure
+
+query GetProductWithFullDetails($id: ID!) {
+  product(id: $id) {
+    id
+    vendureProductId
+
+    # Glance Level - Quick Overview
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+
+    # Scan Level - Detailed Information
+    scan {
+      ingredients {
+        inci {
+          name
+          concentration
+          function
+          warnings
+        }
+        actives {
+          name
+          concentration
+          type
+        }
+        allergens
+        vegan
+        crueltyFree
+      }
+      usageInstructions {
+        application
+        frequency
+        timeOfDay
+        patchTestRequired
+      }
+      keyActives {
+        name
+        concentration
+        type
+      }
+      warnings
+      images
+    }
+
+    # Study Level - Professional/Clinical Data
+    study {
+      clinicalData {
+        trials {
+          studyName
+          participants
+          duration
+          results
+          publicationUrl
+        }
+        certifications
+        testReports {
+          testType
+          reportUrl
+          testedAt
+        }
+      }
+      formulationScience
+      contraindications
+      professionalNotes
+      detailedSteps
+      expectedResults
+      timeToResults
+    }
+
+    # Vector Status
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}

@@ -1,0 +1,285 @@
+# Appointment and Client Management Schema
+
+type Query {
+  """Get appointment by ID"""
+  appointment(id: ID!): Appointment
+
+  """List appointments with filters"""
+  appointments(
+    filters: AppointmentFiltersInput
+    pagination: PaginationInput
+  ): AppointmentConnection!
+
+  """Get client by ID"""
+  client(id: ID!): Client
+
+  """List clients for spa organization"""
+  clients(
+    spaOrganizationId: ID!
+    search: String
+    pagination: PaginationInput
+  ): ClientConnection!
+}
+
+type Mutation {
+  """Create appointment"""
+  createAppointment(input: CreateAppointmentInput!): AppointmentResult!
+
+  """Update appointment"""
+  updateAppointment(id: ID!, input: UpdateAppointmentInput!): AppointmentResult!
+
+  """Cancel appointment"""
+  cancelAppointment(id: ID!, reason: String): AppointmentResult!
+
+  """Check in client for appointment"""
+  checkInAppointment(id: ID!): AppointmentResult!
+
+  """Complete appointment"""
+  completeAppointment(id: ID!, input: CompleteAppointmentInput!): AppointmentResult!
+
+  """Create client profile"""
+  createClient(input: CreateClientInput!): ClientResult!
+
+  """Update client profile"""
+  updateClient(id: ID!, input: UpdateClientInput!): ClientResult!
+}
+"""
+Appointment
+"""
+type Appointment {
+  id: ID!
+  client: Client!
+  serviceProvider: ServiceProvider!
+  location: Location!
+  serviceType: String!
+  scheduledStart: DateTime!
+  scheduledEnd: DateTime!
+  actualStart: DateTime
+  actualEnd: DateTime
+  status: AppointmentStatus!
+  productsUsed: [ProductUsage!]!
+  notes: String
+  clientFeedback: ClientFeedback
+  cancellationReason: String
+  cancelledAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+type ProductUsage {
+  productId: ID!
+  product: Product!
+  quantity: Int
+  notes: String
+}
+
+type ClientFeedback {
+  rating: Int!
+  comments: String
+  wouldRecommend: Boolean!
+  submittedAt: DateTime!
+}
+"""
+Client
+"""
+type Client {
+  id: ID!
+  userId: ID
+  user: User
+  spaOrganization: SpaOrganization!
+  firstName: String!
+  lastName: String!
+  email: String
+  phone: String
+  dateOfBirth: DateTime
+  skinProfile: SkinProfile!
+  allergies: [String!]!
+  preferences: ClientPreferences!
+  notes: String
+  appointments: [Appointment!]!
+  treatmentPlans: [TreatmentPlan!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SkinProfile {
+  skinType: String!
+  concerns: [String!]!
+  goals: [String!]!
+  sensitivities: [String!]!
+  currentRoutine: String
+}
+
+type ClientPreferences {
+  preferredProviders: [ID!]
+  communicationChannel: CommunicationChannel!
+  reminderPreference: ReminderPreference!
+  marketingOptIn: Boolean!
+}
+
+enum CommunicationChannel {
+  EMAIL
+  SMS
+  BOTH
+}
+
+type ReminderPreference {
+  enabled: Boolean!
+  hoursBeforeAppointment: Int!
+}
+"""
+Treatment Plan
+"""
+type TreatmentPlan {
+  id: ID!
+  client: Client!
+  serviceProvider: ServiceProvider!
+  title: String!
+  description: String
+  totalSessions: Int!
+  completedSessions: Int!
+  status: TreatmentPlanStatus!
+  sessions: JSON!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum TreatmentPlanStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+"""
+Filters and pagination
+"""
+input AppointmentFiltersInput {
+  spaOrganizationId: ID
+  serviceProviderId: ID
+  clientId: ID
+  locationId: ID
+  status: AppointmentStatus
+  dateRange: DateRangeInput
+}
+
+type AppointmentConnection {
+  edges: [AppointmentEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AppointmentEdge {
+  node: Appointment!
+  cursor: String!
+}
+
+type ClientConnection {
+  edges: [ClientEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ClientEdge {
+  node: Client!
+  cursor: String!
+}
+"""
+Input types
+"""
+input CreateAppointmentInput {
+  clientId: ID!
+  serviceProviderId: ID!
+  locationId: ID!
+  serviceType: String!
+  scheduledStart: DateTime!
+  scheduledEnd: DateTime!
+  notes: String
+}
+
+input UpdateAppointmentInput {
+  scheduledStart: DateTime
+  scheduledEnd: DateTime
+  serviceType: String
+  notes: String
+}
+
+input CompleteAppointmentInput {
+  productsUsed: [ProductUsageInput!]
+  notes: String
+}
+
+input ProductUsageInput {
+  productId: ID!
+  quantity: Int
+  notes: String
+}
+
+input CreateClientInput {
+  spaOrganizationId: ID!
+  userId: ID
+  firstName: String!
+  lastName: String!
+  email: String
+  phone: String
+  dateOfBirth: DateTime
+  skinProfile: SkinProfileInput!
+  allergies: [String!]
+  preferences: ClientPreferencesInput
+  notes: String
+}
+
+input UpdateClientInput {
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+  dateOfBirth: DateTime
+  skinProfile: SkinProfileInput
+  allergies: [String!]
+  preferences: ClientPreferencesInput
+  notes: String
+}
+
+input SkinProfileInput {
+  skinType: String!
+  concerns: [String!]!
+  goals: [String!]!
+  sensitivities: [String!]!
+  currentRoutine: String
+}
+
+input ClientPreferencesInput {
+  preferredProviders: [ID!]
+  communicationChannel: CommunicationChannel!
+  reminderPreference: ReminderPreferenceInput!
+  marketingOptIn: Boolean!
+}
+
+input ReminderPreferenceInput {
+  enabled: Boolean!
+  hoursBeforeAppointment: Int!
+}
+"""
+Result types
+"""
+type AppointmentResult {
+  success: Boolean!
+  appointment: Appointment
+  errors: [Error!]
+}
+
+type ClientResult {
+  success: Boolean!
+  client: Client
+  errors: [Error!]
+}

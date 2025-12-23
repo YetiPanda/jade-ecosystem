@@ -1,0 +1,354 @@
+@prefix ska: <https://w3id.org/ska/> .
+@prefix skam: <https://w3id.org/ska/meta/> .
+@prefix skaa: <https://w3id.org/ska/agentic/> .
+@prefix skar: <https://w3id.org/ska/regulatory/> .
+@prefix skac: <https://w3id.org/ska/chemistry/> .
+@prefix skap: <https://w3id.org/ska/patterns/> .
+@prefix jade: <https://jade.eco/ontology/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+
+# =============================================================================
+# SKA UNIFIED ONTOLOGY - JADE ECOSYSTEM EDITION
+# =============================================================================
+# Version: 1.0.0
+# Description: Master import file that unifies all SKA Meta-Schema components
+#              for the JADE Skincare Marketplace ecosystem
+# 
+# This file imports:
+#   1. ska-meta-schema.ttl     - Core atom definitions, meta-level types
+#   2. ska-agentic-extension.ttl - Appreciating asset paradigm, 2026 readiness
+#   3. ska-regulatory-atoms.ttl  - NIST, ISO 42001, EU AI Act requirements
+#   4. ska-jade-chemistry.ttl    - Skincare-specific atoms (JADE domain)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# UNIFIED ONTOLOGY DECLARATION
+# -----------------------------------------------------------------------------
+
+<https://jade.eco/ontology/ska-unified/>
+    a owl:Ontology ;
+    owl:versionIRI <https://jade.eco/ontology/ska-unified/1.0.0> ;
+    dcterms:title "SKA Unified Ontology - JADE Edition"@en ;
+    dcterms:description """Master ontology that imports and integrates all SKA 
+        Meta-Schema components for the JADE Skincare Marketplace. Provides a 
+        single entry point for knowledge graph queries spanning regulatory 
+        compliance, skincare chemistry, and cross-domain pattern discovery."""@en ;
+    dcterms:creator "JADE Ecosystem Team" ;
+    dcterms:created "2025-01-01"^^xsd:date ;
+    dcterms:modified "2025-01-01"^^xsd:date ;
+    owl:versionInfo "1.0.0" ;
+    
+    # Import chain
+    owl:imports <https://w3id.org/ska/meta/> ;
+    owl:imports <https://w3id.org/ska/agentic/> ;
+    owl:imports <https://w3id.org/ska/regulatory/> ;
+    owl:imports <https://jade.eco/ontology/chemistry/> ;
+    
+    # External alignments
+    rdfs:seeAlso <http://purl.obolibrary.org/obo/bfo.owl> ;
+    rdfs:seeAlso <http://www.w3.org/2004/02/skos/core> ;
+    
+    # JADE-specific metadata
+    jade:domainScope "skincare-marketplace" ;
+    jade:complianceFrameworks "NIST-CSF-2.0, ISO-42001, EU-AI-Act" ;
+    jade:primaryUseCase "AI-powered skincare recommendations with regulatory compliance" .
+
+# =============================================================================
+# JADE ECOSYSTEM NAMESPACE BINDINGS
+# =============================================================================
+
+jade:NamespaceRegistry
+    a owl:Thing ;
+    rdfs:label "JADE Namespace Registry"@en ;
+    rdfs:comment """Documents the namespace prefixes used throughout the JADE 
+        knowledge graph for consistent querying and integration."""@en ;
+    jade:hasPrefix [
+        jade:prefix "ska" ;
+        jade:namespace "https://w3id.org/ska/" ;
+        jade:purpose "Core SKA ontology classes and properties"
+    ] , [
+        jade:prefix "skam" ;
+        jade:namespace "https://w3id.org/ska/meta/" ;
+        jade:purpose "Meta-schema: meta-level types, structural types"
+    ] , [
+        jade:prefix "skaa" ;
+        jade:namespace "https://w3id.org/ska/agentic/" ;
+        jade:purpose "Agentic extension: asset dynamics, reasoning modes"
+    ] , [
+        jade:prefix "skar" ;
+        jade:namespace "https://w3id.org/ska/regulatory/" ;
+        jade:purpose "Regulatory atoms: NIST, ISO, EU AI Act"
+    ] , [
+        jade:prefix "skac" ;
+        jade:namespace "https://w3id.org/ska/chemistry/" ;
+        jade:purpose "Chemistry atoms: ingredients, interactions"
+    ] , [
+        jade:prefix "jade" ;
+        jade:namespace "https://jade.eco/ontology/" ;
+        jade:purpose "JADE marketplace-specific extensions"
+    ] .
+
+# =============================================================================
+# JADE-SPECIFIC EXTENSIONS
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Marketplace Domain Binding
+# -----------------------------------------------------------------------------
+
+jade:JADEMarketplace
+    a owl:Class ;
+    rdfs:subClassOf skam:InfrastructureComponent ;
+    rdfs:label "JADE Marketplace"@en ;
+    skos:definition """The JADE Skincare Marketplace platform, an AI-powered 
+        ecosystem connecting skincare professionals with curated products 
+        through semantic knowledge atoms."""@en ;
+    skaa:hasAssetValueDynamic skaa:AppreciatingAsset ;
+    skaa:knowledgeLayerComponent skaa:KnowledgeLayer .
+
+jade:PractitionerProfile
+    a owl:Class ;
+    rdfs:subClassOf skam:DomainConcept ;
+    rdfs:label "Practitioner Profile"@en ;
+    skos:definition "A verified skincare professional's profile in the JADE ecosystem" .
+
+jade:ClientProfile
+    a owl:Class ;
+    rdfs:subClassOf skam:DomainConcept ;
+    rdfs:label "Client Profile"@en ;
+    skos:definition "A skincare client's profile with skin concerns and preferences" .
+
+jade:ProductRecommendation
+    a owl:Class ;
+    rdfs:subClassOf skam:DomainConcept ;
+    rdfs:label "Product Recommendation"@en ;
+    skos:definition """An AI-generated product recommendation based on client 
+        profile, ingredient analysis, and compatibility rules."""@en ;
+    skaa:preferredReasoningMode skaa:HybridReasoning .
+
+# -----------------------------------------------------------------------------
+# Cross-Domain Linking Properties
+# -----------------------------------------------------------------------------
+
+jade:hasRegulatoryCompliance
+    a owl:ObjectProperty ;
+    rdfs:label "has regulatory compliance"@en ;
+    rdfs:domain jade:ProductRecommendation ;
+    rdfs:range ska:RegulatoryAtom ;
+    skos:definition """Links a product recommendation to the regulatory 
+        requirements it must satisfy (e.g., ingredient disclosure, AI transparency)."""@en .
+
+jade:usesIngredient
+    a owl:ObjectProperty ;
+    rdfs:label "uses ingredient"@en ;
+    rdfs:domain jade:ProductRecommendation ;
+    rdfs:range ska:IngredientAtom ;
+    skos:definition "Links a recommendation to the ingredients in the product" .
+
+jade:matchesSkinConcern
+    a owl:ObjectProperty ;
+    rdfs:label "matches skin concern"@en ;
+    rdfs:domain jade:ProductRecommendation ;
+    rdfs:range jade:SkinConcern ;
+    skos:definition "Links a recommendation to the skin concerns it addresses" .
+
+# -----------------------------------------------------------------------------
+# JADE Skin Concerns (Entity Atoms)
+# -----------------------------------------------------------------------------
+
+jade:SkinConcern
+    a owl:Class ;
+    rdfs:subClassOf ska:SemanticKnowledgeAtom ;
+    rdfs:label "Skin Concern"@en ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:EntityAtom ;
+    skos:definition "A specific skin condition or concern that products can address" .
+
+jade:Acne a jade:SkinConcern ;
+    skos:prefLabel "Acne"@en ;
+    skos:definition "Inflammatory skin condition characterized by pimples and breakouts" .
+
+jade:Hyperpigmentation a jade:SkinConcern ;
+    skos:prefLabel "Hyperpigmentation"@en ;
+    skos:definition "Patches of skin darker than surrounding areas" .
+
+jade:Dehydration a jade:SkinConcern ;
+    skos:prefLabel "Dehydration"@en ;
+    skos:definition "Lack of water content in the skin" .
+
+jade:Aging a jade:SkinConcern ;
+    skos:prefLabel "Aging Signs"@en ;
+    skos:definition "Fine lines, wrinkles, and loss of elasticity" .
+
+jade:Sensitivity a jade:SkinConcern ;
+    skos:prefLabel "Sensitivity"@en ;
+    skos:definition "Skin that reacts easily to products or environmental factors" .
+
+jade:Rosacea a jade:SkinConcern ;
+    skos:prefLabel "Rosacea"@en ;
+    skos:definition "Chronic skin condition causing redness and visible blood vessels" .
+
+# =============================================================================
+# CROSS-DOMAIN PATTERN DECLARATIONS
+# =============================================================================
+
+jade:Pattern_IngredientTransparency
+    a ska:PatternAtom ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skos:prefLabel "Ingredient Transparency Pattern"@en ;
+    skos:definition """Cross-domain pattern linking regulatory disclosure requirements 
+        (NIST MAP-1.1, EU AI Act Article 13) to skincare ingredient transparency 
+        (INCI labeling, concentration disclosure)."""@en ;
+    ska:discoveredInDomains '["regulatory", "skincare", "consumer-protection"]' ;
+    ska:patternConfidence 0.91 ;
+    ska:linksAtoms skar:NIST_MAP_1_1 ;
+    ska:linksAtoms skar:EUAIA_Article13 ;
+    skos:note """Both AI governance and skincare regulations require transparent 
+        disclosure of components/capabilities to end users.""" .
+
+jade:Pattern_RiskBasedFormulation
+    a ska:PatternAtom ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom ;
+    skos:prefLabel "Risk-Based Formulation Pattern"@en ;
+    skos:definition """Cross-domain pattern linking regulatory risk assessment 
+        (ISO 42001 6.1.2) to skincare formulation safety assessment 
+        (ingredient interactions, sensitization risk)."""@en ;
+    ska:discoveredInDomains '["regulatory", "skincare", "cosmetic-safety"]' ;
+    ska:patternConfidence 0.88 ;
+    ska:linksAtoms skar:ISO42001_6_1_2 ;
+    skos:note """Risk-based proportionality applies both to AI system deployment 
+        and to skincare formulation for sensitive skin types.""" .
+
+# =============================================================================
+# JADE COMPLIANCE CONSTRAINT ATOMS
+# =============================================================================
+
+jade:Constraint_AIRecommendationTransparency
+    a ska:ComplianceConstraintAtom ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:ConstraintAtom ;
+    skos:prefLabel "AI Recommendation Transparency Constraint"@en ;
+    skos:definition """JADE product recommendations must include: reasoning 
+        explanation, ingredient rationale, confidence score, and alternative 
+        options for user autonomy."""@en ;
+    ska:appliesTo skar:EUAIA_Article13 ;
+    skam:hasShaclSerialization """
+        jade:RecommendationTransparencyShape a sh:NodeShape ;
+            sh:targetClass jade:ProductRecommendation ;
+            sh:property [
+                sh:path jade:reasoningExplanation ;
+                sh:minCount 1 ;
+                sh:minLength 20 ;
+                sh:message "Recommendations must explain reasoning"
+            ] ;
+            sh:property [
+                sh:path jade:confidenceScore ;
+                sh:minCount 1 ;
+                sh:datatype xsd:decimal ;
+                sh:minInclusive 0.0 ;
+                sh:maxInclusive 1.0 ;
+                sh:message "Confidence score required (0.0-1.0)"
+            ] ;
+            sh:property [
+                sh:path jade:alternativeOptions ;
+                sh:minCount 2 ;
+                sh:message "At least 2 alternatives for user choice"
+            ] .
+    """ .
+
+jade:Constraint_IngredientSafetyValidation
+    a ska:ComplianceConstraintAtom ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:ConstraintAtom ;
+    skos:prefLabel "Ingredient Safety Validation Constraint"@en ;
+    skos:definition """Before recommendation, ingredient combinations must be 
+        validated for: known interactions, pH compatibility, concentration 
+        limits, and sensitization warnings."""@en ;
+    skam:hasShaclSerialization """
+        jade:IngredientSafetyShape a sh:NodeShape ;
+            sh:targetClass jade:ProductRecommendation ;
+            sh:property [
+                sh:path jade:interactionCheckPassed ;
+                sh:hasValue true ;
+                sh:message "Ingredient interactions must be validated"
+            ] ;
+            sh:property [
+                sh:path jade:pHCompatibilityVerified ;
+                sh:hasValue true ;
+                sh:message "pH compatibility must be verified"
+            ] ;
+            sh:property [
+                sh:path jade:sensitizationWarningsReviewed ;
+                sh:hasValue true ;
+                sh:message "Sensitization risks must be reviewed"
+            ] .
+    """ .
+
+# =============================================================================
+# REASONING MODE ASSIGNMENTS FOR JADE USE CASES
+# =============================================================================
+
+# Product recommendations use hybrid reasoning
+jade:ProductRecommendation skaa:preferredReasoningMode skaa:HybridReasoning .
+
+# Ingredient interactions use symbolic reasoning (deterministic rules)
+ska:InteractionAxiomAtom skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+# Client skin analysis uses neural reasoning (pattern recognition)
+jade:ClientProfile skaa:preferredReasoningMode skaa:NeuralReasoning .
+
+# Compliance checking uses symbolic reasoning (SHACL validation)
+jade:Constraint_AIRecommendationTransparency skaa:preferredReasoningMode skaa:SymbolicReasoning .
+
+# =============================================================================
+# ASSET VALUE DECLARATIONS FOR JADE
+# =============================================================================
+
+# JADE knowledge graph is an appreciating asset
+jade:JADEKnowledgeGraph
+    a skaa:AppreciatingAsset ;
+    rdfs:label "JADE Knowledge Graph"@en ;
+    skos:definition """The accumulated knowledge in JADE's semantic graph, 
+        including ingredient relationships, client preferences, and practitioner 
+        expertise. Appreciates with every new connection."""@en ;
+    skaa:networkEffectStrength "0.85"^^xsd:decimal ;
+    skaa:appreciationFactor "1.12"^^xsd:decimal ;
+    rdfs:comment """Each new ingredient interaction discovered, each practitioner 
+        insight captured, each client outcome recorded adds compounding value.""" .
+
+# =============================================================================
+# CONCEPT SCHEME FOR JADE NAVIGATION
+# =============================================================================
+
+jade:JADEConceptScheme
+    a skos:ConceptScheme ;
+    dcterms:title "JADE Skincare Marketplace Concept Scheme"@en ;
+    skos:hasTopConcept 
+        jade:SkinConcern ,
+        ska:ChemistryAtom ,
+        ska:RegulatoryAtom ,
+        jade:ProductRecommendation .
+
+# Hierarchical navigation
+jade:SkinConcern skos:topConceptOf jade:JADEConceptScheme .
+jade:Acne skos:broader jade:SkinConcern .
+jade:Hyperpigmentation skos:broader jade:SkinConcern .
+jade:Dehydration skos:broader jade:SkinConcern .
+jade:Aging skos:broader jade:SkinConcern .
+jade:Sensitivity skos:broader jade:SkinConcern .
+jade:Rosacea skos:broader jade:SkinConcern .
+
+# =============================================================================
+# END OF UNIFIED ONTOLOGY
+# =============================================================================

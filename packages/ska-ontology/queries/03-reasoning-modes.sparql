@@ -1,0 +1,55 @@
+# =============================================================================
+# QUERY 3: ATOMS BY REASONING MODE
+# Use Case: Route queries to appropriate reasoning engine
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skar: <https://w3id.org/ska/regulatory/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Query 3a: Find all atoms that prefer SYMBOLIC reasoning
+# These can be answered deterministically via graph traversal
+SELECT ?atom ?label ?structuralType WHERE {
+  ?atom skaa:preferredReasoningMode skaa:SymbolicReasoning .
+  ?atom skos:prefLabel ?label .
+  OPTIONAL { ?atom skam:hasStructuralType ?structuralType }
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 3b: Find all atoms that prefer NEURAL reasoning
+# These require embedding similarity or pattern matching
+SELECT ?atom ?label ?structuralType WHERE {
+  ?atom skaa:preferredReasoningMode skaa:NeuralReasoning .
+  ?atom skos:prefLabel ?label .
+  OPTIONAL { ?atom skam:hasStructuralType ?structuralType }
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 3c: Find all atoms that prefer HYBRID reasoning
+# These benefit from combined neural+symbolic approach
+SELECT ?atom ?label ?structuralType WHERE {
+  ?atom skaa:preferredReasoningMode skaa:HybridReasoning .
+  ?atom skos:prefLabel ?label .
+  OPTIONAL { ?atom skam:hasStructuralType ?structuralType }
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 3d: Reasoning mode reliability comparison
+SELECT ?mode ?reliability WHERE {
+  ?mode a skaa:ReasoningMode .
+  ?mode skaa:reasoningReliability ?reliability .
+}
+ORDER BY DESC(?reliability)
+
+# Expected Results:
+# | mode                    | reliability |
+# |-------------------------|-------------|
+# | skaa:SymbolicReasoning  | 0.99        |
+# | skaa:HybridReasoning    | 0.95        |
+# | skaa:NeuralReasoning    | 0.85        |

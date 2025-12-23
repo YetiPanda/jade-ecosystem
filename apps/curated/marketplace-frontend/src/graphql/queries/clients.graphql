@@ -1,0 +1,166 @@
+# Task: T121 - GraphQL queries for clients
+# Client profile and treatment history queries
+
+query GetClient($id: ID!) {
+  client(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    dateOfBirth
+    skinProfile {
+      skinType
+      concerns
+      allergies
+      sensitivities
+      currentProducts
+      previousTreatments
+    }
+    medicalHistory {
+      medications
+      conditions
+      allergies
+      contraindications
+      lastUpdated
+    }
+    preferences {
+      communicationMethod
+      reminderSettings {
+        enabled
+        daysBeforeAppointment
+        method
+      }
+      marketingOptIn
+      preferredProviders
+      preferredTimes
+    }
+    consentForms {
+      formId
+      formType
+      signedAt
+      expiresAt
+      documentUrl
+    }
+    emergencyContact {
+      name
+      relationship
+      phone
+    }
+    tags
+    loyaltyPoints
+    totalSpent
+    notes
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query ClientTreatmentHistory(
+  $clientId: ID!
+  $startDate: DateTime
+  $endDate: DateTime
+  $serviceType: String
+  $providerId: ID
+) {
+  clientTreatmentHistory(
+    clientId: $clientId
+    startDate: $startDate
+    endDate: $endDate
+    serviceType: $serviceType
+    providerId: $providerId
+  ) {
+    client {
+      id
+      firstName
+      lastName
+      email
+      phone
+      skinProfile {
+        skinType
+        concerns
+        allergies
+        sensitivities
+      }
+      medicalHistory {
+        medications
+        conditions
+        allergies
+        contraindications
+        lastUpdated
+      }
+    }
+    appointments {
+      id
+      appointmentNumber
+      serviceType
+      startTime
+      endTime
+      status
+      productsUsed {
+        productId
+        productName
+        amountUsed
+      }
+      treatmentOutcome {
+        skinConditionBefore
+        skinConditionAfter
+        productsRecommended
+        homeCarePlan
+        clientSatisfactionRating
+        photos {
+          url
+          type
+          takenAt
+          notes
+        }
+      }
+    }
+    totalTreatments
+    favoriteServices
+    lastVisit
+    lifetimeValue
+  }
+}
+
+query ClientStatistics($clientId: ID!) {
+  clientStatistics(clientId: $clientId) {
+    totalAppointments
+    completedAppointments
+    cancelledAppointments
+    noShowAppointments
+    lifetimeValue
+    averageSpendPerVisit
+    favoriteProvider
+    favoriteService
+    lastVisit
+    nextAppointment
+  }
+}
+
+query SearchClients($searchTerm: String!) {
+  searchClients(searchTerm: $searchTerm) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    lastVisit
+    totalSpent
+  }
+}
+
+query TopClients($limit: Int) {
+  topClients(limit: $limit) {
+    client {
+      id
+      firstName
+      lastName
+      email
+      totalSpent
+    }
+    lifetimeValue
+    totalAppointments
+  }
+}

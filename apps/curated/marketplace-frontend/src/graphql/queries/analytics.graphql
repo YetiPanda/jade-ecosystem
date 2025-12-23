@@ -1,0 +1,346 @@
+# JADE Analytics & Business Intelligence Queries
+
+# Get comprehensive business metrics for a timeframe
+query GetBusinessMetrics($timeframe: MetricsTimeframeInput, $filters: MetricsFiltersInput) {
+  businessMetrics(timeframe: $timeframe, filters: $filters) {
+    financial {
+      totalRevenue
+      monthlyRecurringRevenue
+      averageOrderValue
+      customerLifetimeValue
+      churnRate
+      growthRate
+      conversionRate
+      retentionRate
+      revenueByPeriod {
+        period
+        revenue
+        orderCount
+      }
+    }
+    customers {
+      totalActive
+      newAcquisitions
+      churnedCustomers
+      averageCustomerAge
+      topSegments {
+        segment
+        count
+        revenue
+        growthRate
+      }
+      geographicDistribution {
+        region
+        customers
+        revenue
+      }
+      journeyStageDistribution {
+        stage
+        count
+        percentage
+      }
+    }
+    products {
+      totalCatalog
+      topPerformers {
+        productId
+        productName
+        revenue
+        unitsSold
+        conversionRate
+        returnRate
+      }
+      underPerformers {
+        productId
+        productName
+        revenue
+        unitsSold
+        conversionRate
+        returnRate
+      }
+      categoryPerformance {
+        category
+        revenue
+        productCount
+        growthRate
+      }
+      crossSellOpportunities {
+        product1Id
+        product1Name
+        product2Id
+        product2Name
+        correlation
+        coOccurrenceCount
+      }
+    }
+    skincare {
+      topConcerns {
+        concern
+        frequency
+        growthRate
+        avgResolutionDays
+      }
+      popularIngredients {
+        ingredient
+        productCount
+        usage
+        satisfaction
+        avgEfficacyScore
+      }
+      routineComplexity {
+        minimal
+        basic
+        advanced
+        expert
+      }
+      purgePhaseAnalysis {
+        activeCount
+        completedCount
+        avgDurationDays
+        successRate
+      }
+      consultationEffectiveness {
+        totalSessions
+        successRate
+        avgSatisfaction
+        avgSessionDuration
+      }
+    }
+    ai {
+      recommendationPerformance {
+        totalGenerated
+        acceptanceRate
+        conversionRate
+        avgConfidenceScore
+      }
+      analysisMetrics {
+        totalAnalyses
+        avgProcessingTimeMs
+        accuracyScore
+        userSatisfaction
+      }
+      predictionAccuracy {
+        churnPrediction
+        replenishmentPrediction
+        ltvPrediction
+      }
+    }
+    computedAt
+    timeframe
+  }
+}
+
+# Get AI-generated insights based on current metrics
+query GetBusinessInsights($timeframe: MetricsTimeframeInput, $filters: MetricsFiltersInput) {
+  businessInsights(timeframe: $timeframe, filters: $filters) {
+    trendAnalysis {
+      metric
+      trend
+      changePercent
+      significance
+      timeframe
+      description
+      context
+    }
+    anomalyDetection {
+      metric
+      expectedValue
+      actualValue
+      deviation
+      severity
+      timestamp
+      possibleCauses
+      recommendedActions
+    }
+    predictiveInsights {
+      prediction
+      confidence
+      timeframe
+      impact
+      factors {
+        factor
+        weight
+      }
+      recommendation
+    }
+    actionableRecommendations {
+      id
+      title
+      description
+      category
+      priority
+      estimatedImpact
+      implementationEffort
+      timeline
+      dependencies
+      successMetrics
+    }
+    businessAlerts {
+      id
+      title
+      description
+      severity
+      category
+      timestamp
+      affectedMetrics
+      thresholdValue
+      currentValue
+      recommendedActions
+      acknowledged
+      acknowledgedAt
+      acknowledgedBy
+    }
+    generatedAt
+  }
+}
+
+# Get dashboard summary for quick overview
+query GetDashboardSummary($organizationId: ID) {
+  dashboardSummary(organizationId: $organizationId) {
+    revenue {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    customers {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    orders {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    churnRate {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    avgOrderValue {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    aiRecommendationAcceptance {
+      value
+      previousValue
+      changePercent
+      trend
+    }
+    topProducts {
+      productId
+      productName
+      revenue
+      unitsSold
+      conversionRate
+      returnRate
+    }
+    recentAlerts {
+      id
+      title
+      description
+      severity
+      category
+      timestamp
+      affectedMetrics
+      thresholdValue
+      currentValue
+      recommendedActions
+      acknowledged
+    }
+    keyInsights
+  }
+}
+
+# Get active business alerts
+query GetBusinessAlerts(
+  $severity: AlertSeverity
+  $category: AlertCategory
+  $acknowledged: Boolean
+  $limit: Int
+) {
+  businessAlerts(
+    severity: $severity
+    category: $category
+    acknowledged: $acknowledged
+    limit: $limit
+  ) {
+    id
+    title
+    description
+    severity
+    category
+    timestamp
+    affectedMetrics
+    thresholdValue
+    currentValue
+    recommendedActions
+    acknowledged
+    acknowledgedAt
+    acknowledgedBy
+  }
+}
+
+# Get a specific alert by ID
+query GetBusinessAlert($id: ID!) {
+  businessAlert(id: $id) {
+    id
+    title
+    description
+    severity
+    category
+    timestamp
+    affectedMetrics
+    thresholdValue
+    currentValue
+    recommendedActions
+    acknowledged
+    acknowledgedAt
+    acknowledgedBy
+  }
+}
+
+# Acknowledge a business alert
+mutation AcknowledgeAlert($input: AcknowledgeAlertInput!) {
+  acknowledgeAlert(input: $input) {
+    id
+    title
+    severity
+    acknowledged
+    acknowledgedAt
+    acknowledgedBy
+  }
+}
+
+# Generate a report on demand
+mutation GenerateReport($input: GenerateReportInput!) {
+  generateReport(input: $input) {
+    id
+    type
+    format
+    timeframe
+    generatedAt
+    downloadUrl
+    expiresAt
+    status
+  }
+}
+
+# Record an analytics event
+mutation RecordAnalyticsEvent(
+  $eventType: String!
+  $eventData: JSON!
+  $organizationId: ID
+) {
+  recordAnalyticsEvent(
+    eventType: $eventType
+    eventData: $eventData
+    organizationId: $organizationId
+  )
+}

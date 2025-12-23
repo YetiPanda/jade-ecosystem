@@ -1,0 +1,232 @@
+# Cart mutations for marketplace
+
+mutation AddToCart($productId: ID!, $variantId: ID!, $quantity: Int!) {
+  addToCart(productId: $productId, variantId: $variantId, quantity: $quantity) {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      total
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation UpdateCartItem($lineId: ID!, $quantity: Int!) {
+  updateCartItem(lineId: $lineId, quantity: $quantity) {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      total
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation RemoveFromCart($lineId: ID!) {
+  removeFromCart(lineId: $lineId) {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      total
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation ClearCart {
+  clearCart {
+    success
+    message
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation ApplyPromoCode($code: String!) {
+  applyPromoCode(code: $code) {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      discount
+      total
+      promoCode
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation RemovePromoCode {
+  removePromoCode {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      discount
+      total
+      promoCode
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}

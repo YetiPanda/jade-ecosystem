@@ -1,0 +1,88 @@
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    success
+    user {
+      id
+      email
+      role
+      firstName
+      lastName
+      phone
+      avatarUrl
+      isActive
+      emailVerified
+    }
+    accessToken
+    refreshToken
+    errors {
+      code
+      field
+      message
+    }
+  }
+}
+
+mutation Register($input: RegisterInput!) {
+  register(input: $input) {
+    success
+    user {
+      id
+      email
+      role
+      firstName
+      lastName
+      phone
+      avatarUrl
+      isActive
+      emailVerified
+    }
+    accessToken
+    refreshToken
+    errors {
+      code
+      field
+      message
+    }
+  }
+}
+
+mutation RefreshToken($refreshToken: String!) {
+  refreshToken(refreshToken: $refreshToken) {
+    success
+    user {
+      id
+      email
+      role
+      firstName
+      lastName
+    }
+    accessToken
+    refreshToken
+    errors {
+      code
+      field
+      message
+    }
+  }
+}
+
+mutation Logout {
+  logout {
+    success
+    message
+  }
+}
+
+query Me {
+  me {
+    id
+    email
+    role
+    firstName
+    lastName
+    phone
+    avatarUrl
+    isActive
+    emailVerified
+  }
+}

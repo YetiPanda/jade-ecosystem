@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Jade Software Brand Colors */
+    --jade-green: #2E8B57;
+    --sage-green: #9CAF88;
+    --moss-green: #8B9A6B;
+    --warm-brown: #6F4E37;
+    --rich-brown: #4A332A;
+    --taupe: #8B7D6B;
+    --greige: #A69B8E;
+    --cream: #F8F8F8;
+    --off-white: #FEFEFE;
+    --gold-accent: #B8860B;
+    --brass-accent: #B5A642;
+    --terracotta: #C65D4A;
+    --blush: #E8B4B8;
+
+    /* Theme Variables */
+    --background: #FEFEFE;
+    --foreground: #333333;
+    --card: #FFFFFF;
+    --card-foreground: #333333;
+    --popover: #FFFFFF;
+    --popover-foreground: #333333;
+    --primary: #2E8B57;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F8F8F8;
+    --secondary-foreground: #333333;
+    --muted: #F5F5F5;
+    --muted-foreground: #666666;
+    --accent: #9CAF88;
+    --accent-foreground: #333333;
+    --destructive: #E53E3E;
+    --destructive-foreground: #FFFFFF;
+    --border: #E5E5E5;
+    --input: transparent;
+    --input-background: #F8F8F8;
+    --ring: #2E8B57;
+
+    /* Chart Colors */
+    --chart-1: #2E8B57;
+    --chart-2: #9CAF88;
+    --chart-3: #8B9A6B;
+    --chart-4: #B5A642;
+    --chart-5: #C65D4A;
+
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}

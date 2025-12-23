@@ -1,0 +1,34 @@
+{
+  "name": "@jade/shared-layouts",
+  "version": "1.0.0",
+  "description": "Shared layout components with unified 4-pillar navigation for JADE ecosystem",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./components/*": "./src/components/*.tsx",
+    "./contexts/*": "./src/contexts/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./types/*": "./src/types/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --ext ts,tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.11.0"
+  },
+  "dependencies": {
+    "@jade/ui-components": "workspace:*",
+    "lucide-react": "^0.344.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "react-router-dom": "^7.11.0",
+    "typescript": "^5.4.3"
+  }
+}

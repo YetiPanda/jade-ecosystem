@@ -1,0 +1,1055 @@
+/**
+ * Database Migration for User Story 2: Appointment Scheduling
+ * Phase 4: User Story 2 - Appointment Scheduling & Client Management
+ * Task: T104
+ *
+ * Purpose: Create tables for scheduling system
+ * - service_provider: Service providers (estheticians, therapists, etc.)
+ * - client: Clients receiving treatments
+ * - appointment: Scheduled appointments
+ * - availability: Schedule exceptions (blocked time, vacation, etc.)
+ */
+
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+
+export class UserStory2Scheduling1729450000000 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Set schema to jade (required for TypeORM createTable to use correct schema)
+    await queryRunner.query(`SET search_path TO jade, public`);
+
+    // Create service_provider table
+    await queryRunner.createTable(
+      new Table({
+        name: 'service_provider',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'firstName',
+            type: 'varchar',
+            length: '100',
+          },
+          {
+            name: 'lastName',
+            type: 'varchar',
+            length: '100',
+          },
+          {
+            name: 'email',
+            type: 'varchar',
+            length: '255',
+            isUnique: true,
+          },
+          {
+            name: 'phone',
+            type: 'varchar',
+            length: '20',
+          },
+          {
+            name: 'bio',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'profilePhotoUrl',
+            type: 'varchar',
+            length: '500',
+            isNullable: true,
+          },
+          {
+            name: 'yearsOfExperience',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            length: '20',
+            default: "'PENDING_APPROVAL'",
+          },
+          {
+            name: 'licenses',
+            type: 'jsonb',
+          },
+          {
+            name: 'weeklySchedule',
+            type: 'jsonb',
+          },
+          {
+            name: 'services',
+            type: 'jsonb',
+          },
+          {
+            name: 'blockedTimes',
+            type: 'jsonb',
+            default: "'[]'",
+          },
+          {
+            name: 'maxConcurrentAppointments',
+            type: 'int',
+            default: 1,
+          },
+          {
+            name: 'bufferTimeBetweenAppointments',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'spaOrganizationId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'spaOrganizationName',
+            type: 'varchar',
+            length: '200',
+            isNullable: true,
+          },
+          {
+            name: 'timezone',
+            type: 'varchar',
+            length: '50',
+            default: "'America/Los_Angeles'",
+          },
+          {
+            name: 'acceptOnlineBookings',
+            type: 'boolean',
+            default: true,
+          },
+          {
+            name: 'minimumNoticeHours',
+            type: 'int',
+            default: 24,
+          },
+          {
+            name: 'maxAdvanceBookingHours',
+            type: 'int',
+            default: 168,
+          },
+          {
+            name: 'notificationPreferences',
+            type: 'jsonb',
+            default: "'{}'",
+          },
+          {
+            name: 'averageRating',
+            type: 'decimal',
+            precision: 3,
+            scale: 2,
+            default: 0,
+          },
+          {
+            name: 'totalReviews',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'totalAppointments',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'cancellationRate',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'deletedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+        ],
+      }),
+      true
+    );
+
+    // Create indexes for service_provider
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_firstName',
+        columnNames: ['firstName'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_lastName',
+        columnNames: ['lastName'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_email',
+        columnNames: ['email'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_status',
+        columnNames: ['status'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_spaOrganizationId',
+        columnNames: ['spaOrganizationId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'service_provider',
+      new TableIndex({
+        name: 'IDX_service_provider_deletedAt',
+        columnNames: ['deletedAt'],
+      })
+    );
+
+    // Create client table
+    await queryRunner.createTable(
+      new Table({
+        name: 'client',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'firstName',
+            type: 'varchar',
+            length: '100',
+          },
+          {
+            name: 'lastName',
+            type: 'varchar',
+            length: '100',
+          },
+          {
+            name: 'email',
+            type: 'varchar',
+            length: '255',
+            isUnique: true,
+          },
+          {
+            name: 'phone',
+            type: 'varchar',
+            length: '20',
+          },
+          {
+            name: 'dateOfBirth',
+            type: 'date',
+            isNullable: true,
+          },
+          {
+            name: 'gender',
+            type: 'varchar',
+            length: '10',
+            isNullable: true,
+          },
+          {
+            name: 'street',
+            type: 'varchar',
+            length: '200',
+            isNullable: true,
+          },
+          {
+            name: 'street2',
+            type: 'varchar',
+            length: '200',
+            isNullable: true,
+          },
+          {
+            name: 'city',
+            type: 'varchar',
+            length: '100',
+            isNullable: true,
+          },
+          {
+            name: 'state',
+            type: 'varchar',
+            length: '2',
+            isNullable: true,
+          },
+          {
+            name: 'zipCode',
+            type: 'varchar',
+            length: '10',
+            isNullable: true,
+          },
+          {
+            name: 'country',
+            type: 'varchar',
+            length: '2',
+            default: "'US'",
+          },
+          {
+            name: 'profilePhotoUrl',
+            type: 'varchar',
+            length: '500',
+            isNullable: true,
+          },
+          {
+            name: 'skinProfile',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'medicalHistory',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'consentForms',
+            type: 'jsonb',
+            default: "'[]'",
+          },
+          {
+            name: 'emergencyContact',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'preferences',
+            type: 'jsonb',
+            default: "'{}'",
+          },
+          {
+            name: 'membership',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            length: '20',
+            default: "'ACTIVE'",
+          },
+          {
+            name: 'primarySpaOrganizationId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'primarySpaOrganizationName',
+            type: 'varchar',
+            length: '200',
+            isNullable: true,
+          },
+          {
+            name: 'referralSource',
+            type: 'varchar',
+            length: '100',
+            isNullable: true,
+          },
+          {
+            name: 'referredByClientId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'totalAppointments',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'totalSpent',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'loyaltyPoints',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'lastAppointmentDate',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'firstAppointmentDate',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'emailOptIn',
+            type: 'boolean',
+            default: true,
+          },
+          {
+            name: 'smsOptIn',
+            type: 'boolean',
+            default: true,
+          },
+          {
+            name: 'timezone',
+            type: 'varchar',
+            length: '50',
+            default: "'America/Los_Angeles'",
+          },
+          {
+            name: 'internalNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'userId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'deletedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+        ],
+      }),
+      true
+    );
+
+    // Create indexes for client
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_firstName',
+        columnNames: ['firstName'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_lastName',
+        columnNames: ['lastName'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_email',
+        columnNames: ['email'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_state',
+        columnNames: ['state'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_status',
+        columnNames: ['status'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_primarySpaOrganizationId',
+        columnNames: ['primarySpaOrganizationId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_userId',
+        columnNames: ['userId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'IDX_client_deletedAt',
+        columnNames: ['deletedAt'],
+      })
+    );
+
+    // Create appointment table
+    await queryRunner.createTable(
+      new Table({
+        name: 'appointment',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'appointmentNumber',
+            type: 'varchar',
+            length: '20',
+            isUnique: true,
+          },
+          {
+            name: 'clientId',
+            type: 'uuid',
+          },
+          {
+            name: 'clientName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'providerId',
+            type: 'uuid',
+          },
+          {
+            name: 'providerName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'serviceType',
+            type: 'varchar',
+            length: '100',
+          },
+          {
+            name: 'serviceName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'serviceDescription',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'startTime',
+            type: 'timestamp',
+          },
+          {
+            name: 'endTime',
+            type: 'timestamp',
+          },
+          {
+            name: 'duration',
+            type: 'int',
+          },
+          {
+            name: 'timezone',
+            type: 'varchar',
+            length: '50',
+            default: "'America/Los_Angeles'",
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            length: '20',
+            default: "'SCHEDULED'",
+          },
+          {
+            name: 'spaOrganizationId',
+            type: 'uuid',
+          },
+          {
+            name: 'spaOrganizationName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'roomNumber',
+            type: 'varchar',
+            length: '100',
+            isNullable: true,
+          },
+          {
+            name: 'bookedByUserId',
+            type: 'uuid',
+          },
+          {
+            name: 'bookedByName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'bookedAt',
+            type: 'timestamp',
+          },
+          {
+            name: 'bookingSource',
+            type: 'varchar',
+            length: '50',
+            isNullable: true,
+          },
+          {
+            name: 'price',
+            type: 'int',
+          },
+          {
+            name: 'discount',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'tax',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'total',
+            type: 'int',
+          },
+          {
+            name: 'payment',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'clientNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'providerNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'internalNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'productsUsed',
+            type: 'jsonb',
+            default: "'[]'",
+          },
+          {
+            name: 'treatmentOutcome',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'reminderSent',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'reminderSentAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'confirmationSent',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'confirmationSentAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'cancellation',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'rescheduleHistory',
+            type: 'jsonb',
+            default: "'[]'",
+          },
+          {
+            name: 'rescheduleCount',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'checkedInAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'startedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'completedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'followUpRequired',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'followUpDate',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'followUpCompleted',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'deletedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+        ],
+      }),
+      true
+    );
+
+    // Create indexes for appointment
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_appointmentNumber',
+        columnNames: ['appointmentNumber'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_clientId',
+        columnNames: ['clientId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_providerId',
+        columnNames: ['providerId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_startTime',
+        columnNames: ['startTime'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_endTime',
+        columnNames: ['endTime'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_status',
+        columnNames: ['status'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_spaOrganizationId',
+        columnNames: ['spaOrganizationId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_deletedAt',
+        columnNames: ['deletedAt'],
+      })
+    );
+
+    // Composite index for conflict checking
+    await queryRunner.createIndex(
+      'appointment',
+      new TableIndex({
+        name: 'IDX_appointment_provider_time',
+        columnNames: ['providerId', 'startTime', 'endTime'],
+      })
+    );
+
+    // Create availability table
+    await queryRunner.createTable(
+      new Table({
+        name: 'availability',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            default: 'uuid_generate_v4()',
+          },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'providerId',
+            type: 'uuid',
+          },
+          {
+            name: 'providerName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'type',
+            type: 'varchar',
+            length: '30',
+          },
+          {
+            name: 'startTime',
+            type: 'timestamp',
+          },
+          {
+            name: 'endTime',
+            type: 'timestamp',
+          },
+          {
+            name: 'isAllDay',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'title',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'description',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'reason',
+            type: 'varchar',
+            length: '100',
+            isNullable: true,
+          },
+          {
+            name: 'isRecurring',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'recurrenceRule',
+            type: 'jsonb',
+            isNullable: true,
+          },
+          {
+            name: 'recurringGroupId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'capacity',
+            type: 'int',
+            isNullable: true,
+          },
+          {
+            name: 'bookedCount',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            length: '20',
+            default: "'ACTIVE'",
+          },
+          {
+            name: 'spaOrganizationId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'createdByUserId',
+            type: 'uuid',
+          },
+          {
+            name: 'createdByName',
+            type: 'varchar',
+            length: '200',
+          },
+          {
+            name: 'approvalStatus',
+            type: 'varchar',
+            length: '20',
+            default: "'APPROVED'",
+          },
+          {
+            name: 'approvedByUserId',
+            type: 'uuid',
+            isNullable: true,
+          },
+          {
+            name: 'approvedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
+            name: 'approvalNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'affectedAppointmentsCount',
+            type: 'int',
+            default: 0,
+          },
+          {
+            name: 'internalNotes',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'deletedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+        ],
+      }),
+      true
+    );
+
+    // Create indexes for availability
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_providerId',
+        columnNames: ['providerId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_type',
+        columnNames: ['type'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_startTime',
+        columnNames: ['startTime'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_endTime',
+        columnNames: ['endTime'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_status',
+        columnNames: ['status'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_recurringGroupId',
+        columnNames: ['recurringGroupId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_spaOrganizationId',
+        columnNames: ['spaOrganizationId'],
+      })
+    );
+
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_deletedAt',
+        columnNames: ['deletedAt'],
+      })
+    );
+
+    // Composite index for provider availability lookup
+    await queryRunner.createIndex(
+      'availability',
+      new TableIndex({
+        name: 'IDX_availability_provider_time',
+        columnNames: ['providerId', 'startTime', 'endTime'],
+      })
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // Drop indexes and tables in reverse order
+    await queryRunner.dropTable('availability', true);
+    await queryRunner.dropTable('appointment', true);
+    await queryRunner.dropTable('client', true);
+    await queryRunner.dropTable('service_provider', true);
+  }
+}

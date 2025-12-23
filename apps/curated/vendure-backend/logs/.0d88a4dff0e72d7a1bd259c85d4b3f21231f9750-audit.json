@@ -1,0 +1,55 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/.0d88a4dff0e72d7a1bd259c85d4b3f21231f9750-audit.json",
+    "files": [
+        {
+            "date": 1765313779739,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-09.log",
+            "hash": "f6046460ac2b0c1e42d9a44449e84425ca587604245a367f3201a5efdca7c14e"
+        },
+        {
+            "date": 1765383366895,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-10.log",
+            "hash": "e5ccfd8322c6471de8c6c284a4bc222cf6d2b24d325df8920dd87f41893f63d7"
+        },
+        {
+            "date": 1765432863459,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-11.log",
+            "hash": "fa91db0a09369addf7b367ec774ce9d678ce5fbfb2ff941901ed9c07ca8b42a3"
+        },
+        {
+            "date": 1765920843145,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-16.log",
+            "hash": "3b49483b8bfc16cfcb80a925f4aa54d3963682ba58e50c2fb1d66ecb088a326a"
+        },
+        {
+            "date": 1765993584714,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-17.log",
+            "hash": "5d09648d68542402ce5b723152c2bd046199d857dfc3f68ebafc3eef4d917e91"
+        },
+        {
+            "date": 1766261283679,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-20.log",
+            "hash": "19493b6693a6040aa84fda0da89418133ae326214935ff9af93299d558ea7751"
+        },
+        {
+            "date": 1766348666908,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-21.log",
+            "hash": "d9fe79fb1d903e175979c7492bb3fcffe1b5a23adf7001081e090f0b417ea67c"
+        },
+        {
+            "date": 1766383287659,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-22.log",
+            "hash": "6b42640ffff35081ddfa37c4fe9cf40603fd6c1bb8cdc611b0e08942e0446f8e"
+        },
+        {
+            "date": 1766506377855,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/combined-2025-12-23.log",
+            "hash": "bce7d9eeab24ad0c82e4ab9db6d638eba3599f5ea18aa5c9d2c2bbadcb0ad47c"
+        }
+    ],
+    "hashType": "sha256"
+}

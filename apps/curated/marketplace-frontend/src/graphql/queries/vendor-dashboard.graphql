@@ -1,0 +1,82 @@
+# Vendor Dashboard Queries
+# Feature 011: Vendor Portal MVP
+# Sprint B.1: Dashboard Metrics (Task B.1.4)
+
+query GetVendorDashboard($dateRange: DateRangeInput!) {
+  vendorDashboard(dateRange: $dateRange) {
+    dateRange {
+      startDate
+      endDate
+    }
+
+    revenue {
+      total
+      fromNewSpas
+      fromRepeatSpas
+      trend
+      percentChange
+    }
+
+    orders {
+      count
+      fromNewSpas
+      fromRepeatSpas
+      avgOrderValue
+      trend
+      percentChange
+    }
+
+    spas {
+      active
+      new
+      repeat
+      reorderRate
+      trend
+      percentChange
+    }
+
+    impressions {
+      total
+      bySource {
+        search
+        browse
+        values
+        recommendation
+        direct
+      }
+      trend
+      percentChange
+    }
+
+    topProducts {
+      productId
+      productName
+      productSku
+      category
+      unitsSold
+      revenue
+      orderCount
+      uniqueSpas
+    }
+
+    topCustomers {
+      spaId
+      spaName
+      lifetimeValue
+      orderCount
+      avgOrderValue
+      lastOrderAt
+      daysSinceLastOrder
+    }
+
+    revenueTimeSeries {
+      date
+      value
+    }
+
+    ordersTimeSeries {
+      date
+      value
+    }
+  }
+}

@@ -1,0 +1,116 @@
+# Authentication and User Management Schema
+
+type Query {
+  """Get current user"""
+  me: User
+
+  """Get user by ID (admin only)"""
+  user(id: ID!): User
+}
+
+type Mutation {
+  """Register new user"""
+  register(input: RegisterInput!): AuthResult!
+
+  """Login with email and password"""
+  login(input: LoginInput!): AuthResult!
+
+  """Refresh access token"""
+  refreshToken(refreshToken: String!): AuthResult!
+
+  """Logout (invalidate tokens)"""
+  logout: SuccessResponse!
+
+  """Request password reset"""
+  requestPasswordReset(email: String!): SuccessResponse!
+
+  """Reset password with token"""
+  resetPassword(input: ResetPasswordInput!): SuccessResponse!
+
+  """Update user profile"""
+  updateProfile(input: UpdateProfileInput!): UserResult!
+}
+"""
+User type
+"""
+type User {
+  id: ID!
+  email: String!
+  role: UserRole!
+  spaOrganization: SpaOrganization
+  vendorOrganization: VendorOrganization
+  firstName: String
+  lastName: String
+  phone: String
+  avatarUrl: String
+  isActive: Boolean!
+  emailVerified: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  SPA_OWNER
+  SPA_MANAGER
+  SPA_STAFF
+  SERVICE_PROVIDER
+  CLIENT
+  VENDOR
+  VENDOR_OWNER
+  VENDOR_STAFF
+  ADMIN
+}
+"""
+Authentication result
+"""
+type AuthResult {
+  success: Boolean!
+  user: User
+  accessToken: String
+  refreshToken: String
+  errors: [Error!]
+}
+"""
+User operation result
+"""
+type UserResult {
+  success: Boolean!
+  user: User
+  errors: [Error!]
+}
+"""
+Register input
+"""
+input RegisterInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole!
+  spaOrganizationId: ID
+  vendorOrganizationId: ID
+  phone: String
+}
+"""
+Login input
+"""
+input LoginInput {
+  email: String!
+  password: String!
+}
+"""
+Reset password input
+"""
+input ResetPasswordInput {
+  token: String!
+  newPassword: String!
+}
+"""
+Update profile input
+"""
+input UpdateProfileInput {
+  firstName: String
+  lastName: String
+  phone: String
+  avatarUrl: String
+}

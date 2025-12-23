@@ -1,0 +1,400 @@
+# JADE SKA Intelligence Service Metrics Configuration
+# Version: 1.0.0
+# Feature: 010-ska-mach-evolution
+# Purpose: Segment-level observability (Five Rings: WIND gap)
+
+# ============================================
+# SEGMENT DIMENSIONS
+# ============================================
+# Defines how metrics can be broken down for analysis
+
+segment_dimensions:
+  skin_type:
+    values: [oily, dry, combination, normal, sensitive]
+    description: "Primary skin type classification"
+    
+  primary_concern:
+    values: [acne, aging, hyperpigmentation, rosacea, dehydration, sensitivity, texture, pores, general]
+    description: "User's primary skincare concern"
+    
+  experience_level:
+    values: [beginner, intermediate, advanced, professional]
+    description: "User's skincare knowledge level"
+    
+  price_sensitivity:
+    values: [budget, mid_range, premium, luxury]
+    description: "Price point preference"
+    
+  age_bracket:
+    values: ["18-25", "26-35", "36-45", "46-55", "55+"]
+    description: "User age range"
+
+# ============================================
+# RECOMMENDATION QUALITY METRICS
+# ============================================
+
+metrics:
+  # -----------------------------------------
+  # Acceptance Metrics (Are users engaging?)
+  # -----------------------------------------
+  
+  - name: recommendation_acceptance_rate
+    type: gauge
+    description: "Percentage of shown recommendations that were clicked or purchased"
+    formula: "(clicks + purchases) / impressions"
+    segment_by: [skin_type, primary_concern]
+    target: 0.15  # 15% baseline
+    alert_if_below: 0.10
+    alert_if_delta: 0.15  # Alert if segment variance > 15%
+    
+  - name: click_through_rate
+    type: gauge
+    description: "Percentage of impressions that resulted in clicks"
+    formula: "clicks / impressions"
+    segment_by: [skin_type, experience_level]
+    target: 0.08
+    alert_if_below: 0.05
+    
+  - name: add_to_cart_rate
+    type: gauge
+    description: "Percentage of clicks that resulted in add-to-cart"
+    formula: "add_to_cart / clicks"
+    segment_by: [skin_type, price_sensitivity]
+    target: 0.25
+    alert_if_below: 0.15
+
+  # -----------------------------------------
+  # Outcome Metrics (Are recommendations working?)
+  # -----------------------------------------
+  
+  - name: outcome_satisfaction_rate
+    type: gauge
+    description: "Percentage of outcomes that are positive (improvement)"
+    formula: "positive_outcomes / total_outcomes"
+    segment_by: [skin_type, primary_concern, experience_level]
+    alert_threshold:
+      sensitive: 0.70  # Higher bar for sensitive skin
+      acne: 0.65       # Acne is harder to treat
+      default: 0.60
+    
+  - name: negative_outcome_rate
+    type: gauge
+    description: "Percentage of outcomes that are negative (irritation, breakout, allergic)"
+    formula: "negative_outcomes / total_outcomes"
+    segment_by: [skin_type]
+    alert_threshold:
+      sensitive: 0.10  # Max 10% for sensitive skin
+      default: 0.15
+    critical_threshold:
+      sensitive: 0.15
+      default: 0.20
+      
+  - name: average_rating
+    type: gauge
+    description: "Average user rating for recommended products"
+    formula: "sum(rating) / count(rating)"
+    segment_by: [skin_type, primary_concern]
+    target: 4.0
+    alert_if_below: 3.5
+    
+  - name: repurchase_intent_rate
+    type: gauge
+    description: "Percentage of users who would repurchase"
+    formula: "would_repurchase_true / total_outcomes"
+    segment_by: [skin_type, price_sensitivity]
+    target: 0.60
+    alert_if_below: 0.45
+
+  # -----------------------------------------
+  # Coverage Metrics (Can we help everyone?)
+  # -----------------------------------------
+  
+  - name: cold_start_coverage
+    type: gauge
+    description: "Percentage of new users receiving useful recommendations"
+    formula: "new_users_with_recommendations / total_new_users"
+    segment_by: [skin_type]
+    target:
+      sensitive: 0.80  # Hardest segment - less product options
+      default: 0.90
+    alert_if_below:
+      sensitive: 0.70
+      default: 0.80
+      
+  - name: query_coverage
+    type: gauge
+    description: "Percentage of searches that return relevant results"
+    formula: "searches_with_results / total_searches"
+    segment_by: [primary_concern]
+    target: 0.95
+    alert_if_below: 0.90
+    
+  - name: zero_result_rate
+    type: gauge
+    description: "Percentage of searches with no results"
+    formula: "zero_result_searches / total_searches"
+    target: 0.02
+    alert_if_above: 0.05
+
+  # -----------------------------------------
+  # Calibration Metrics (Are predictions accurate?)
+  # -----------------------------------------
+  
+  - name: high_confidence_accuracy
+    type: gauge
+    description: "When we say 'HIGH' confidence, how often is outcome positive?"
+    formula: "positive_outcomes_when_high_confidence / total_high_confidence_recommendations"
+    expected: 0.85
+    alert_if_below: 0.75
+    
+  - name: moderate_confidence_accuracy
+    type: gauge
+    description: "When we say 'MODERATE' confidence, how often is outcome positive?"
+    formula: "positive_outcomes_when_moderate_confidence / total_moderate_confidence_recommendations"
+    expected: 0.65
+    alert_if_below: 0.55
+    
+  - name: low_confidence_accuracy
+    type: gauge
+    description: "When we say 'LOW' confidence, how often is outcome positive?"
+    formula: "positive_outcomes_when_low_confidence / total_low_confidence_recommendations"
+    expected: 0.50
+    alert_if_below: 0.40
+    
+  - name: match_score_calibration
+    type: gauge
+    description: "Correlation between match_score and actual satisfaction"
+    formula: "pearson_correlation(match_score, outcome_rating)"
+    expected: 0.70
+    alert_if_below: 0.50
+    
+  - name: tensor_match_calibration
+    type: gauge
+    description: "Correlation between tensor match score and outcome"
+    formula: "pearson_correlation(tensor_score, outcome_positive)"
+    expected: 0.60
+    alert_if_below: 0.40
+
+# ============================================
+# DATA QUALITY METRICS
+# ============================================
+
+data_quality_metrics:
+  - name: ingredient_completeness
+    type: gauge
+    description: "Percentage of products with verified INCI lists"
+    formula: "products_with_inci / total_products"
+    target: 0.95
+    alert_if_below: 0.90
+    critical_if_below: 0.85
+    
+  - name: tensor_coverage
+    type: gauge
+    description: "Percentage of atoms with 17-D tensor fully populated"
+    formula: "atoms_with_full_tensor / total_atoms"
+    target: 0.90
+    alert_if_below: 0.85
+    
+  - name: source_citation_rate
+    type: gauge
+    description: "Percentage of atoms with peer-reviewed sources"
+    formula: "atoms_with_sources / total_atoms"
+    target: 1.00
+    alert_if_below: 0.95
+    
+  - name: vendor_data_consistency
+    type: gauge
+    description: "Percentage of vendor submissions passing validation"
+    formula: "valid_submissions / total_submissions"
+    target: 0.90
+    alert_if_below: 0.80
+    
+  - name: stale_content_rate
+    type: gauge
+    description: "Percentage of atoms not updated in 6 months"
+    formula: "atoms_older_than_6_months / total_atoms"
+    target: 0.10
+    alert_if_above: 0.20
+    
+  - name: constraint_coverage
+    type: gauge
+    description: "Percentage of known interactions with constraint relations"
+    formula: "constraints_defined / known_interactions"
+    target: 0.95
+    alert_if_below: 0.90
+
+# ============================================
+# PERFORMANCE METRICS
+# ============================================
+
+performance_metrics:
+  - name: search_latency_p95
+    type: histogram
+    description: "95th percentile search latency"
+    unit: milliseconds
+    target: 200
+    alert_if_above: 300
+    critical_if_above: 500
+    
+  - name: explanation_latency_p95
+    type: histogram
+    description: "95th percentile explanation generation latency"
+    unit: milliseconds
+    target: 500
+    alert_if_above: 750
+    critical_if_above: 1000
+    
+  - name: constraint_check_latency_p95
+    type: histogram
+    description: "95th percentile constraint checking latency"
+    unit: milliseconds
+    target: 100
+    alert_if_above: 150
+    critical_if_above: 200
+    
+  - name: ranking_latency_p95
+    type: histogram
+    description: "95th percentile multi-signal ranking latency"
+    unit: milliseconds
+    target: 50
+    alert_if_above: 75
+    critical_if_above: 100
+
+# ============================================
+# FEEDBACK LOOP METRICS
+# ============================================
+
+feedback_metrics:
+  - name: interaction_events_per_minute
+    type: counter
+    description: "Rate of interaction event ingestion"
+    alert_if_below: 10  # Low traffic warning
+    alert_if_above: 10000  # Potential spam/bot
+    
+  - name: outcome_reports_per_day
+    type: counter
+    description: "Daily outcome report submissions"
+    target: 100
+    alert_if_below: 50
+    
+  - name: corrections_pending
+    type: gauge
+    description: "Number of corrections awaiting review"
+    alert_if_above: 50
+    
+  - name: correction_review_time_hours
+    type: histogram
+    description: "Time from submission to review"
+    target: 24
+    alert_if_above: 72
+
+# ============================================
+# ALERT CONFIGURATION
+# ============================================
+
+alerting:
+  channels:
+    - name: slack
+      webhook: "${SLACK_WEBHOOK_URL}"
+      severity: [warning, critical]
+      
+    - name: pagerduty
+      integration_key: "${PAGERDUTY_KEY}"
+      severity: [critical]
+      
+  rules:
+    - name: sensitive_skin_outcome_degradation
+      metric: outcome_satisfaction_rate
+      segment: { skin_type: sensitive }
+      condition: "value < 0.65"
+      for: 1h
+      severity: critical
+      message: "Sensitive skin satisfaction rate dropped below 65%"
+      
+    - name: calibration_drift
+      metric: high_confidence_accuracy
+      condition: "value < 0.75"
+      for: 24h
+      severity: warning
+      message: "High confidence predictions are less accurate than expected"
+      
+    - name: data_quality_degradation
+      metric: ingredient_completeness
+      condition: "value < 0.90"
+      for: 1h
+      severity: warning
+      message: "Product ingredient completeness dropped below 90%"
+
+# ============================================
+# DASHBOARD CONFIGURATION
+# ============================================
+
+dashboards:
+  - name: intelligence_overview
+    description: "High-level intelligence service health"
+    panels:
+      - title: "Recommendation Quality"
+        metrics: [recommendation_acceptance_rate, outcome_satisfaction_rate, average_rating]
+        visualization: time_series
+        
+      - title: "Coverage"
+        metrics: [cold_start_coverage, query_coverage]
+        visualization: gauge
+        
+      - title: "Calibration"
+        metrics: [high_confidence_accuracy, moderate_confidence_accuracy, match_score_calibration]
+        visualization: time_series
+        
+  - name: segment_analysis
+    description: "Segment-level metric breakdown"
+    panels:
+      - title: "Satisfaction by Skin Type"
+        metric: outcome_satisfaction_rate
+        segment_by: skin_type
+        visualization: bar_chart
+        
+      - title: "Negative Outcomes by Skin Type"
+        metric: negative_outcome_rate
+        segment_by: skin_type
+        visualization: bar_chart
+        threshold_line: true
+        
+      - title: "Coverage by Concern"
+        metric: cold_start_coverage
+        segment_by: primary_concern
+        visualization: bar_chart
+        
+  - name: data_quality
+    description: "Data quality monitoring"
+    panels:
+      - title: "Completeness Metrics"
+        metrics: [ingredient_completeness, tensor_coverage, source_citation_rate]
+        visualization: gauge
+        
+      - title: "Vendor Quality"
+        metric: vendor_data_consistency
+        visualization: time_series
+        
+      - title: "Content Freshness"
+        metric: stale_content_rate
+        visualization: gauge
+        invert_color: true  # Higher is worse
+
+# ============================================
+# EXPORT CONFIGURATION
+# ============================================
+
+export:
+  prometheus:
+    enabled: true
+    port: 9090
+    path: /metrics
+    
+  cloudwatch:
+    enabled: true
+    namespace: "JADE/Intelligence"
+    dimensions: [Environment, Service]
+    
+  datadog:
+    enabled: false
+    api_key: "${DATADOG_API_KEY}"

@@ -1,0 +1,746 @@
+# ========================================
+# Marketplace GraphQL Schema for JADE Spa Platform
+# Task: T070 - Create marketplace GraphQL schema
+#
+# Defines queries and mutations for:
+# - Product search and discovery
+# - Shopping cart management
+# - Order checkout and tracking
+# - Wholesale pricing
+# ========================================
+
+# ========================================
+# TYPES
+# ========================================
+
+"""
+Progressive disclosure - Glance level data
+Always loaded in search results, optimized for quick scanning
+"""
+type ProductGlance {
+  """Hero benefit (e.g., 'Reduces fine lines in 4 weeks')"""
+  heroBenefit: String!
+
+  """Average rating (0-5)"""
+  rating: Float
+
+  """Number of reviews"""
+  reviewCount: Int!
+
+  """Suitable skin types"""
+  skinTypes: [String!]!
+}
+
+"""
+Progressive disclosure - Scan level data
+Loaded on interaction (hover/click), provides detailed info
+"""
+type ProductScan {
+  """Key ingredients with percentages"""
+  keyIngredients: [Ingredient!]!
+
+  """What it does (benefits)"""
+  benefits: [String!]!
+
+  """Usage instructions"""
+  howToUse: String!
+
+  """Product texture/feel"""
+  texture: String!
+
+  """Targeted concerns"""
+  concerns: [String!]!
+}
+
+"""
+Ingredient with concentration
+"""
+type Ingredient {
+  """Ingredient name"""
+  name: String!
+
+  """Percentage concentration"""
+  percentage: Float
+
+  """Purpose/benefit"""
+  purpose: String
+}
+
+"""
+Progressive disclosure - Study level data
+Loaded on detail page, comprehensive information
+"""
+type ProductStudy {
+  """Complete ingredient list (INCI)"""
+  fullIngredientList: String!
+
+  """Clinical study results"""
+  clinicalData: [ClinicalStudy!]!
+
+  """Certifications (organic, cruelty-free, etc.)"""
+  certifications: [String!]!
+
+  """Safety information"""
+  safetyInfo: String
+
+  """Contraindications"""
+  contraindications: [String!]!
+
+  """Storage instructions"""
+  storageInstructions: String
+}
+
+"""
+Clinical study data
+"""
+type ClinicalStudy {
+  """Study description"""
+  description: String!
+
+  """Sample size"""
+  participants: Int
+
+  """Duration"""
+  duration: String
+
+  """Results"""
+  results: String!
+}
+
+"""
+Wholesale pricing tier
+"""
+type PricingTier {
+  """Minimum quantity for this tier"""
+  minQuantity: Int!
+
+  """Unit price at this tier (in cents)"""
+  unitPrice: Int!
+
+  """Discount percentage"""
+  discountPercentage: Float!
+}
+
+"""
+Product with marketplace extensions
+"""
+type MarketplaceProduct {
+  """Base Vendure product"""
+  product: Product!
+
+  """Glance level data (always included)"""
+  glance: ProductGlance!
+
+  """Scan level data (optional, loaded on request)"""
+  scan: ProductScan
+
+  """Study level data (optional, loaded on detail page)"""
+  study: ProductStudy
+
+  """Pricing tiers for wholesale"""
+  pricingTiers: [PricingTier!]!
+
+  """Current inventory level"""
+  inventoryLevel: Int!
+
+  """Vendor organization ID"""
+  vendorId: ID!
+}
+
+"""
+Product search connection (paginated)
+"""
+type ProductSearchConnection {
+  """Product edges"""
+  items: [MarketplaceProduct!]!
+
+  """Total items matching search"""
+  totalItems: Int!
+
+  """Whether there is a next page"""
+  hasNextPage: Boolean!
+
+  """Whether there is a previous page"""
+  hasPreviousPage: Boolean!
+}
+
+"""
+Cart item with pricing tier applied
+"""
+type CartItem {
+  """Item ID"""
+  id: ID!
+
+  """Product ID"""
+  productId: ID!
+
+  """Variant ID"""
+  variantId: ID!
+
+  """Product name"""
+  productName: String!
+
+  """Vendor ID"""
+  vendorId: ID!
+
+  """Quantity"""
+  quantity: Int!
+
+  """Unit price (with tier discount applied)"""
+  unitPrice: Int!
+
+  """Applied pricing tier"""
+  appliedTier: PricingTier!
+
+  """Line total (unitPrice * quantity)"""
+  lineTotal: Int!
+
+  """Featured asset URL"""
+  featuredAssetUrl: String
+}
+
+"""
+Vendor-specific cart
+"""
+type VendorCart {
+  """Vendor ID"""
+  vendorId: ID!
+
+  """Vendor name"""
+  vendorName: String!
+
+  """Items from this vendor"""
+  items: [CartItem!]!
+
+  """Subtotal for this vendor"""
+  subtotal: Int!
+}
+
+"""
+Shopping cart
+"""
+type Cart {
+  """Order ID (cart is an order in AddingItems state)"""
+  orderId: ID!
+
+  """All cart items"""
+  items: [CartItem!]!
+
+  """Items grouped by vendor"""
+  vendorCarts: [VendorCart!]!
+
+  """Total number of items"""
+  totalItems: Int!
+
+  """Subtotal"""
+  subtotal: Int!
+
+  """Tax"""
+  tax: Int!
+
+  """Shipping"""
+  shipping: Int!
+
+  """Total discount from pricing tiers"""
+  totalDiscount: Int!
+
+  """Grand total"""
+  total: Int!
+
+  """Last updated"""
+  updatedAt: DateTime!
+}
+
+"""
+Add to cart result
+"""
+type AddToCartResult {
+  """Updated cart"""
+  cart: Cart!
+
+  """Added/updated item"""
+  item: CartItem!
+
+  """Whether item was newly added"""
+  isNew: Boolean!
+}
+
+"""
+Vendor-specific order split
+"""
+type VendorOrderSplit {
+  """Vendor ID"""
+  vendorId: ID!
+
+  """Order line IDs for this vendor"""
+  orderLineIds: [ID!]!
+
+  """Subtotal for this vendor"""
+  subtotal: Int!
+
+  """Shipping cost for this vendor"""
+  shippingCost: Int!
+
+  """Total for this vendor (subtotal + shipping)"""
+  vendorTotal: Int!
+
+  """Fulfillment status"""
+  fulfillmentStatus: FulfillmentStatus!
+
+  """Tracking number"""
+  trackingNumber: String
+
+  """Estimated delivery"""
+  estimatedDelivery: String
+
+  """Shipped at"""
+  shippedAt: String
+}
+
+"""
+Order summary
+"""
+type OrderSummary {
+  """Order ID"""
+  id: ID!
+
+  """Order number"""
+  orderNumber: String!
+
+  """Spa organization ID"""
+  spaOrganizationId: ID!
+
+  """User who placed the order"""
+  placedByUserId: ID!
+
+  """Order placed date"""
+  placedAt: DateTime!
+
+  """Overall fulfillment status"""
+  fulfillmentStatus: FulfillmentStatus!
+
+  """Payment status"""
+  paymentStatus: PaymentStatus!
+
+  """Order total"""
+  total: Int!
+
+  """Number of items"""
+  itemCount: Int!
+
+  """Number of vendors"""
+  vendorCount: Int!
+
+  """Vendor-specific order splits"""
+  vendorOrders: [VendorOrderSplit!]!
+}
+
+"""
+Order detail
+"""
+type OrderDetail {
+  """Order summary info"""
+  id: ID!
+  orderNumber: String!
+  spaOrganizationId: ID!
+  placedByUserId: ID!
+  placedAt: DateTime!
+  fulfillmentStatus: FulfillmentStatus!
+  paymentStatus: PaymentStatus!
+  total: Int!
+  itemCount: Int!
+  vendorCount: Int!
+  vendorOrders: [VendorOrderSplit!]!
+
+  """Order lines"""
+  lines: [OrderLine!]!
+
+  """Shipping address"""
+  shippingAddress: AddressInput!
+
+  """Billing address"""
+  billingAddress: AddressInput!
+
+  """Subtotal"""
+  subtotal: Int!
+
+  """Tax"""
+  tax: Int!
+
+  """Shipping cost"""
+  shipping: Int!
+
+  """Discount"""
+  discount: Int!
+
+  """Notes"""
+  notes: String
+
+  """Fulfilled at"""
+  fulfilledAt: DateTime
+}
+
+"""
+Order connection (paginated)
+"""
+type OrderConnection {
+  """Orders"""
+  items: [OrderSummary!]!
+
+  """Total count"""
+  totalCount: Int!
+}
+
+"""
+Cart validation result
+"""
+type CartValidation {
+  """Is cart valid"""
+  valid: Boolean!
+
+  """Validation errors"""
+  errors: [String!]!
+}
+
+"""
+Reorder result
+"""
+type ReorderResult {
+  """Success status"""
+  success: Boolean!
+
+  """Items that couldn't be added"""
+  unavailableItems: [String!]!
+
+  """Updated cart"""
+  cart: Cart
+}
+
+# ========================================
+# ENUMS
+# ========================================
+
+"""
+Fulfillment status
+"""
+enum FulfillmentStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  FULFILLED
+  CANCELLED
+}
+
+"""
+Payment status
+"""
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  PAID
+  REFUNDED
+  FAILED
+}
+
+"""
+Payment method
+"""
+enum PaymentMethod {
+  CREDIT_CARD
+  NET_30
+  WIRE_TRANSFER
+}
+
+# ========================================
+# INPUT TYPES
+# ========================================
+
+"""
+Product filter options
+"""
+input ProductFilters {
+  """Filter by category IDs"""
+  categoryIds: [ID!]
+
+  """Filter by vendor ID"""
+  vendorId: ID
+
+  """Price range (in cents)"""
+  priceRange: PriceRangeInput
+
+  """Filter by skin types"""
+  skinTypes: [String!]
+
+  """Filter by ingredients"""
+  ingredients: [String!]
+
+  """Filter by concerns"""
+  concerns: [String!]
+
+  """Only show in-stock items"""
+  inStockOnly: Boolean
+
+  """Minimum inventory level"""
+  minInventory: Int
+}
+
+"""
+Price range input
+"""
+input PriceRangeInput {
+  """Minimum price (in cents)"""
+  min: Int!
+
+  """Maximum price (in cents)"""
+  max: Int!
+}
+
+"""
+Pagination input
+"""
+input PaginationInput {
+  """Number of items to skip"""
+  skip: Int
+
+  """Number of items to take"""
+  take: Int
+}
+
+"""
+Address input
+"""
+input AddressInput {
+  firstName: String!
+  lastName: String!
+  company: String
+  street: String!
+  street2: String
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+  phone: String!
+}
+
+"""
+Payment input
+"""
+input PaymentInput {
+  """Payment method"""
+  method: PaymentMethod!
+
+  """Card last 4 digits"""
+  cardLast4: String
+
+  """Card brand"""
+  cardBrand: String
+
+  """Transaction ID"""
+  transactionId: String
+}
+
+"""
+Checkout input
+"""
+input CheckoutInput {
+  """Shipping address"""
+  shippingAddress: AddressInput!
+
+  """Billing address (defaults to shipping if not provided)"""
+  billingAddress: AddressInput
+
+  """Payment information"""
+  payment: PaymentInput!
+
+  """Special instructions"""
+  notes: String
+
+  """Discount code"""
+  discountCode: String
+}
+
+# ========================================
+# QUERIES
+# ========================================
+
+extend type Query {
+  """
+  Search products with filters
+  """
+  searchProducts(
+    """Search term for product name/description"""
+    query: String
+
+    """Product filters"""
+    filters: ProductFilters
+
+    """Pagination options"""
+    pagination: PaginationInput
+
+    """Include scan-level data"""
+    includeScan: Boolean
+  ): ProductSearchConnection!
+
+  """
+  Get single product by ID
+  """
+  product(
+    """Product ID"""
+    id: ID!
+
+    """Include study-level data"""
+    includeStudy: Boolean
+  ): MarketplaceProduct
+
+  """
+  Get products by vendor
+  """
+  productsByVendor(
+    """Vendor ID"""
+    vendorId: ID!
+
+    """Pagination options"""
+    pagination: PaginationInput
+  ): ProductSearchConnection!
+
+  """
+  Get active shopping cart
+  """
+  myCart: Cart!
+
+  """
+  Get cart grouped by vendor
+  """
+  myCartByVendor: [VendorCart!]!
+
+  """
+  Validate cart before checkout
+  """
+  validateCart: CartValidation!
+
+  """
+  Get my orders
+  """
+  myOrders(
+    """Pagination options"""
+    pagination: PaginationInput
+  ): OrderConnection!
+
+  """
+  Get order by ID
+  """
+  order(
+    """Order ID"""
+    id: ID!
+  ): OrderDetail
+
+  """
+  Get orders for spa organization
+  """
+  ordersBySpa(
+    """Spa organization ID"""
+    spaOrganizationId: ID!
+
+    """Pagination options"""
+    pagination: PaginationInput
+  ): OrderConnection!
+
+  """
+  Get orders for vendor (vendor portal)
+  """
+  ordersByVendor(
+    """Vendor ID"""
+    vendorId: ID!
+
+    """Pagination options"""
+    pagination: PaginationInput
+  ): OrderConnection!
+}
+
+# ========================================
+# MUTATIONS
+# ========================================
+
+extend type Mutation {
+  """
+  Add item to cart
+  """
+  addToCart(
+    """Product ID"""
+    productId: ID!
+
+    """Variant ID"""
+    variantId: ID!
+
+    """Quantity to add"""
+    quantity: Int!
+  ): AddToCartResult!
+
+  """
+  Update cart item quantity
+  """
+  updateCartItem(
+    """Cart line ID"""
+    lineId: ID!
+
+    """New quantity (0 to remove)"""
+    quantity: Int!
+  ): Cart!
+
+  """
+  Remove item from cart
+  """
+  removeFromCart(
+    """Cart line ID"""
+    lineId: ID!
+  ): Cart!
+
+  """
+  Clear entire cart
+  """
+  clearCart: Cart!
+
+  """
+  Checkout - create order from cart
+  """
+  checkout(
+    """Spa organization ID"""
+    spaOrganizationId: ID!
+
+    """Checkout information"""
+    input: CheckoutInput!
+  ): OrderSummary!
+
+  """
+  Reorder from previous order
+  """
+  reorder(
+    """Order ID to reorder from"""
+    orderId: ID!
+  ): ReorderResult!
+
+  """
+  Cancel order
+  """
+  cancelOrder(
+    """Order ID"""
+    orderId: ID!
+  ): Boolean!
+
+  """
+  Update vendor fulfillment status (vendor only)
+  """
+  updateFulfillment(
+    """Order ID"""
+    orderId: ID!
+
+    """Vendor ID"""
+    vendorId: ID!
+
+    """New status"""
+    status: FulfillmentStatus!
+
+    """Tracking number"""
+    trackingNumber: String
+  ): OrderSummary!
+}

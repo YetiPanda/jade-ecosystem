@@ -1,0 +1,271 @@
+# Skincare Semantic Search System
+# Feature: RDF Skincare Taxonomy Integration
+# Date: 2025-12-10
+
+# Semantic search capabilities for skincare products using Zilliz
+# Enables natural language queries like:
+# - "Find gentle gel cleansers for oily skin under $20"
+# - "Best vitamin C serums for hyperpigmentation"
+# - "Fragrance-free moisturizers for sensitive skin"
+
+#######################################
+# Skincare Search Queries
+#######################################
+
+extend type Query {
+  """
+  Semantic search for skincare products
+  Uses AI-powered natural language understanding
+
+  Example queries:
+  - "gentle gel cleanser for oily skin"
+  - "vitamin C serum for dark spots"
+  - "hydrating night cream for dry skin"
+  """
+  searchSkincareProducts(
+    """Natural language search query"""
+    query: String!
+    """Optional filters to narrow results"""
+    filters: SkincareSearchFilters
+    """Maximum number of results (default: 10, max: 50)"""
+    limit: Int
+  ): [SkincareProduct!]!
+
+  """
+  Find products similar to a given product
+  Uses semantic similarity matching
+  """
+  findSimilarSkincareProducts(
+    """ID of the product to find similar items for"""
+    productId: ID!
+    """Maximum number of results (default: 5)"""
+    limit: Int
+  ): [SkincareProduct!]!
+
+  """
+  Get personalized product recommendations based on skin profile
+  """
+  recommendSkincareProducts(
+    """User's skin profile for personalized recommendations"""
+    profile: SkinProfileInput!
+    """Maximum number of recommendations (default: 10)"""
+    limit: Int
+  ): [SkincareProduct!]!
+
+  """
+  Get skincare products by category
+  """
+  skincareProductsByCategory(
+    """Category name (Cleansers, Treatments, Moisturizers, etc.)"""
+    category: String!
+    """Maximum number of results (default: 20)"""
+    limit: Int
+  ): [SkincareProduct!]!
+
+  """
+  Get a single skincare product by ID
+  """
+  skincareProduct(id: ID!): SkincareProduct
+
+  """
+  Build a complete skincare routine recommendation
+  Returns products for each step: Cleanse, Treat, Moisturize, Protect
+  """
+  buildSkincareRoutine(
+    """User's skin profile"""
+    profile: SkinProfileInput!
+  ): SkincareRoutine!
+
+  """
+  Get all available skincare categories
+  """
+  skincareCategories: [String!]!
+
+  """
+  Get filter options for skincare search UI
+  """
+  skincareFilterOptions: SkincareFilterOptions!
+}
+
+#######################################
+# Skincare Types
+#######################################
+
+"""
+Skincare product with full metadata
+"""
+type SkincareProduct {
+  id: ID!
+
+  """Product name"""
+  productName: String!
+
+  """Brand name"""
+  brand: String!
+
+  """Main category (Cleansers, Treatments, etc.)"""
+  category: String!
+
+  """Subcategory (Gel Cleanser, Vitamin C Serum, etc.)"""
+  subcategory: String!
+
+  """Skin types this product is suitable for"""
+  skinTypes: [String!]!
+
+  """Skin concerns this product targets"""
+  concerns: [String!]!
+
+  """Active ingredients"""
+  ingredients: [String!]!
+
+  """Functional benefits"""
+  benefits: [String!]!
+
+  """Key product benefits (marketing highlights)"""
+  keyBenefits: [String!]!
+
+  """Price tier ($, $$, $$$, $$$$)"""
+  priceTier: PriceTier!
+
+  """Product texture (Gel, Cream, Serum, etc.)"""
+  texture: String!
+
+  """Routine step (Cleanse, Treat, Moisturize, Protect)"""
+  routineStep: String!
+
+  """Product volume/size"""
+  volume: String!
+
+  """Is fragrance-free"""
+  fragranceFree: Boolean!
+
+  """Is vegan"""
+  vegan: Boolean!
+
+  """Is cruelty-free"""
+  crueltyFree: Boolean!
+
+  """Relevance score (0-1, higher is more relevant)"""
+  score: Float!
+}
+
+"""
+Price tier enumeration
+"""
+enum PriceTier {
+  """Budget-friendly ($0-$20)"""
+  BUDGET
+  """Moderate ($$20-$50)"""
+  MODERATE
+  """Premium ($50-$100)"""
+  PREMIUM
+  """Luxury ($100+)"""
+  LUXURY
+}
+
+"""
+Skincare routine with products for each step
+"""
+type SkincareRoutine {
+  """Routine steps with recommended products"""
+  steps: [SkincareRoutineStep!]!
+}
+
+"""
+Single step in a skincare routine
+"""
+type SkincareRoutineStep {
+  """Step name (Cleanse, Treat, Moisturize, Protect)"""
+  step: String!
+
+  """Recommended products for this step"""
+  products: [SkincareProduct!]!
+}
+
+"""
+Available filter options for skincare search UI
+"""
+type SkincareFilterOptions {
+  """Available skin types"""
+  skinTypes: [String!]!
+
+  """Available skin concerns"""
+  concerns: [String!]!
+
+  """Available categories"""
+  categories: [String!]!
+
+  """Available subcategories"""
+  subcategories: [String!]!
+
+  """Available textures"""
+  textures: [String!]!
+
+  """Available routine steps"""
+  routineSteps: [String!]!
+
+  """Available price tiers"""
+  priceTiers: [PriceTier!]!
+}
+
+#######################################
+# Input Types
+#######################################
+
+"""
+Filters for skincare product search
+"""
+input SkincareSearchFilters {
+  """Filter by compatible skin types"""
+  skinTypes: [String!]
+
+  """Filter by targeted concerns"""
+  concerns: [String!]
+
+  """Filter by category"""
+  category: String
+
+  """Filter by subcategory"""
+  subcategory: String
+
+  """Filter by price tier"""
+  priceTier: PriceTier
+
+  """Filter for fragrance-free products only"""
+  fragranceFree: Boolean
+
+  """Filter for vegan products only"""
+  vegan: Boolean
+
+  """Filter for cruelty-free products only"""
+  crueltyFree: Boolean
+
+  """Filter by routine step"""
+  routineStep: String
+
+  """Filter by texture"""
+  texture: String
+}
+
+"""
+User's skin profile for personalized recommendations
+"""
+input SkinProfileInput {
+  """Primary skin type (Normal, Dry, Oily, Combination, Sensitive, Mature)"""
+  skinType: String!
+
+  """Skin concerns to address"""
+  concerns: [String!]!
+
+  """Known sensitivities or allergies"""
+  sensitivities: [String!]
+
+  """Prefer fragrance-free products"""
+  preferFragranceFree: Boolean
+
+  """Prefer vegan products"""
+  preferVegan: Boolean
+
+  """Budget preference ($, $$, $$$, $$$$)"""
+  budgetTier: String
+}

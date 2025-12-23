@@ -1,0 +1,50 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/.f25dfb7b47a7683151a8b7de4c2c51e1c3cac45e-audit.json",
+    "files": [
+        {
+            "date": 1765313779731,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-09.log",
+            "hash": "8283098471591e4b00bb5af8b9f9cc9fbc278799c58666b7f33907f9f46b7f0b"
+        },
+        {
+            "date": 1765383366894,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-10.log",
+            "hash": "09d4255c32455e8cd38653b7f684e161e33c895920c9fef24d5d985e3ba434cb"
+        },
+        {
+            "date": 1765432863458,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-11.log",
+            "hash": "eedc334ccdba661e3395d2e1c44f42c8f1dad0bac2b72b9aa8403296cadb66e7"
+        },
+        {
+            "date": 1765920843143,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-16.log",
+            "hash": "46e4d153667fb1eb37e0cbc9d6e9fc123a2eef2f0c56139fd9a07245d02b0c96"
+        },
+        {
+            "date": 1766261283677,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-20.log",
+            "hash": "bfd385596d9e8a0b1aa47d807bf8698deb1881141e1150ffd5d9aef526492331"
+        },
+        {
+            "date": 1766348666907,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-21.log",
+            "hash": "7bfbe6bf28907ecbb342f70061074d1fd489931ce8c4d2cda83a65af4e8dff0d"
+        },
+        {
+            "date": 1766383287656,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-22.log",
+            "hash": "71f75ee2c53054464620af589773bcde40c520b3226f9b16afbf7b004021c546"
+        },
+        {
+            "date": 1766506377847,
+            "name": "/Users/jessegarza/JADE/jade-spa-marketplace/apps/vendure-backend/logs/error-2025-12-23.log",
+            "hash": "ce764d70392208c358f5545d411c5d87e5cc41a072f6245c321e69c8f7426b90"
+        }
+    ],
+    "hashType": "sha256"
+}

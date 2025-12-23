@@ -1,0 +1,524 @@
+# JADE Analytics & Business Intelligence Schema
+# Comprehensive reporting and insights for the skincare marketplace
+
+#######################################
+# Business Metrics Types
+#######################################
+
+"""
+Comprehensive business metrics for a given timeframe
+"""
+type BusinessMetrics {
+  financial: FinancialMetrics!
+  customers: CustomerMetrics!
+  products: ProductMetrics!
+  skincare: SkincareAnalytics!
+  ai: AIPerformanceMetrics!
+  computedAt: DateTime!
+  timeframe: String!
+}
+
+"""
+Financial performance metrics
+"""
+type FinancialMetrics {
+  totalRevenue: Float!
+  monthlyRecurringRevenue: Float!
+  averageOrderValue: Float!
+  customerLifetimeValue: Float!
+  churnRate: Float!
+  growthRate: Float!
+  conversionRate: Float!
+  retentionRate: Float!
+  revenueByPeriod: [RevenuePeriod!]!
+}
+
+type RevenuePeriod {
+  period: String!
+  revenue: Float!
+  orderCount: Int!
+}
+
+"""
+Customer analytics
+"""
+type CustomerMetrics {
+  totalActive: Int!
+  newAcquisitions: Int!
+  churnedCustomers: Int!
+  averageCustomerAge: Int!
+  topSegments: [CustomerSegment!]!
+  geographicDistribution: [GeographicRegion!]!
+  journeyStageDistribution: [JourneyStage!]!
+}
+
+type CustomerSegment {
+  segment: String!
+  count: Int!
+  revenue: Float!
+  growthRate: Float!
+}
+
+type GeographicRegion {
+  region: String!
+  customers: Int!
+  revenue: Float!
+}
+
+type JourneyStage {
+  stage: String!
+  count: Int!
+  percentage: Float!
+}
+
+"""
+Product performance metrics
+"""
+type ProductMetrics {
+  totalCatalog: Int!
+  topPerformers: [ProductPerformance!]!
+  underPerformers: [ProductPerformance!]!
+  categoryPerformance: [CategoryPerformance!]!
+  crossSellOpportunities: [CrossSellPair!]!
+}
+
+type ProductPerformance {
+  productId: ID!
+  productName: String!
+  revenue: Float!
+  unitsSold: Int!
+  conversionRate: Float!
+  returnRate: Float!
+}
+
+type CategoryPerformance {
+  category: String!
+  revenue: Float!
+  productCount: Int!
+  growthRate: Float!
+}
+
+type CrossSellPair {
+  product1Id: ID!
+  product1Name: String!
+  product2Id: ID!
+  product2Name: String!
+  correlation: Float!
+  coOccurrenceCount: Int!
+}
+
+"""
+Skincare-specific analytics
+"""
+type SkincareAnalytics {
+  topConcerns: [ConcernAnalysis!]!
+  popularIngredients: [IngredientAnalysis!]!
+  routineComplexity: RoutineComplexityBreakdown!
+  purgePhaseAnalysis: PurgeAnalysis!
+  consultationEffectiveness: ConsultationMetrics!
+}
+
+type ConcernAnalysis {
+  concern: String!
+  frequency: Int!
+  growthRate: Float!
+  avgResolutionDays: Int
+}
+
+type IngredientAnalysis {
+  ingredient: String!
+  productCount: Int!
+  usage: Int!
+  satisfaction: Float!
+  avgEfficacyScore: Float
+}
+
+type RoutineComplexityBreakdown {
+  minimal: Int!
+  basic: Int!
+  advanced: Int!
+  expert: Int!
+}
+
+type PurgeAnalysis {
+  activeCount: Int!
+  completedCount: Int!
+  avgDurationDays: Int!
+  successRate: Float!
+}
+
+type ConsultationMetrics {
+  totalSessions: Int!
+  successRate: Float!
+  avgSatisfaction: Float!
+  avgSessionDuration: Int!
+}
+
+"""
+AI system performance metrics
+"""
+type AIPerformanceMetrics {
+  recommendationPerformance: RecommendationMetrics!
+  analysisMetrics: AnalysisMetrics!
+  predictionAccuracy: PredictionAccuracyMetrics!
+}
+
+type RecommendationMetrics {
+  totalGenerated: Int!
+  acceptanceRate: Float!
+  conversionRate: Float!
+  avgConfidenceScore: Float!
+}
+
+type AnalysisMetrics {
+  totalAnalyses: Int!
+  avgProcessingTimeMs: Int!
+  accuracyScore: Float!
+  userSatisfaction: Float!
+}
+
+type PredictionAccuracyMetrics {
+  churnPrediction: Float!
+  replenishmentPrediction: Float!
+  ltvPrediction: Float!
+}
+
+#######################################
+# Insight Engine Types
+#######################################
+
+"""
+AI-generated insights for business intelligence
+"""
+type InsightEngine {
+  trendAnalysis: [TrendInsight!]!
+  anomalyDetection: [AnomalyInsight!]!
+  predictiveInsights: [PredictiveInsight!]!
+  actionableRecommendations: [ActionableRecommendation!]!
+  businessAlerts: [BusinessAlert!]!
+  generatedAt: DateTime!
+}
+
+"""
+Trend analysis insight
+"""
+type TrendInsight {
+  metric: String!
+  trend: TrendDirection!
+  changePercent: Float!
+  significance: SignificanceLevel!
+  timeframe: String!
+  description: String!
+  context: String!
+}
+
+enum TrendDirection {
+  INCREASING
+  DECREASING
+  STABLE
+  VOLATILE
+}
+
+enum SignificanceLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+"""
+Anomaly detection insight
+"""
+type AnomalyInsight {
+  metric: String!
+  expectedValue: Float!
+  actualValue: Float!
+  deviation: Float!
+  severity: AlertSeverity!
+  timestamp: DateTime!
+  possibleCauses: [String!]!
+  recommendedActions: [String!]!
+}
+
+"""
+Predictive insight
+"""
+type PredictiveInsight {
+  prediction: String!
+  confidence: Float!
+  timeframe: String!
+  impact: SignificanceLevel!
+  factors: [PredictionFactor!]!
+  recommendation: String!
+}
+
+type PredictionFactor {
+  factor: String!
+  weight: Float!
+}
+
+"""
+Actionable recommendation
+"""
+type ActionableRecommendation {
+  id: ID!
+  title: String!
+  description: String!
+  category: RecommendationCategory!
+  priority: SignificanceLevel!
+  estimatedImpact: String!
+  implementationEffort: EffortLevel!
+  timeline: String!
+  dependencies: [String!]!
+  successMetrics: [String!]!
+}
+
+enum RecommendationCategory {
+  GROWTH
+  RETENTION
+  OPTIMIZATION
+  RISK_MITIGATION
+}
+
+enum EffortLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+"""
+Business alert
+"""
+type BusinessAlert {
+  id: ID!
+  title: String!
+  description: String!
+  severity: AlertSeverity!
+  category: AlertCategory!
+  timestamp: DateTime!
+  affectedMetrics: [String!]!
+  thresholdValue: Float
+  currentValue: Float
+  recommendedActions: [String!]!
+  acknowledged: Boolean!
+  acknowledgedAt: DateTime
+  acknowledgedBy: ID
+}
+
+enum AlertSeverity {
+  CRITICAL
+  WARNING
+  INFO
+}
+
+enum AlertCategory {
+  FINANCIAL
+  OPERATIONAL
+  CUSTOMER
+  PRODUCT
+  TECHNICAL
+}
+
+#######################################
+# Report Types
+#######################################
+
+"""
+Generated report
+"""
+type Report {
+  id: ID!
+  type: ReportType!
+  format: ReportFormat!
+  timeframe: String!
+  generatedAt: DateTime!
+  downloadUrl: String
+  expiresAt: DateTime
+  status: ReportStatus!
+  metrics: BusinessMetrics
+  insights: InsightEngine
+}
+
+enum ReportType {
+  EXECUTIVE
+  OPERATIONAL
+  ANALYTICAL
+  CUSTOMER
+  PRODUCT
+  FINANCIAL
+}
+
+enum ReportFormat {
+  PDF
+  EXCEL
+  JSON
+  HTML
+}
+
+enum ReportStatus {
+  PENDING
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
+"""
+Scheduled report configuration
+"""
+type ScheduledReport {
+  id: ID!
+  name: String!
+  type: ReportType!
+  format: ReportFormat!
+  frequency: ReportFrequency!
+  recipients: [String!]!
+  lastRunAt: DateTime
+  nextRunAt: DateTime
+  isActive: Boolean!
+  createdAt: DateTime!
+}
+
+enum ReportFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+}
+
+#######################################
+# Input Types
+#######################################
+
+input MetricsTimeframeInput {
+  """Timeframe preset: 7d, 30d, 90d, 1y, mtd, ytd"""
+  preset: String
+  """Custom start date"""
+  startDate: DateTime
+  """Custom end date"""
+  endDate: DateTime
+}
+
+input MetricsFiltersInput {
+  organizationId: ID
+  productCategory: String
+  skinType: String
+  region: String
+}
+
+input GenerateReportInput {
+  type: ReportType!
+  format: ReportFormat!
+  timeframe: MetricsTimeframeInput!
+  filters: MetricsFiltersInput
+  includeCharts: Boolean
+  includeRawData: Boolean
+  includeRecommendations: Boolean
+}
+
+input ScheduleReportInput {
+  name: String!
+  type: ReportType!
+  format: ReportFormat!
+  frequency: ReportFrequency!
+  recipients: [String!]!
+  filters: MetricsFiltersInput
+}
+
+input AcknowledgeAlertInput {
+  alertId: ID!
+  note: String
+}
+
+#######################################
+# Query Extensions
+#######################################
+
+extend type Query {
+  """Get comprehensive business metrics for a timeframe"""
+  businessMetrics(
+    timeframe: MetricsTimeframeInput
+    filters: MetricsFiltersInput
+  ): BusinessMetrics!
+
+  """Get AI-generated insights based on current metrics"""
+  businessInsights(
+    timeframe: MetricsTimeframeInput
+    filters: MetricsFiltersInput
+  ): InsightEngine!
+
+  """Get active business alerts"""
+  businessAlerts(
+    severity: AlertSeverity
+    category: AlertCategory
+    acknowledged: Boolean
+    limit: Int
+  ): [BusinessAlert!]!
+
+  """Get a specific alert by ID"""
+  businessAlert(id: ID!): BusinessAlert
+
+  """Get dashboard summary for quick overview"""
+  dashboardSummary(organizationId: ID): DashboardSummary!
+
+  """Get generated reports"""
+  reports(
+    type: ReportType
+    limit: Int
+    offset: Int
+  ): [Report!]!
+
+  """Get a specific report by ID"""
+  report(id: ID!): Report
+
+  """Get scheduled reports"""
+  scheduledReports: [ScheduledReport!]!
+}
+
+"""
+Quick dashboard summary for executive view
+"""
+type DashboardSummary {
+  revenue: DashboardMetric!
+  customers: DashboardMetric!
+  orders: DashboardMetric!
+  churnRate: DashboardMetric!
+  avgOrderValue: DashboardMetric!
+  aiRecommendationAcceptance: DashboardMetric!
+  topProducts: [ProductPerformance!]!
+  recentAlerts: [BusinessAlert!]!
+  keyInsights: [String!]!
+}
+
+type DashboardMetric {
+  value: Float!
+  previousValue: Float!
+  changePercent: Float!
+  trend: TrendDirection!
+}
+
+#######################################
+# Mutation Extensions
+#######################################
+
+extend type Mutation {
+  """Generate a report on demand"""
+  generateReport(input: GenerateReportInput!): Report!
+
+  """Schedule recurring reports"""
+  scheduleReport(input: ScheduleReportInput!): ScheduledReport!
+
+  """Update scheduled report"""
+  updateScheduledReport(id: ID!, input: ScheduleReportInput!): ScheduledReport!
+
+  """Delete scheduled report"""
+  deleteScheduledReport(id: ID!): Boolean!
+
+  """Acknowledge a business alert"""
+  acknowledgeAlert(input: AcknowledgeAlertInput!): BusinessAlert!
+
+  """Record an analytics event (for internal tracking)"""
+  recordAnalyticsEvent(
+    eventType: String!
+    eventData: JSON!
+    organizationId: ID
+  ): Boolean!
+}

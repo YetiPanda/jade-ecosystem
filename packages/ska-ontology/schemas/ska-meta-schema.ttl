@@ -1,0 +1,323 @@
+@prefix ska: <https://w3id.org/ska/> .
+@prefix skam: <https://w3id.org/ska/meta/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+
+# =============================================================================
+# SKA META-SCHEMA ONTOLOGY
+# Version: 1.0.0
+# Description: A formal SKOS/OWL hybrid schema for Semantic Knowledge Atoms
+#              with BFO/IAO grounding and meta-level distinctions
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# ONTOLOGY DECLARATION
+# -----------------------------------------------------------------------------
+
+<https://w3id.org/ska/meta/>
+    a owl:Ontology ;
+    owl:versionIRI <https://w3id.org/ska/meta/1.0.0> ;
+    dcterms:title "SKA Meta-Schema Ontology"@en ;
+    dcterms:description """The SKA Meta-Schema provides a formal foundation for 
+        Semantic Knowledge Atoms, implementing a hybrid SKOS/OWL approach with 
+        explicit meta-level distinctions, BFO/IAO alignment, and separation of 
+        entity, axiom, and constraint atoms."""@en ;
+    dcterms:creator "SKA Framework Team" ;
+    dcterms:created "2025-01-01"^^xsd:date ;
+    owl:imports <http://www.w3.org/2004/02/skos/core> ;
+    rdfs:seeAlso <http://purl.obolibrary.org/obo/bfo.owl> .
+
+# =============================================================================
+# PART 1: META-LEVEL TYPE SYSTEM
+# =============================================================================
+
+skam:MetaLevelType
+    a owl:Class ;
+    rdfs:label "Meta-Level Type"@en ;
+    skos:definition """The fundamental ontological category of a Semantic 
+        Knowledge Atom, distinguishing between representation constructs, 
+        domain concepts, information artifacts, and infrastructure components."""@en .
+
+skam:RepresentationConstruct
+    a owl:Class ;
+    rdfs:subClassOf skam:MetaLevelType ;
+    rdfs:label "Representation Construct"@en ;
+    skos:definition "Elements of the representation language itself."@en .
+
+skam:DomainConcept
+    a owl:Class ;
+    rdfs:subClassOf skam:MetaLevelType ;
+    rdfs:label "Domain Concept"@en ;
+    skos:definition "Concepts in the world being modeled."@en .
+
+skam:InformationArtifact
+    a owl:Class ;
+    rdfs:subClassOf skam:MetaLevelType ;
+    rdfs:label "Information Artifact"@en ;
+    skos:definition "Created information objects - ontologies, schemas, datasets."@en ;
+    rdfs:subClassOf iao:0000030 .
+
+skam:InfrastructureComponent
+    a owl:Class ;
+    rdfs:subClassOf skam:MetaLevelType ;
+    rdfs:label "Infrastructure Component"@en ;
+    skos:definition "Systems and tools that process semantic content."@en .
+
+# =============================================================================
+# PART 2: ATOM STRUCTURAL TYPES
+# =============================================================================
+
+skam:AtomStructuralType
+    a owl:Class ;
+    rdfs:label "Atom Structural Type"@en ;
+    skos:definition "The logical function of a Semantic Knowledge Atom."@en .
+
+skam:EntityAtom
+    a owl:Class ;
+    rdfs:subClassOf skam:AtomStructuralType ;
+    rdfs:label "Entity Atom"@en ;
+    skos:definition "Atoms representing 'what exists'."@en .
+
+skam:AxiomAtom
+    a owl:Class ;
+    rdfs:subClassOf skam:AtomStructuralType ;
+    rdfs:label "Axiom Atom"@en ;
+    skos:definition "Atoms representing 'what is necessarily true'."@en .
+
+skam:ConstraintAtom
+    a owl:Class ;
+    rdfs:subClassOf skam:AtomStructuralType ;
+    rdfs:label "Constraint Atom"@en ;
+    skos:definition "Atoms representing 'what must be validated'."@en .
+
+# =============================================================================
+# PART 3: CORE SKA ATOM CLASS
+# =============================================================================
+
+ska:SemanticKnowledgeAtom
+    a owl:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Semantic Knowledge Atom"@en ;
+    skos:definition """The fundamental unit of meaning in the SKA framework - 
+        a precisely defined concept enriched with tensor coordinates for 
+        cross-domain alignment."""@en .
+
+skam:hasMetaType
+    a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "has meta-level type"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range skam:MetaLevelType .
+
+skam:hasStructuralType
+    a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "has structural type"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range skam:AtomStructuralType .
+
+skam:hasTensorCoordinate
+    a owl:ObjectProperty ;
+    rdfs:label "has tensor coordinate"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range skam:TensorCoordinate .
+
+skam:hasOwlSerialization
+    a owl:DatatypeProperty ;
+    rdfs:label "has OWL serialization"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range xsd:string .
+
+skam:hasSkosSerialization
+    a owl:DatatypeProperty ;
+    rdfs:label "has SKOS serialization"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range xsd:string .
+
+skam:alignsToBFO
+    a owl:ObjectProperty ;
+    rdfs:label "aligns to BFO"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range rdfs:Class .
+
+skam:alignsToIAO
+    a owl:ObjectProperty ;
+    rdfs:label "aligns to IAO"@en ;
+    rdfs:domain ska:SemanticKnowledgeAtom ;
+    rdfs:range rdfs:Class .
+
+# =============================================================================
+# PART 4: TENSOR COORDINATE SYSTEM
+# =============================================================================
+
+skam:TensorCoordinate
+    a owl:Class ;
+    rdfs:label "Tensor Coordinate"@en ;
+    skos:definition "A position in the 792-dimensional semantic embedding space."@en .
+
+skam:dimensionGroup
+    a owl:DatatypeProperty ;
+    rdfs:domain skam:TensorCoordinate ;
+    rdfs:range xsd:string .
+
+skam:vectorValue
+    a owl:DatatypeProperty ;
+    rdfs:domain skam:TensorCoordinate ;
+    rdfs:range xsd:string .
+
+skam:confidenceScore
+    a owl:DatatypeProperty ;
+    rdfs:domain skam:TensorCoordinate ;
+    rdfs:range xsd:decimal .
+
+# =============================================================================
+# PART 5: DOMAIN-SPECIFIC ATOM TYPES
+# =============================================================================
+
+# Regulatory Atoms
+ska:RegulatoryAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:SemanticKnowledgeAtom ;
+    rdfs:label "Regulatory Atom"@en ;
+    skam:hasMetaType skam:DomainConcept .
+
+ska:RequirementAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:RegulatoryAtom ;
+    rdfs:label "Requirement Atom"@en ;
+    skam:hasStructuralType skam:EntityAtom ;
+    skam:alignsToIAO iao:0000033 .
+
+ska:ComplianceAxiomAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:RegulatoryAtom ;
+    rdfs:label "Compliance Axiom Atom"@en ;
+    skam:hasStructuralType skam:AxiomAtom .
+
+ska:ComplianceConstraintAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:RegulatoryAtom ;
+    rdfs:label "Compliance Constraint Atom"@en ;
+    skam:hasStructuralType skam:ConstraintAtom .
+
+ska:FrameworkAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:RegulatoryAtom ;
+    rdfs:label "Framework Atom"@en ;
+    skam:hasMetaType skam:InformationArtifact ;
+    skam:hasStructuralType skam:EntityAtom .
+
+# Regulatory Properties
+ska:hasJurisdiction a owl:ObjectProperty .
+ska:hasEffectiveDate a owl:DatatypeProperty ; rdfs:range xsd:date .
+ska:hasSeverity a owl:DatatypeProperty ; rdfs:range xsd:string .
+ska:mapsToControl a owl:ObjectProperty .
+ska:entails a owl:ObjectProperty, owl:TransitiveProperty .
+ska:partiallyCovers a owl:ObjectProperty .
+ska:hasComplianceEvidence a owl:ObjectProperty .
+
+# Chemistry Atoms
+ska:ChemistryAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:SemanticKnowledgeAtom ;
+    rdfs:label "Chemistry Atom"@en ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:alignsToBFO bfo:0000040 .
+
+ska:IngredientAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:ChemistryAtom ;
+    rdfs:label "Ingredient Atom"@en ;
+    skam:hasStructuralType skam:EntityAtom .
+
+ska:InteractionAxiomAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:ChemistryAtom ;
+    rdfs:label "Interaction Axiom Atom"@en ;
+    skam:hasStructuralType skam:AxiomAtom .
+
+ska:FormulationConstraintAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:ChemistryAtom ;
+    rdfs:label "Formulation Constraint Atom"@en ;
+    skam:hasStructuralType skam:ConstraintAtom .
+
+# Chemistry Properties
+ska:hasConcentration a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+ska:hasPHRange a owl:ObjectProperty .
+ska:interactsWith a owl:ObjectProperty, owl:SymmetricProperty .
+ska:hasInteractionType a owl:DatatypeProperty ; rdfs:range xsd:string .
+
+# Pattern Atoms
+ska:PatternAtom
+    a owl:Class ;
+    rdfs:subClassOf ska:SemanticKnowledgeAtom ;
+    rdfs:label "Pattern Atom"@en ;
+    skam:hasMetaType skam:DomainConcept ;
+    skam:hasStructuralType skam:AxiomAtom .
+
+ska:discoveredInDomains a owl:DatatypeProperty ; rdfs:range xsd:string .
+ska:patternConfidence a owl:DatatypeProperty ; rdfs:range xsd:decimal .
+ska:linksAtoms a owl:ObjectProperty .
+
+# =============================================================================
+# PART 6: CONCEPT SCHEME
+# =============================================================================
+
+skam:SKAConceptScheme
+    a skos:ConceptScheme ;
+    dcterms:title "Semantic Knowledge Atoms Concept Scheme"@en ;
+    skos:hasTopConcept ska:RegulatoryAtom, ska:ChemistryAtom, ska:PatternAtom .
+
+# =============================================================================
+# PART 7: SHACL SHAPES
+# =============================================================================
+
+skam:SemanticKnowledgeAtomShape
+    a sh:NodeShape ;
+    sh:targetClass ska:SemanticKnowledgeAtom ;
+    sh:property [
+        sh:path skam:hasMetaType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class skam:MetaLevelType
+    ] ;
+    sh:property [
+        sh:path skam:hasStructuralType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class skam:AtomStructuralType
+    ] ;
+    sh:property [
+        sh:path skos:prefLabel ;
+        sh:minCount 1
+    ] ;
+    sh:property [
+        sh:path skos:definition ;
+        sh:minCount 1
+    ] .
+
+# =============================================================================
+# PART 8: REASONING SUPPORT
+# =============================================================================
+
+ska:impliesCompliance
+    a owl:ObjectProperty ;
+    owl:propertyChainAxiom ( ska:mapsToControl ska:entails ) .
+
+skam:EntityAtom owl:disjointWith skam:AxiomAtom .
+skam:EntityAtom owl:disjointWith skam:ConstraintAtom .
+skam:AxiomAtom owl:disjointWith skam:ConstraintAtom .
+
+skam:RepresentationConstruct owl:disjointWith skam:DomainConcept .
+skam:RepresentationConstruct owl:disjointWith skam:InformationArtifact .
+skam:RepresentationConstruct owl:disjointWith skam:InfrastructureComponent .
+skam:DomainConcept owl:disjointWith skam:InformationArtifact .
+skam:DomainConcept owl:disjointWith skam:InfrastructureComponent .
+skam:InformationArtifact owl:disjointWith skam:InfrastructureComponent .

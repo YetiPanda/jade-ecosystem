@@ -1,0 +1,89 @@
+# Task: T121 - GraphQL queries for appointments
+# Appointment queries for scheduling dashboard and client profile
+
+query GetAppointment($id: ID!) {
+  appointment(id: $id) {
+    id
+    appointmentNumber
+    clientId
+    providerId
+    serviceType
+    duration
+    startTime
+    endTime
+    timezone
+    status
+    notes
+    requestedProducts
+    productsUsed {
+      productId
+      productName
+      amountUsed
+      cost
+      notes
+    }
+    treatmentOutcome {
+      skinConditionBefore
+      skinConditionAfter
+      productsRecommended
+      homeCarePlan
+      clientSatisfactionRating
+      photos {
+        url
+        type
+        takenAt
+        notes
+      }
+    }
+    paymentStatus
+    paymentInfo {
+      amount
+      depositAmount
+      method
+      transactionId
+      paidAt
+    }
+    cancellationInfo {
+      cancelledBy
+      cancelledAt
+      reason
+      cancellationFee
+      refundIssued
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query GetAppointments(
+  $filters: AppointmentFilters
+  $pagination: PaginationInput
+) {
+  appointments(filters: $filters, pagination: $pagination) {
+    edges {
+      node {
+        id
+        appointmentNumber
+        clientId
+        providerId
+        serviceType
+        duration
+        startTime
+        endTime
+        timezone
+        status
+        notes
+        paymentStatus
+        createdAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

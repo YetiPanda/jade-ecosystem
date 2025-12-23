@@ -1,0 +1,112 @@
+# Order queries for marketplace
+
+query MyOrders($pagination: PaginationInput) {
+  myOrders(pagination: $pagination) {
+    items {
+      id
+      orderNumber
+      spaOrganizationId
+      placedByUserId
+      placedAt
+      fulfillmentStatus
+      paymentStatus
+      total
+      itemCount
+      vendorCount
+      vendorOrders {
+        vendorId
+        orderLineIds
+        subtotal
+        shippingCost
+        vendorTotal
+        fulfillmentStatus
+        trackingNumber
+        estimatedDelivery
+        shippedAt
+      }
+    }
+    totalCount
+  }
+}
+
+query GetOrder($id: ID!) {
+  order(id: $id) {
+    id
+    orderNumber
+    spaOrganizationId
+    placedByUserId
+    placedAt
+    fulfillmentStatus
+    paymentStatus
+    total
+    itemCount
+    vendorCount
+    vendorOrders {
+      vendorId
+      orderLineIds
+      subtotal
+      shippingCost
+      vendorTotal
+      fulfillmentStatus
+      trackingNumber
+      estimatedDelivery
+      shippedAt
+    }
+    lines {
+      id
+      productVariant {
+        id
+        name
+      }
+      quantity
+      unitPrice
+    }
+    shippingAddress {
+      firstName
+      lastName
+      company
+      street
+      street2
+      city
+      state
+      zipCode
+      country
+      phone
+    }
+    billingAddress {
+      firstName
+      lastName
+      company
+      street
+      street2
+      city
+      state
+      zipCode
+      country
+      phone
+    }
+    subtotal
+    tax
+    shipping
+    discount
+    notes
+    fulfilledAt
+  }
+}
+
+query OrdersBySpa($spaOrganizationId: ID!, $pagination: PaginationInput) {
+  ordersBySpa(spaOrganizationId: $spaOrganizationId, pagination: $pagination) {
+    items {
+      id
+      orderNumber
+      placedByUserId
+      placedAt
+      fulfillmentStatus
+      paymentStatus
+      total
+      itemCount
+      vendorCount
+    }
+    totalCount
+  }
+}

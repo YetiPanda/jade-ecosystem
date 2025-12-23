@@ -1,0 +1,163 @@
+# Create Product Mutation
+mutation CreateProduct($input: CreateProductInput!) {
+  createProduct(input: $input) {
+    id
+    name
+    slug
+    description
+    enabled
+    variants {
+      id
+      sku
+      name
+      price
+      stockLevel
+      customFields {
+        wholesalePrice
+        minOrderQty
+      }
+    }
+    featuredAsset {
+      id
+      source
+      preview
+    }
+    facetValues {
+      id
+      code
+      name
+      facet {
+        id
+        code
+        name
+      }
+    }
+    customFields {
+      brand
+      rating
+      reviewCount
+      totalSold
+    }
+  }
+}
+
+# Update Product Mutation
+mutation UpdateProduct($id: ID!, $input: UpdateProductInput!) {
+  updateProduct(id: $id, input: $input) {
+    id
+    name
+    slug
+    description
+    enabled
+    variants {
+      id
+      sku
+      name
+      price
+      stockLevel
+      customFields {
+        wholesalePrice
+        minOrderQty
+      }
+    }
+    featuredAsset {
+      id
+      source
+      preview
+    }
+    facetValues {
+      id
+      code
+      name
+    }
+    customFields {
+      brand
+      rating
+      reviewCount
+      totalSold
+    }
+  }
+}
+
+# Delete Product Mutation
+mutation DeleteProduct($id: ID!) {
+  deleteProduct(id: $id) {
+    result
+    message
+  }
+}
+
+# Update Product Variant Mutation
+mutation UpdateProductVariant($id: ID!, $input: UpdateProductVariantInput!) {
+  updateProductVariant(id: $id, input: $input) {
+    id
+    sku
+    name
+    price
+    stockLevel
+    customFields {
+      wholesalePrice
+      minOrderQty
+    }
+  }
+}
+
+# Create Product Asset Mutation
+mutation CreateProductAsset($input: CreateAssetInput!) {
+  createAsset(input: $input) {
+    id
+    name
+    source
+    preview
+    mimeType
+  }
+}
+
+# Assign Asset to Product
+mutation AddAssetToProduct($productId: ID!, $assetId: ID!) {
+  addFeaturedAssetToProduct(productId: $productId, assetId: $assetId) {
+    id
+    featuredAsset {
+      id
+      source
+      preview
+    }
+  }
+}
+
+# Input Types (for reference - actual types come from backend schema)
+input CreateProductInput {
+  name: String!
+  slug: String
+  description: String
+  enabled: Boolean
+  facetValueIds: [ID!]
+  customFields: ProductCustomFieldsInput
+}
+
+input UpdateProductInput {
+  name: String
+  slug: String
+  description: String
+  enabled: Boolean
+  facetValueIds: [ID!]
+  customFields: ProductCustomFieldsInput
+}
+
+input ProductCustomFieldsInput {
+  brand: String
+  ingredients: String
+  instructions: String
+}
+
+input UpdateProductVariantInput {
+  sku: String
+  price: Int
+  stockLevel: Int
+  customFields: ProductVariantCustomFieldsInput
+}
+
+input ProductVariantCustomFieldsInput {
+  wholesalePrice: Int
+  minOrderQty: Int
+}

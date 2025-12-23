@@ -1,0 +1,293 @@
+# Common GraphQL Operations for Marketplace Frontend
+# Auth, Product, and User queries/mutations
+
+# ============================================================================
+# Authentication Mutations
+# ============================================================================
+
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    success
+    user {
+      id
+      email
+      role
+      firstName
+      lastName
+      phone
+      avatarUrl
+      isActive
+      emailVerified
+      createdAt
+      updatedAt
+    }
+    accessToken
+    refreshToken
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation Register($input: RegisterInput!) {
+  register(input: $input) {
+    success
+    user {
+      id
+      email
+      role
+      firstName
+      lastName
+      phone
+      avatarUrl
+      isActive
+      emailVerified
+      createdAt
+      updatedAt
+    }
+    accessToken
+    refreshToken
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation Logout {
+  logout {
+    success
+    message
+  }
+}
+
+# ============================================================================
+# User Queries
+# ============================================================================
+
+query Me {
+  me {
+    id
+    email
+    role
+    firstName
+    lastName
+    phone
+    avatarUrl
+    isActive
+    emailVerified
+    spaOrganization {
+      id
+      name
+      displayName
+    }
+    vendorOrganization {
+      id
+      companyName
+      displayName
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+# ============================================================================
+# Product Queries
+# ============================================================================
+
+query GetProducts($limit: Int, $offset: Int) {
+  products(limit: $limit, offset: $offset) {
+    id
+    vendureProductId
+    vendorOrganization {
+      id
+      displayName
+    }
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}
+
+query GetProductWithFullDetails($id: ID!) {
+  product(id: $id) {
+    id
+    vendureProductId
+    vendorOrganization {
+      id
+      displayName
+    }
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    scan {
+      ingredients {
+        inci {
+          name
+          concentration
+          function
+          warnings
+        }
+        actives {
+          name
+          concentration
+          type
+        }
+        allergens
+        vegan
+        crueltyFree
+      }
+      usageInstructions {
+        application
+        frequency
+        timeOfDay
+        patchTestRequired
+      }
+      keyActives {
+        name
+        concentration
+        type
+      }
+      warnings
+      images
+    }
+    study {
+      clinicalData {
+        trials {
+          studyName
+          participants
+          duration
+          results
+          publicationUrl
+        }
+        certifications
+        testReports {
+          testType
+          reportUrl
+          testedAt
+        }
+      }
+      formulationScience
+      contraindications
+      professionalNotes
+      detailedSteps
+      expectedResults
+      timeToResults
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}
+
+query SearchProducts(
+  $tensor: [Float!]
+  $embedding: [Float!]
+  $tensorWeight: Float
+  $limit: Int
+) {
+  searchProducts(
+    tensor: $tensor
+    embedding: $embedding
+    tensorWeight: $tensorWeight
+    limit: $limit
+  ) {
+    id
+    vendureProductId
+    vendorOrganization {
+      id
+      displayName
+    }
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}
+
+query SimilarProducts($productId: ID!, $limit: Int) {
+  similarProducts(productId: $productId, limit: $limit) {
+    id
+    vendureProductId
+    vendorOrganization {
+      id
+      displayName
+    }
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}
+
+query SearchProductsByText($query: String!, $limit: Int) {
+  searchProductsByText(query: $query, limit: $limit) {
+    id
+    vendureProductId
+    vendorOrganization {
+      id
+      displayName
+    }
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+    updatedAt
+  }
+}

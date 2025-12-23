@@ -1,0 +1,126 @@
+# Homepage GraphQL Queries
+# Feature: 008-homepage-integration
+#
+# Queries for fetching homepage data including products and vendors
+
+# Query for bestselling products (or newest as workaround)
+# Using searchProducts with filters and sorting
+query GetBestsellers {
+  searchProducts(
+    pagination: { take: 4, skip: 0 }
+  ) {
+    items {
+      product {
+        id
+        name
+        slug
+        description
+        featuredAsset {
+          preview
+        }
+      }
+      glance {
+        heroBenefit
+        rating
+        reviewCount
+        skinTypes
+      }
+      pricingTiers {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      inventoryLevel
+    }
+    totalItems
+    hasNextPage
+  }
+}
+
+# Query for new arrival products
+# Sorted by creation date descending
+query GetNewArrivals {
+  searchProducts(
+    pagination: { take: 4, skip: 0 }
+  ) {
+    items {
+      product {
+        id
+        name
+        slug
+        description
+        featuredAsset {
+          preview
+        }
+      }
+      glance {
+        heroBenefit
+        rating
+        reviewCount
+        skinTypes
+      }
+      pricingTiers {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      inventoryLevel
+    }
+    totalItems
+    hasNextPage
+  }
+}
+
+# Query for featured products (can be used for any featured section)
+query GetFeaturedProducts($limit: Int = 4) {
+  searchProducts(
+    pagination: { take: $limit, skip: 0 }
+    filters: { inStock: true }
+  ) {
+    items {
+      product {
+        id
+        name
+        slug
+        description
+        featuredAsset {
+          preview
+        }
+      }
+      glance {
+        heroBenefit
+        rating
+        reviewCount
+        skinTypes
+      }
+      pricingTiers {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      inventoryLevel
+    }
+    totalItems
+    hasNextPage
+  }
+}
+
+# Query for products by vendor (for brand strip workaround)
+query GetVendorProductsForHomepage($vendorId: ID!, $limit: Int = 1) {
+  productsByVendor(
+    vendorId: $vendorId
+    pagination: { take: $limit, skip: 0 }
+  ) {
+    items {
+      product {
+        id
+        name
+        featuredAsset {
+          preview
+        }
+      }
+      vendorId
+    }
+    totalItems
+  }
+}

@@ -1,0 +1,96 @@
+# Task: T122 - GraphQL mutations for client management
+# Client creation, updates, and profile management
+
+mutation CreateClient($input: CreateClientInput!) {
+  createClient(input: $input) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    skinProfile {
+      skinType
+      concerns
+      allergies
+      sensitivities
+    }
+    medicalHistory {
+      medications
+      conditions
+      allergies
+      contraindications
+    }
+    consentForms {
+      formType
+      signedAt
+      expiresAt
+    }
+    loyaltyPoints
+    totalSpent
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateClient($input: UpdateClientInput!) {
+  updateClient(input: $input) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    updatedAt
+  }
+}
+
+mutation AddClientConsent($input: AddConsentInput!) {
+  addClientConsent(input: $input) {
+    id
+    consentForms {
+      formId
+      formType
+      signedAt
+      expiresAt
+      documentUrl
+    }
+    updatedAt
+  }
+}
+
+mutation UpdateClientMedicalHistory($input: UpdateMedicalHistoryInput!) {
+  updateClientMedicalHistory(input: $input) {
+    id
+    medicalHistory {
+      medications
+      conditions
+      allergies
+      contraindications
+      lastUpdated
+    }
+    updatedAt
+  }
+}
+
+mutation UpdateClientSkinProfile($input: UpdateSkinProfileInput!) {
+  updateClientSkinProfile(input: $input) {
+    id
+    skinProfile {
+      skinType
+      concerns
+      allergies
+      sensitivities
+      currentProducts
+      previousTreatments
+    }
+    updatedAt
+  }
+}
+
+mutation AddClientNote($clientId: ID!, $note: String!, $addedBy: String!) {
+  addClientNote(clientId: $clientId, note: $note, addedBy: $addedBy) {
+    id
+    notes
+    updatedAt
+  }
+}

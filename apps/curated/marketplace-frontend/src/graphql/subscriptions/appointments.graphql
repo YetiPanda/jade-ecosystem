@@ -1,0 +1,100 @@
+# Task: T127 - GraphQL subscriptions for real-time appointment updates
+# Real-time notifications for appointment and calendar changes
+
+subscription AppointmentUpdated(
+  $appointmentId: ID
+  $clientId: ID
+  $providerId: ID
+) {
+  appointmentUpdated(
+    appointmentId: $appointmentId
+    clientId: $clientId
+    providerId: $providerId
+  ) {
+    eventType
+    appointment {
+      id
+      appointmentNumber
+      clientId
+      providerId
+      serviceType
+      duration
+      startTime
+      endTime
+      timezone
+      status
+      notes
+      requestedProducts
+      paymentStatus
+      createdAt
+      updatedAt
+    }
+    previousStatus
+    timestamp
+  }
+}
+
+subscription ProviderScheduleUpdated($providerId: ID!) {
+  providerScheduleUpdated(providerId: $providerId) {
+    eventType
+    providerId
+    affectedSlots {
+      startTime
+      endTime
+      duration
+      capacity
+      bookedCount
+      isAvailable
+      slotId
+    }
+    blockedTime {
+      id
+      providerId
+      type
+      startTime
+      endTime
+      reason
+      isRecurring
+      recurrenceRule {
+        frequency
+        interval
+        count
+        until
+        byDay
+      }
+    }
+    timestamp
+  }
+}
+
+subscription CalendarUpdated(
+  $providerId: ID
+  $startDate: DateTime!
+  $endDate: DateTime!
+) {
+  calendarUpdated(
+    providerId: $providerId
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    eventType
+    appointments {
+      id
+      appointmentNumber
+      clientId
+      providerId
+      serviceType
+      duration
+      startTime
+      endTime
+      timezone
+      status
+      notes
+      paymentStatus
+      createdAt
+    }
+    affectedDate
+    providerId
+    timestamp
+  }
+}

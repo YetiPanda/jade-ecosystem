@@ -1,0 +1,32 @@
+# Vector Search Query
+
+query SearchProductsVector(
+  $tensor: [Float!]
+  $embedding: [Float!]
+  $tensorWeight: Float
+  $limit: Int
+) {
+  searchProducts(
+    tensor: $tensor
+    embedding: $embedding
+    tensorWeight: $tensorWeight
+    limit: $limit
+  ) {
+    id
+    vendureProductId
+    glance {
+      heroBenefit
+      skinTypes
+      rating
+      reviewCount
+      price {
+        amount
+        currency
+      }
+      thumbnail
+    }
+    tensorGenerated
+    embeddingGenerated
+    createdAt
+  }
+}

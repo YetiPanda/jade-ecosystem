@@ -1,0 +1,76 @@
+# =============================================================================
+# QUERY 4: MULTI-HOP COMPLIANCE CHAIN TRAVERSAL
+# Use Case: Answer "What requirements does X satisfy?" via transitive entailment
+# This demonstrates SKA's Multi-Hop Reasoning Capability (skaa:MultiHopReasoningSupport)
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skar: <https://w3id.org/ska/regulatory/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+# Query 4a: Find ALL requirements satisfied by EU AI Act Article 9
+# Uses transitive property path (ska:entails+) for multi-hop reasoning
+SELECT ?satisfied ?label ?framework WHERE {
+  skar:EUAIA_Article9 ska:entails+ ?satisfied .
+  ?satisfied skos:prefLabel ?label .
+  ?satisfied dcterms:source ?framework .
+}
+
+# Expected Results (demonstrating 2-hop chain):
+# | satisfied            | label                             | framework        |
+# |----------------------|-----------------------------------|------------------|
+# | skar:ISO42001_6_1_2  | ISO 42001 6.1.2: AI Risk Assessment| skar:ISO42001_2023|
+# | skar:NIST_MAP_1_1    | NIST MAP-1.1: Context Establishment| skar:NIST_CSF_2_0|
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 4b: Complete compliance chain with depth calculation
+# Shows how deep the entailment reaches
+SELECT ?start ?startLabel ?satisfied ?satisfiedLabel (COUNT(?mid) AS ?depth) WHERE {
+  VALUES ?start { skar:EUAIA_Article9 }
+  ?start skos:prefLabel ?startLabel .
+  ?start ska:entails+ ?satisfied .
+  ?satisfied skos:prefLabel ?satisfiedLabel .
+  
+  # Calculate depth by counting intermediate nodes
+  ?start ska:entails* ?mid .
+  ?mid ska:entails+ ?satisfied .
+}
+GROUP BY ?start ?startLabel ?satisfied ?satisfiedLabel
+ORDER BY ?depth
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 4c: Find requirements that satisfy MULTIPLE frameworks simultaneously
+# (Cross-framework coverage analysis)
+SELECT ?requirement ?label (COUNT(DISTINCT ?framework) AS ?frameworksCovered) WHERE {
+  ?satisfyingReq ska:entails+ ?requirement .
+  ?satisfyingReq dcterms:source ?framework .
+  ?requirement skos:prefLabel ?label .
+}
+GROUP BY ?requirement ?label
+HAVING (COUNT(DISTINCT ?framework) > 1)
+ORDER BY DESC(?frameworksCovered)
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 4d: Reverse lookup - What satisfies a given requirement?
+# "What must I comply with to satisfy NIST MAP-1.1?"
+SELECT ?source ?label ?framework WHERE {
+  ?source ska:entails+ skar:NIST_MAP_1_1 .
+  ?source skos:prefLabel ?label .
+  ?source dcterms:source ?framework .
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 4e: Cross-framework mapping via ska:mapsToControl
+SELECT ?source ?sourceLabel ?target ?targetLabel WHERE {
+  ?source ska:mapsToControl ?target .
+  ?source skos:prefLabel ?sourceLabel .
+  ?target skos:prefLabel ?targetLabel .
+}

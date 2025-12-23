@@ -1,0 +1,25 @@
+# =============================================================================
+# QUERY 2: DEPRECIATING PATTERN ANALYSIS
+# Use Case: Identify technical debt to retire
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?pattern ?label ?depreciationRate ?replacement WHERE {
+  ?pattern rdfs:subClassOf skaa:ContextEngineeringPattern .
+  ?pattern rdfs:label ?label .
+  ?pattern skaa:depreciationRate ?depreciationRate .
+  OPTIONAL { ?pattern skos:scopeNote ?replacement }
+}
+ORDER BY DESC(?depreciationRate)
+
+# Expected Results:
+# | pattern                       | label                  | depreciationRate | replacement                               |
+# |-------------------------------|------------------------|------------------|-------------------------------------------|
+# | skaa:PromptScaffolding        | Prompt Scaffolding     | 0.40             | SKA: Formal constraints in SHACL shapes   |
+# | skaa:ChainOfThoughtFramework  | Chain-of-Thought       | 0.35             | SKA: Symbolic reasoning on axiom atoms    |
+# | skaa:SearchTree               | Search Tree            | 0.30             | SKA: Axiom atoms with transitive entailment|
+# | skaa:RAGPipeline              | RAG Pipeline           | 0.25             | SKA: Structured atoms with relationships  |

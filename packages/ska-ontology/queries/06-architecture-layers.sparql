@@ -1,0 +1,74 @@
+# =============================================================================
+# QUERY 6: THREE-LAYER AGENTIC ARCHITECTURE ANALYSIS
+# Use Case: Understand where SKA fits in the emerging AI stack
+# =============================================================================
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Query 6a: List all architecture layers with their asset dynamics
+SELECT ?layer ?label ?assetDynamic WHERE {
+  ?layer rdfs:subClassOf skaa:AgenticArchitectureLayer .
+  ?layer rdfs:label ?label .
+  ?layer skaa:hasAssetValueDynamic ?assetDynamic .
+}
+ORDER BY ?layer
+
+# Expected Results:
+# | layer                  | label              | assetDynamic            |
+# |------------------------|--------------------|-------------------------|
+# | skaa:ModelLayer        | Model Layer        | skaa:DepreciatingAsset  |
+# | skaa:KnowledgeLayer    | Knowledge Layer    | skaa:AppreciatingAsset  |
+# | skaa:CoordinationLayer | Coordination Layer | skaa:AppreciatingAsset  |
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 6b: Layer dependency chain
+SELECT ?layer ?dependsOn WHERE {
+  ?layer skaa:dependsOnLayer ?dependsOn .
+}
+
+# Expected Results:
+# | layer               | dependsOn              |
+# |---------------------|------------------------|
+# | skaa:ModelLayer     | skaa:KnowledgeLayer    |
+# | skaa:KnowledgeLayer | skaa:CoordinationLayer |
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 6c: Find all resources in the Knowledge Layer (where SKA lives)
+SELECT ?resource ?label ?type WHERE {
+  ?resource skaa:knowledgeLayerComponent skaa:KnowledgeLayer .
+  OPTIONAL { ?resource rdfs:label ?label }
+  OPTIONAL { ?resource a ?type }
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 6d: Investment recommendation based on layer dynamics
+SELECT ?layer ?label ?dynamic ?recommendation WHERE {
+  ?layer rdfs:subClassOf skaa:AgenticArchitectureLayer .
+  ?layer rdfs:label ?label .
+  ?layer skaa:hasAssetValueDynamic ?dynamic .
+  BIND(
+    IF(?dynamic = skaa:AppreciatingAsset, 
+       "INVEST: Value compounds over time",
+       "MINIMIZE: Technical debt risk")
+    AS ?recommendation
+  )
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Query 6e: Data entropy analysis
+SELECT ?resource ?entropyLevel 
+       (IF(?entropyLevel < 0.2, "LOW (Reliable)", 
+         IF(?entropyLevel < 0.5, "MEDIUM (Monitor)", 
+            "HIGH (Risk)")) AS ?entropyStatus)
+WHERE {
+  ?resource skaa:entropyLevel ?entropyLevel .
+}
+ORDER BY ?entropyLevel

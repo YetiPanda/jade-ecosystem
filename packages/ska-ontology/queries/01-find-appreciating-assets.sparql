@@ -1,0 +1,23 @@
+# =============================================================================
+# SKA AGENTIC SPARQL QUERIES
+# Demonstrations of the appreciating asset paradigm and agent readiness
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# QUERY 1: FIND ALL APPRECIATING ASSETS
+# Use Case: Identify which components to invest in
+# -----------------------------------------------------------------------------
+
+PREFIX ska: <https://w3id.org/ska/>
+PREFIX skam: <https://w3id.org/ska/meta/>
+PREFIX skaa: <https://w3id.org/ska/agentic/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?resource ?label ?type ?networkEffect WHERE {
+  ?resource skaa:hasAssetValueDynamic skaa:AppreciatingAsset .
+  OPTIONAL { ?resource rdfs:label ?label }
+  OPTIONAL { ?resource a ?type }
+  OPTIONAL { ?resource skaa:networkEffectStrength ?networkEffect }
+}
+ORDER BY DESC(?networkEffect)

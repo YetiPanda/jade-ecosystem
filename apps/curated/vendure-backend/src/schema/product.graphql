@@ -1,0 +1,293 @@
+# Product Schema - Progressive Disclosure Data Model
+
+type Query {
+  """Get product by ID with progressive disclosure"""
+  product(id: ID!): Product
+
+  """List all products with pagination (simple version)"""
+  products(limit: Int, offset: Int): [Product!]!
+
+  """Search products by vendor organization"""
+  productsByVendor(vendorId: ID!, limit: Int): [Product!]!
+
+  """Vector search for similar products"""
+  searchProducts(
+    tensor: [Float!]
+    embedding: [Float!]
+    tensorWeight: Float
+    limit: Int
+  ): [Product!]!
+
+  """Search products with filters (advanced)"""
+  searchProductsAdvanced(
+    search: String
+    filters: ProductFiltersInput
+    pagination: PaginationInput
+  ): ProductConnection!
+
+  """Search products using vector similarity"""
+  similarProducts(
+    productId: ID!
+    limit: Int = 10
+  ): [Product!]!
+
+  """Search products by semantic text query"""
+  searchProductsByText(
+    query: String!
+    limit: Int = 10
+  ): [Product!]!
+}
+
+type Mutation {
+  """Create a new product"""
+  createProduct(input: CreateProductInput!): ProductResult!
+
+  """Create a mock product for testing"""
+  createMockProduct(vendorOrganizationId: ID!): ProductResult!
+
+  """Update product information"""
+  updateProduct(id: ID!, input: UpdateProductInput!): ProductResult!
+
+  """Generate tensor vector for product"""
+  generateProductTensor(productId: ID!): JobStatusResponse!
+
+  """Generate semantic embedding for product"""
+  generateProductEmbedding(productId: ID!): JobStatusResponse!
+}
+"""
+Product with progressive disclosure structure
+"""
+type Product {
+  id: ID!
+  vendureProductId: ID!
+  vendorOrganization: VendorOrganization!
+
+  """Glance level - Quick overview"""
+  glance: ProductGlance!
+
+  """Scan level - Detailed information"""
+  scan: ProductScan!
+
+  """Study level - Professional/clinical data"""
+  study: ProductStudy
+
+  """Vector data status"""
+  tensorGenerated: Boolean!
+  embeddingGenerated: Boolean!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+"""
+Glance Level - Quick Product Overview
+"""
+type ProductGlance {
+  heroBenefit: String!
+  skinTypes: [SkinType!]!
+  rating: Float
+  reviewCount: Int
+  price: Money!
+  thumbnail: String
+}
+"""
+Scan Level - Detailed Product Information
+"""
+type ProductScan {
+  ingredients: IngredientList!
+  usageInstructions: UsageInstructions!
+  keyActives: [ActiveIngredient!]!
+  warnings: [String!]!
+  images: [String!]!
+}
+"""
+Study Level - Professional/Clinical Data
+"""
+type ProductStudy {
+  clinicalData: ClinicalData
+  formulationScience: String
+  contraindications: [String!]!
+  professionalNotes: String
+  detailedSteps: [String!]!
+  expectedResults: String!
+  timeToResults: String!
+}
+
+type IngredientList {
+  inci: [Ingredient!]!
+  actives: [ActiveIngredient!]!
+  allergens: [String!]!
+  vegan: Boolean!
+  crueltyFree: Boolean!
+}
+
+type Ingredient {
+  name: String!
+  concentration: Float
+  function: String!
+  warnings: [String!]
+}
+
+type ActiveIngredient {
+  name: String!
+  concentration: Float!
+  type: String!
+}
+
+type UsageInstructions {
+  application: String!
+  frequency: String!
+  timeOfDay: TimeOfDay!
+  patchTestRequired: Boolean!
+}
+
+type ClinicalData {
+  trials: [ClinicalTrial!]!
+  certifications: [String!]!
+  testReports: [TestReport!]!
+}
+
+type ClinicalTrial {
+  studyName: String!
+  participants: Int!
+  duration: String!
+  results: String!
+  publicationUrl: String
+}
+
+type TestReport {
+  testType: String!
+  reportUrl: String!
+  testedAt: DateTime!
+}
+
+enum SkinType {
+  NORMAL
+  DRY
+  OILY
+  COMBINATION
+  SENSITIVE
+}
+
+enum TimeOfDay {
+  MORNING
+  EVENING
+  BOTH
+}
+"""
+Product filters
+"""
+input ProductFiltersInput {
+  skinTypes: [SkinType!]
+  priceRange: PriceRangeInput
+  brand: String
+  category: String
+  inStock: Boolean
+}
+
+input PriceRangeInput {
+  min: Float
+  max: Float
+}
+"""
+Product connection for pagination
+"""
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProductEdge {
+  node: Product!
+  cursor: String!
+}
+"""
+Create product input
+"""
+input CreateProductInput {
+  vendureProductId: ID!
+  vendorOrganizationId: ID!
+  glance: ProductGlanceInput!
+  scan: ProductScanInput!
+  study: ProductStudyInput
+}
+
+input ProductGlanceInput {
+  heroBenefit: String!
+  skinTypes: [SkinType!]!
+  rating: Float
+  reviewCount: Int
+}
+
+input ProductScanInput {
+  ingredients: IngredientListInput!
+  usageInstructions: UsageInstructionsInput!
+  keyActives: [ActiveIngredientInput!]!
+  warnings: [String!]!
+}
+
+input ProductStudyInput {
+  formulationScience: String
+  contraindications: [String!]!
+  professionalNotes: String
+  detailedSteps: [String!]!
+  expectedResults: String!
+  timeToResults: String!
+}
+
+input IngredientListInput {
+  inci: [IngredientInput!]!
+  actives: [ActiveIngredientInput!]!
+  allergens: [String!]!
+  vegan: Boolean!
+  crueltyFree: Boolean!
+}
+
+input IngredientInput {
+  name: String!
+  concentration: Float
+  function: String!
+  warnings: [String!]
+}
+
+input ActiveIngredientInput {
+  name: String!
+  concentration: Float!
+  type: String!
+}
+
+input UsageInstructionsInput {
+  application: String!
+  frequency: String!
+  timeOfDay: TimeOfDay!
+  patchTestRequired: Boolean!
+}
+
+input UpdateProductInput {
+  glance: ProductGlanceInput
+  scan: ProductScanInput
+  study: ProductStudyInput
+}
+"""
+Product operation result
+"""
+type ProductResult {
+  success: Boolean!
+  product: Product
+  errors: [Error!]
+}
+"""
+Job status response for async operations
+"""
+type JobStatusResponse {
+  jobId: String!
+  status: JobStatus!
+  message: String
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}

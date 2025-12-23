@@ -1,0 +1,164 @@
+/**
+ * Progressive Disclosure Animations
+ *
+ * Task: Day 5 - Accessibility Enhancement
+ *
+ * Provides smooth animations for progressive disclosure levels
+ * Respects user's motion preferences (prefers-reduced-motion)
+ */
+
+/* Base animation variables */
+:root {
+  --progressive-transition-duration: 500ms;
+  --progressive-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --progressive-transform-distance: 20px;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --progressive-transition-duration: 0.01ms;
+    --progressive-transform-distance: 0px;
+  }
+
+  /* Disable all animations and transitions for progressive components */
+  .progressive-content,
+  .progressive-content *,
+  .progressive-product-card,
+  .progressive-product-card *,
+  .progressive-product-detail,
+  .progressive-product-detail * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  /* Remove transform animations */
+  .progressive-content.progressive-transitioning,
+  .progressive-product-card.progressive-transitioning,
+  .progressive-product-detail .glance-level,
+  .progressive-product-detail .scan-level,
+  .progressive-product-detail .study-level {
+    transform: none !important;
+  }
+}
+
+/* Fade In Animation (Glance Level) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--progressive-transform-distance));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.progressive-fade-in {
+  animation: fadeIn var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+/* Slide In Animation (Scan Level) */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--progressive-transform-distance)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.progressive-slide-in {
+  animation: slideIn var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+/* Expand In Animation (Study Level) */
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.progressive-expand-in {
+  animation: expandIn var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+/* Smooth transitions for interactive elements */
+.progressive-interactive {
+  transition: all var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+/* Level transitions */
+.progressive-content {
+  transition: opacity var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+.progressive-content.progressive-transitioning {
+  opacity: 0.9;
+}
+
+/* Progress indicator animations */
+.progressive-level-button {
+  transition: all 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-level-button {
+    transition: none;
+  }
+}
+
+/* Spinner animation (respects motion preferences) */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progressive-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-spinner {
+    animation: none;
+    border-color: #3b82f6 transparent transparent transparent;
+  }
+}
+
+/* Hover effects */
+.progressive-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* Image zoom on hover */
+.progressive-image-zoom {
+  transition: transform var(--progressive-transition-duration) var(--progressive-transition-timing);
+}
+
+.progressive-image-zoom:hover {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-image-zoom,
+  .progressive-image-zoom:hover {
+    transform: none;
+  }
+}

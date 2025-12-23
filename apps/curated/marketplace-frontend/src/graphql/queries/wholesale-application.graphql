@@ -1,0 +1,221 @@
+# Wholesale Application Queries
+# Week 8: Practitioner Verification System
+
+query MyWholesaleApplication {
+  myWholesaleApplication {
+    id
+    businessName
+    businessType
+    taxId
+    businessAddress {
+      street
+      street2
+      city
+      state
+      zipCode
+      country
+    }
+    yearsInOperation
+    websiteUrl
+    phoneNumber
+    licenseDocuments {
+      id
+      filename
+      url
+      size
+      mimeType
+      uploadedAt
+      documentType
+    }
+    locationPhotos {
+      id
+      filename
+      url
+      size
+      mimeType
+      uploadedAt
+      documentType
+    }
+    wholesalePaperworkSigned
+    status
+    reviewNotes
+    rejectionReason
+    verificationResult {
+      verified
+      provider
+      verifiedAt
+      licenseNumber
+      expirationDate
+      error
+    }
+    submittedAt
+    reviewedAt
+    approvedAt
+    applicantNotes
+    createdAt
+    updatedAt
+  }
+}
+
+query WholesaleApplication($id: ID!) {
+  wholesaleApplication(id: $id) {
+    id
+    user {
+      id
+      identifier
+    }
+    businessName
+    businessType
+    taxId
+    businessAddress {
+      street
+      street2
+      city
+      state
+      zipCode
+      country
+    }
+    yearsInOperation
+    websiteUrl
+    phoneNumber
+    licenseDocuments {
+      id
+      filename
+      url
+      size
+      mimeType
+      uploadedAt
+      documentType
+    }
+    locationPhotos {
+      id
+      filename
+      url
+      size
+      mimeType
+      uploadedAt
+      documentType
+    }
+    wholesalePaperworkSigned
+    status
+    reviewedBy {
+      id
+      identifier
+    }
+    reviewNotes
+    rejectionReason
+    verificationResult {
+      verified
+      provider
+      verifiedAt
+      licenseNumber
+      expirationDate
+      details
+      error
+    }
+    submittedAt
+    reviewedAt
+    approvedAt
+    applicantNotes
+    createdAt
+    updatedAt
+  }
+}
+
+query WholesaleApplications(
+  $pagination: ApplicationPaginationInput
+  $filters: ApplicationFiltersInput
+) {
+  wholesaleApplications(pagination: $pagination, filters: $filters) {
+    items {
+      id
+      user {
+        id
+        identifier
+      }
+      businessName
+      businessType
+      status
+      submittedAt
+      reviewedAt
+      approvedAt
+      createdAt
+    }
+    totalCount
+  }
+}
+
+query PendingApplicationsCount {
+  pendingApplicationsCount
+}
+
+mutation CreateWholesaleApplication($input: CreateWholesaleApplicationInput!) {
+  createWholesaleApplication(input: $input) {
+    application {
+      id
+      businessName
+      status
+      createdAt
+    }
+    message
+  }
+}
+
+mutation UpdateWholesaleApplication(
+  $id: ID!
+  $input: UpdateWholesaleApplicationInput!
+) {
+  updateWholesaleApplication(id: $id, input: $input) {
+    id
+    businessName
+    status
+    updatedAt
+  }
+}
+
+mutation SubmitWholesaleApplication($id: ID!) {
+  submitWholesaleApplication(id: $id) {
+    application {
+      id
+      status
+      submittedAt
+    }
+    message
+  }
+}
+
+mutation ReviewWholesaleApplication(
+  $id: ID!
+  $input: ReviewWholesaleApplicationInput!
+) {
+  reviewWholesaleApplication(id: $id, input: $input) {
+    application {
+      id
+      status
+      reviewedAt
+      approvedAt
+      reviewNotes
+      rejectionReason
+    }
+    message
+  }
+}
+
+mutation WithdrawWholesaleApplication($id: ID!) {
+  withdrawWholesaleApplication(id: $id) {
+    id
+    status
+  }
+}
+
+mutation RequestLicenseVerification($applicationId: ID!) {
+  requestLicenseVerification(applicationId: $applicationId) {
+    id
+    verificationResult {
+      verified
+      provider
+      verifiedAt
+      error
+    }
+  }
+}

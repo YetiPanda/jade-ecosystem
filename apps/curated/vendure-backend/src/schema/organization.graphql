@@ -1,0 +1,295 @@
+# Organization Schema - Spa and Vendor Organizations
+
+type Query {
+  """Get spa organization by ID"""
+  spaOrganization(id: ID!): SpaOrganization
+
+  """List all spa organizations (admin only)"""
+  spaOrganizations(pagination: PaginationInput): SpaOrganizationConnection!
+
+  """Get vendor organization by ID"""
+  vendorOrganization(id: ID!): VendorOrganization
+
+  """List vendor organizations"""
+  vendorOrganizations(
+    status: ApprovalStatus
+    pagination: PaginationInput
+  ): VendorOrganizationConnection!
+}
+
+type Mutation {
+  """Create spa organization"""
+  createSpaOrganization(input: CreateSpaOrganizationInput!): SpaOrganizationResult!
+
+  """Update spa organization"""
+  updateSpaOrganization(id: ID!, input: UpdateSpaOrganizationInput!): SpaOrganizationResult!
+
+  """Create vendor organization"""
+  createVendorOrganization(input: CreateVendorOrganizationInput!): VendorOrganizationResult!
+
+  """Update vendor organization"""
+  updateVendorOrganization(id: ID!, input: UpdateVendorOrganizationInput!): VendorOrganizationResult!
+
+  """Approve/reject vendor organization (admin only)"""
+  approveVendorOrganization(id: ID!, decision: ApprovalDecision!, notes: String): VendorOrganizationResult!
+}
+"""
+Spa Organization
+"""
+type SpaOrganization {
+  id: ID!
+  name: String!
+  displayName: String!
+  contactEmail: String!
+  contactPhone: String
+  address: Address!
+  logoUrl: String
+  subscriptionTier: SubscriptionTier!
+  subscriptionStatus: SubscriptionStatus!
+  isActive: Boolean!
+  locations: [Location!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum SubscriptionTier {
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIAL
+}
+"""
+Vendor Organization
+"""
+type VendorOrganization {
+  id: ID!
+  companyName: String!
+  displayName: String!
+  contactEmail: String!
+  contactPhone: String
+  address: Address!
+  businessLicense: BusinessLicense!
+  certifications: [Certification!]!
+  insurance: InsuranceInfo!
+  approvalStatus: ApprovalStatus!
+  qualityScore: Float!
+  fulfillmentSettings: FulfillmentSettings!
+  isActive: Boolean!
+  approvedAt: DateTime
+  products: [Product!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REQUIRES_INFO
+}
+
+enum ApprovalDecision {
+  APPROVE
+  REJECT
+  REQUEST_INFO
+}
+
+type BusinessLicense {
+  number: String!
+  state: String!
+  expirationDate: DateTime!
+  documentUrl: String!
+}
+
+type Certification {
+  name: String!
+  issuingOrg: String!
+  issueDate: DateTime!
+  expirationDate: DateTime
+  certificateUrl: String
+}
+
+type InsuranceInfo {
+  provider: String!
+  policyNumber: String!
+  coverage: Money!
+  expirationDate: DateTime!
+  documentUrl: String!
+}
+
+type FulfillmentSettings {
+  handlingTime: Int!
+  shippingMethods: [String!]!
+  freeShippingThreshold: Float
+  returnPolicy: String!
+}
+"""
+Location (for spa chains)
+"""
+type Location {
+  id: ID!
+  spaOrganizationId: ID!
+  name: String!
+  address: Address!
+  phone: String
+  timezone: String!
+  operatingHours: JSON!
+  isActive: Boolean!
+  serviceProviders: [ServiceProvider!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+"""
+Service Provider
+"""
+type ServiceProvider {
+  id: ID!
+  userId: ID!
+  user: User!
+  spaOrganization: SpaOrganization!
+  location: Location
+  licenseInfo: LicenseInfo!
+  specialties: [String!]!
+  bio: String
+  avatarUrl: String
+  availabilityWindows: JSON!
+  isActive: Boolean!
+  appointments: [Appointment!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum LicenseType {
+  ESTHETICIAN
+  COSMETOLOGIST
+  MASSAGE_THERAPIST
+  MEDICAL_DIRECTOR
+  NURSE_PRACTITIONER
+}
+
+type LicenseInfo {
+  type: LicenseType!
+  number: String!
+  state: String!
+  expirationDate: DateTime!
+  verified: Boolean!
+  verifiedAt: DateTime
+  verifiedBy: ID
+}
+"""
+Pagination connections
+"""
+type SpaOrganizationConnection {
+  edges: [SpaOrganizationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type SpaOrganizationEdge {
+  node: SpaOrganization!
+  cursor: String!
+}
+
+type VendorOrganizationConnection {
+  edges: [VendorOrganizationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type VendorOrganizationEdge {
+  node: VendorOrganization!
+  cursor: String!
+}
+"""
+Input types
+"""
+input CreateSpaOrganizationInput {
+  name: String!
+  displayName: String!
+  contactEmail: String!
+  contactPhone: String
+  address: AddressInput!
+  logoUrl: String
+  subscriptionTier: SubscriptionTier = BASIC
+}
+
+input UpdateSpaOrganizationInput {
+  displayName: String
+  contactEmail: String
+  contactPhone: String
+  address: AddressInput
+  logoUrl: String
+}
+
+input CreateVendorOrganizationInput {
+  companyName: String!
+  displayName: String!
+  contactEmail: String!
+  contactPhone: String
+  address: AddressInput!
+  businessLicense: BusinessLicenseInput!
+  certifications: [CertificationInput!]!
+  insurance: InsuranceInfoInput!
+  fulfillmentSettings: FulfillmentSettingsInput!
+}
+
+input UpdateVendorOrganizationInput {
+  displayName: String
+  contactEmail: String
+  contactPhone: String
+  address: AddressInput
+  businessLicense: BusinessLicenseInput
+  certifications: [CertificationInput!]
+  insurance: InsuranceInfoInput
+  fulfillmentSettings: FulfillmentSettingsInput
+}
+
+input BusinessLicenseInput {
+  number: String!
+  state: String!
+  expirationDate: DateTime!
+  documentUrl: String!
+}
+
+input CertificationInput {
+  name: String!
+  issuingOrg: String!
+  issueDate: DateTime!
+  expirationDate: DateTime
+  certificateUrl: String
+}
+
+input InsuranceInfoInput {
+  provider: String!
+  policyNumber: String!
+  coverage: MoneyInput!
+  expirationDate: DateTime!
+  documentUrl: String!
+}
+
+input FulfillmentSettingsInput {
+  handlingTime: Int!
+  shippingMethods: [String!]!
+  freeShippingThreshold: Float
+  returnPolicy: String!
+}
+"""
+Result types
+"""
+type SpaOrganizationResult {
+  success: Boolean!
+  spaOrganization: SpaOrganization
+  errors: [Error!]
+}
+
+type VendorOrganizationResult {
+  success: Boolean!
+  vendorOrganization: VendorOrganization
+  errors: [Error!]
+}

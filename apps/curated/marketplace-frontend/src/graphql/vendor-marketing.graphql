@@ -1,0 +1,176 @@
+# Vendor Marketing Campaigns Queries and Mutations
+# Marketing Analytics Integration
+
+query VendorCampaigns($filter: CampaignFilterInput, $limit: Int, $offset: Int) {
+  vendorCampaigns(filter: $filter, limit: $limit, offset: $offset) {
+    id
+    vendorId
+    name
+    type
+    status
+    description
+    startDate
+    endDate
+    budgetDollars
+    spentDollars
+    budgetUtilization
+    impressions
+    clicks
+    conversions
+    revenueDollars
+    ctr
+    cpcDollars
+    roas
+    conversionRate
+    audienceSize
+    createdAt
+    updatedAt
+  }
+}
+
+query VendorCampaign($id: ID!) {
+  vendorCampaign(id: $id) {
+    id
+    vendorId
+    name
+    type
+    status
+    description
+    startDate
+    endDate
+    budgetDollars
+    spentDollars
+    budgetUtilization
+    impressions
+    clicks
+    conversions
+    revenueDollars
+    ctr
+    cpcDollars
+    roas
+    conversionRate
+    audienceSize
+    audienceDetails
+    metadata
+    createdAt
+    updatedAt
+  }
+}
+
+query CampaignPerformanceSummary($dateRange: DateRangeInput!) {
+  campaignPerformanceSummary(dateRange: $dateRange) {
+    dateRange {
+      startDate
+      endDate
+    }
+    totalRevenue
+    totalSpent
+    overallROAS
+    overallCTR
+    overallConversionRate
+    activeCampaigns
+    completedCampaigns
+    channelPerformance {
+      channel
+      campaigns
+      spent
+      revenue
+      roas
+      conversions
+    }
+    topCampaignsByROAS {
+      id
+      name
+      type
+      roas
+      revenueDollars
+      spentDollars
+    }
+    topCampaignsByRevenue {
+      id
+      name
+      type
+      revenueDollars
+      spentDollars
+      roas
+    }
+  }
+}
+
+mutation CreateCampaign($input: CreateCampaignInput!) {
+  createCampaign(input: $input) {
+    success
+    campaign {
+      id
+      name
+      type
+      status
+      startDate
+      endDate
+      budgetDollars
+      createdAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation UpdateCampaign($input: UpdateCampaignInput!) {
+  updateCampaign(input: $input) {
+    success
+    campaign {
+      id
+      name
+      type
+      status
+      description
+      startDate
+      endDate
+      budgetDollars
+      updatedAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation UpdateCampaignMetrics($input: UpdateCampaignMetricsInput!) {
+  updateCampaignMetrics(input: $input) {
+    success
+    campaign {
+      id
+      impressions
+      clicks
+      conversions
+      revenueDollars
+      spentDollars
+      ctr
+      cpcDollars
+      roas
+      conversionRate
+      budgetUtilization
+      updatedAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation DeleteCampaign($campaignId: ID!) {
+  deleteCampaign(campaignId: $campaignId) {
+    success
+    errors {
+      code
+      message
+    }
+  }
+}

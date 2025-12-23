@@ -1,0 +1,143 @@
+# Admin Operations for Vendor Portal
+# Feature 011: Vendor Portal MVP - Phase E.2
+# Admin-only mutations for application review and approval
+
+# ============================================================================
+# Application Review & Approval
+# ============================================================================
+
+query AdminVendorApplications(
+  $statusFilter: ApplicationStatus
+  $assigneeFilter: String
+  $limit: Int
+  $offset: Int
+) {
+  adminVendorApplications(
+    statusFilter: $statusFilter
+    assigneeFilter: $assigneeFilter
+    limit: $limit
+    offset: $offset
+  ) {
+    id
+    brandName
+    contactFirstName
+    contactLastName
+    contactEmail
+    contactPhone
+    contactRole
+    legalName
+    website
+    yearFounded
+    headquarters
+    employeeCount
+    annualRevenue
+    productCategories
+    skuCount
+    priceRange
+    targetMarket
+    currentDistribution
+    values
+    certifications
+    whyJade
+    documents {
+      productCatalogUrl
+      lineSheetUrl
+      insuranceCertificateUrl
+      businessLicenseUrl
+    }
+    status
+    submittedAt
+    slaDeadline
+    assignedReviewerId
+    assignedReviewerName
+    riskLevel
+    riskAssessment
+    decidedAt
+    approvalConditions
+    rejectionReason
+    createdAt
+    updatedAt
+  }
+}
+
+query AdminVendorApplication($id: ID!) {
+  vendorApplication(id: $id) {
+    id
+    brandName
+    contactFirstName
+    contactLastName
+    contactEmail
+    contactPhone
+    contactRole
+    legalName
+    website
+    yearFounded
+    headquarters
+    employeeCount
+    annualRevenue
+    productCategories
+    skuCount
+    priceRange
+    targetMarket
+    currentDistribution
+    values
+    certifications
+    whyJade
+    documents {
+      productCatalogUrl
+      lineSheetUrl
+      insuranceCertificateUrl
+      businessLicenseUrl
+    }
+    status
+    submittedAt
+    slaDeadline
+    assignedReviewerId
+    assignedReviewerName
+    riskLevel
+    riskAssessment
+    decidedAt
+    approvalConditions
+    rejectionReason
+    createdAt
+    updatedAt
+  }
+}
+
+mutation ReviewVendorApplication($input: ApplicationReviewDecisionInput!) {
+  reviewVendorApplication(input: $input) {
+    success
+    application {
+      id
+      brandName
+      status
+      decidedAt
+      approvalConditions
+      rejectionReason
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation AssignApplicationReviewer($applicationId: ID!, $reviewerId: ID!) {
+  assignApplicationReviewer(
+    applicationId: $applicationId
+    reviewerId: $reviewerId
+  ) {
+    success
+    application {
+      id
+      assignedReviewerId
+      assignedReviewerName
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}

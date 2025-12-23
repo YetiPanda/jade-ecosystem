@@ -1,0 +1,64 @@
+# Cart queries for marketplace
+
+query MyCart {
+  myCart {
+    orderId
+    items {
+      id
+      productId
+      variantId
+      productName
+      vendorId
+      quantity
+      unitPrice
+      appliedTier {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      lineTotal
+      featuredAssetUrl
+    }
+    vendorCarts {
+      vendorId
+      vendorName
+      items {
+        id
+        productName
+        quantity
+        unitPrice
+        lineTotal
+      }
+      subtotal
+    }
+    totalItems
+    subtotal
+    tax
+    shipping
+    totalDiscount
+    total
+    updatedAt
+  }
+}
+
+query MyCartByVendor {
+  myCartByVendor {
+    vendorId
+    vendorName
+    items {
+      id
+      productName
+      quantity
+      unitPrice
+      lineTotal
+    }
+    subtotal
+  }
+}
+
+query ValidateCart {
+  validateCart {
+    valid
+    errors
+  }
+}

@@ -1,0 +1,226 @@
+# Vendor Orders Queries and Mutations
+# Based on specs/011-vendor-portal/contracts/vendor.graphql
+
+query VendorOrders(
+  $filter: OrderFilterInput
+  $sort: OrderSortInput
+  $pagination: PaginationInput
+) {
+  vendorOrders(filter: $filter, sort: $sort, pagination: $pagination) {
+    edges {
+      node {
+        id
+        orderNumber
+        spaId
+        spaName
+        spaContact {
+          name
+          email
+          phone
+        }
+        shippingAddress {
+          line1
+          line2
+          city
+          state
+          postalCode
+          country
+        }
+        items {
+          productId
+          productName
+          sku
+          imageUrl
+          quantity
+          unitPrice
+          totalPrice
+        }
+        subtotal
+        shipping
+        tax
+        total
+        status
+        statusHistory {
+          status
+          changedAt
+          changedBy
+          note
+        }
+        fulfillment {
+          carrier
+          trackingNumber
+          trackingUrl
+          estimatedDelivery
+          actualDelivery
+        }
+        conversationId
+        createdAt
+        updatedAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query VendorOrder($id: ID!) {
+  vendorOrder(id: $id) {
+    id
+    orderNumber
+    spaId
+    spaName
+    spaContact {
+      name
+      email
+      phone
+    }
+    shippingAddress {
+      line1
+      line2
+      city
+      state
+      postalCode
+      country
+    }
+    items {
+      productId
+      productName
+      sku
+      imageUrl
+      quantity
+      unitPrice
+      totalPrice
+    }
+    subtotal
+    shipping
+    tax
+    total
+    status
+    statusHistory {
+      status
+      changedAt
+      changedBy
+      note
+    }
+    fulfillment {
+      carrier
+      trackingNumber
+      trackingUrl
+      estimatedDelivery
+      actualDelivery
+    }
+    conversationId
+    createdAt
+    updatedAt
+  }
+}
+
+query OrderStatusCounts {
+  orderStatusCounts {
+    pending
+    confirmed
+    processing
+    shipped
+    delivered
+    cancelled
+    disputed
+  }
+}
+
+mutation UpdateOrderStatus($input: UpdateOrderStatusInput!) {
+  updateOrderStatus(input: $input) {
+    id
+    orderNumber
+    status
+    statusHistory {
+      status
+      changedAt
+      changedBy
+      note
+    }
+    updatedAt
+  }
+}
+
+mutation AddShippingInfo($input: AddShippingInfoInput!) {
+  addShippingInfo(input: $input) {
+    id
+    orderNumber
+    fulfillment {
+      carrier
+      trackingNumber
+      trackingUrl
+      estimatedDelivery
+      actualDelivery
+    }
+    status
+    updatedAt
+  }
+}
+
+# Vendor Application Mutations & Queries
+
+mutation SubmitVendorApplication($input: SubmitVendorApplicationInput!) {
+  submitVendorApplication(input: $input) {
+    success
+    application {
+      id
+      brandName
+      status
+      submittedAt
+      slaDeadline
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+query VendorApplication($id: ID!) {
+  vendorApplication(id: $id) {
+    id
+    contactFirstName
+    contactLastName
+    contactEmail
+    contactPhone
+    contactRole
+    brandName
+    legalName
+    website
+    yearFounded
+    headquarters
+    employeeCount
+    annualRevenue
+    productCategories
+    skuCount
+    priceRange
+    targetMarket
+    currentDistribution
+    values
+    certifications
+    whyJade
+    documents {
+      productCatalogUrl
+      lineSheetUrl
+      insuranceCertificateUrl
+      businessLicenseUrl
+    }
+    status
+    submittedAt
+    slaDeadline
+    assignedReviewerId
+    assignedReviewerName
+    riskLevel
+    decidedAt
+    approvalConditions
+    rejectionReason
+  }
+}

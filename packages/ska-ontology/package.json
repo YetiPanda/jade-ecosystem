@@ -1,0 +1,51 @@
+{
+  "name": "@jade/ska-ontology",
+  "version": "1.0.0",
+  "description": "Semantic Knowledge Atoms ontology package for JADE Skincare Marketplace",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YetiPanda/jade-ecosystem"
+  },
+  "keywords": [
+    "ontology",
+    "semantic-web",
+    "knowledge-graph",
+    "skos",
+    "owl",
+    "rdf",
+    "skincare",
+    "ai-governance",
+    "compliance"
+  ],
+  "author": "JADE Ecosystem Team",
+  "license": "MIT",
+  "files": [
+    "schemas/**/*.ttl",
+    "ska-unified.ttl",
+    "queries/**/*.sparql",
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "validate": "riot --validate schemas/*.ttl ska-unified.ttl",
+    "test:sparql": "node scripts/test-queries.js",
+    "build": "echo 'No build step required for ontology package'",
+    "lint": "riot --validate schemas/*.ttl"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "peerDependencies": {},
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js",
+      "types": "./index.d.ts"
+    },
+    "./schemas/*": "./schemas/*",
+    "./queries/*": "./queries/*",
+    "./ska-unified.ttl": "./ska-unified.ttl"
+  }
+}

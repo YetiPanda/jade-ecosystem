@@ -1,0 +1,598 @@
+# Vendor Admin GraphQL Contract
+
+"""
+JADE Vendor Admin API
+Version: 1.0.0
+Status: Draft
+
+This contract defines the GraphQL schema for internal admin tools
+related to vendor management, application review, and certification verification.
+
+Access: Internal admin users only (role-based access control required)
+"""
+
+# ==============================================================================
+# ADMIN-SPECIFIC ENUMS
+# ==============================================================================
+
+"""
+Risk level assessed during application review.
+"""
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+"""
+Risk factor categories.
+"""
+enum RiskFactorCategory {
+  BUSINESS_VERIFICATION
+  FINANCIAL
+  PRODUCT_QUALITY
+  BRAND_FIT
+  COMPLIANCE
+}
+
+"""
+Review decision options.
+"""
+enum ReviewDecision {
+  APPROVE
+  CONDITIONALLY_APPROVE
+  REQUEST_INFO
+  REJECT
+}
+
+"""
+SLA status for application review.
+"""
+enum SlaStatus {
+  ON_TRACK
+  AT_RISK
+  BREACHED
+}
+
+# ==============================================================================
+# ADMIN INPUT TYPES
+# ==============================================================================
+
+"""
+Filter for application queue.
+"""
+input ApplicationQueueFilterInput {
+  status: [ApplicationStatus!]
+  assigneeId: ID
+  slaStatus: SlaStatus
+  riskLevel: RiskLevel
+  dateRange: DateRangeInput
+  searchQuery: String
+}
+
+"""
+Sort options for application queue.
+"""
+input ApplicationQueueSortInput {
+  field: ApplicationSortField!
+  direction: SortDirection!
+}
+
+enum ApplicationSortField {
+  SUBMITTED_AT
+  SLA_DEADLINE
+  RISK_SCORE
+  BRAND_NAME
+}
+
+"""
+Input for making a review decision.
+"""
+input ReviewDecisionInput {
+  applicationId: ID!
+  decision: ReviewDecision!
+  note: String!
+  conditions: [String!]
+  rejectionReason: String
+}
+
+"""
+Input for assigning an application to a reviewer.
+"""
+input AssignApplicationInput {
+  applicationId: ID!
+  assigneeId: ID!
+}
+
+"""
+Input for adding a review note.
+"""
+input AddReviewNoteInput {
+  applicationId: ID!
+  note: String!
+  category: ReviewNoteCategory!
+}
+
+enum ReviewNoteCategory {
+  GENERAL
+  RISK
+  QUALITY
+  FIT
+  COMPLIANCE
+}
+
+"""
+Filter for certification verification queue.
+"""
+input CertificationQueueFilterInput {
+  status: [CertificationStatus!]
+  type: [CertificationType!]
+  assigneeId: ID
+  dateRange: DateRangeInput
+}
+
+"""
+Input for certification verification decision.
+"""
+input CertificationVerificationInput {
+  certificationId: ID!
+  decision: CertificationDecision!
+  note: String
+  rejectionReason: String
+}
+
+enum CertificationDecision {
+  APPROVE
+  REJECT
+  REQUEST_CLEARER_DOCUMENT
+}
+
+"""
+Filter for moderation queue.
+"""
+input ModerationQueueFilterInput {
+  status: [ModerationStatus!]
+  dateRange: DateRangeInput
+}
+
+"""
+Input for moderation decision.
+"""
+input ModerationDecisionInput {
+  messageId: ID!
+  decision: ModerationDecisionType!
+  reason: String
+}
+
+enum ModerationDecisionType {
+  APPROVE
+  REJECT
+  EDIT_REQUIRED
+}
+
+# ==============================================================================
+# ADMIN TYPES
+# ==============================================================================
+
+"""
+Application queue item with admin-specific data.
+"""
+type ApplicationQueueItem {
+  application: VendorApplication!
+  
+  # Review status
+  assignee: AdminUser
+  riskAssessment: RiskAssessment
+  reviewNotes: [ReviewNote!]!
+  
+  # SLA tracking
+  slaStatus: SlaStatus!
+  slaDeadline: DateTime!
+  timeRemaining: String!
+  
+  # Metrics
+  daysInCurrentStatus: Int!
+}
+
+type AdminUser {
+  id: ID!
+  name: String!
+  email: EmailAddress!
+  role: AdminRole!
+}
+
+enum AdminRole {
+  REVIEWER
+  SENIOR_REVIEWER
+  ADMIN
+  SUPER_ADMIN
+}
+
+"""
+Automated risk assessment for an application.
+"""
+type RiskAssessment {
+  overallLevel: RiskLevel!
+  overallScore: Int!
+  factors: [RiskFactor!]!
+  generatedAt: DateTime!
+}
+
+type RiskFactor {
+  category: RiskFactorCategory!
+  level: RiskLevel!
+  description: String!
+  details: String
+}
+
+type ReviewNote {
+  id: ID!
+  reviewerId: ID!
+  reviewerName: String!
+  note: String!
+  category: ReviewNoteCategory!
+  createdAt: DateTime!
+}
+
+type ApplicationQueueConnection {
+  edges: [ApplicationQueueEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+  statusCounts: ApplicationStatusCounts!
+  slaCounts: SlaStatusCounts!
+}
+
+type ApplicationQueueEdge {
+  node: ApplicationQueueItem!
+  cursor: String!
+}
+
+type ApplicationStatusCounts {
+  submitted: Int!
+  underReview: Int!
+  additionalInfoRequested: Int!
+  approved: Int!
+  conditionallyApproved: Int!
+  rejected: Int!
+  withdrawn: Int!
+}
+
+type SlaStatusCounts {
+  onTrack: Int!
+  atRisk: Int!
+  breached: Int!
+}
+
+"""
+Certification verification queue item.
+"""
+type CertificationQueueItem {
+  certification: VendorCertification!
+  vendorProfile: VendorProfile!
+  
+  # Review status
+  assignee: AdminUser
+  submittedAt: DateTime!
+  
+  # Verification checklist
+  checklist: VerificationChecklist!
+}
+
+type VerificationChecklist {
+  items: [ChecklistItem!]!
+  completedCount: Int!
+  totalCount: Int!
+}
+
+type ChecklistItem {
+  id: ID!
+  label: String!
+  completed: Boolean!
+  completedBy: String
+  completedAt: DateTime
+}
+
+type CertificationQueueConnection {
+  edges: [CertificationQueueEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+  pendingCount: Int!
+}
+
+type CertificationQueueEdge {
+  node: CertificationQueueItem!
+  cursor: String!
+}
+
+"""
+Message moderation queue item.
+"""
+type ModerationQueueItem {
+  message: Message!
+  conversation: Conversation!
+  vendorProfile: VendorProfile!
+  
+  # Moderation details
+  flagReason: String!
+  flaggedAt: DateTime!
+  autoDetectedCategories: [String!]!
+  
+  # Context
+  previousMessages: [Message!]!
+}
+
+type ModerationQueueConnection {
+  edges: [ModerationQueueEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+  pendingCount: Int!
+}
+
+type ModerationQueueEdge {
+  node: ModerationQueueItem!
+  cursor: String!
+}
+
+"""
+Admin dashboard stats.
+"""
+type AdminDashboardStats {
+  # Applications
+  applicationsPendingReview: Int!
+  applicationsAtRisk: Int!
+  applicationsApprovedThisMonth: Int!
+  avgReviewTimeDays: Float!
+  slaComplianceRate: Float!
+  
+  # Certifications
+  certificationsPendingReview: Int!
+  certificationsVerifiedThisMonth: Int!
+  avgVerificationTimeDays: Float!
+  
+  # Moderation
+  messagesPendingModeration: Int!
+  messagesModeratedThisMonth: Int!
+  flaggedMessageRate: Float!
+  
+  # Overall
+  totalActiveVendors: Int!
+  vendorsOnboardedThisMonth: Int!
+  avgOnboardingTimeDays: Float!
+}
+
+"""
+SLA report for a time period.
+"""
+type SlaReport {
+  period: DateRangeInput!
+  totalApplications: Int!
+  completedOnTime: Int!
+  completedLate: Int!
+  stillPending: Int!
+  complianceRate: Float!
+  avgResponseTimeHours: Float!
+  breachesByReviewer: [ReviewerSlaStats!]!
+}
+
+type ReviewerSlaStats {
+  reviewer: AdminUser!
+  totalAssigned: Int!
+  completedOnTime: Int!
+  completedLate: Int!
+  avgResponseTimeHours: Float!
+}
+
+# ==============================================================================
+# ADMIN QUERIES
+# ==============================================================================
+
+extend type Query {
+  # ─────────────────────────────────────────────────────────────────────────
+  # APPLICATION REVIEW
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the application review queue.
+  Requires: REVIEWER role or higher.
+  """
+  applicationQueue(
+    filter: ApplicationQueueFilterInput
+    sort: ApplicationQueueSortInput
+    pagination: PaginationInput
+  ): ApplicationQueueConnection!
+  
+  """
+  Get a single application with full admin details.
+  Requires: REVIEWER role or higher.
+  """
+  applicationDetail(applicationId: ID!): ApplicationQueueItem
+  
+  """
+  Get available reviewers for assignment.
+  Requires: ADMIN role or higher.
+  """
+  availableReviewers: [AdminUser!]!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # CERTIFICATION VERIFICATION
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the certification verification queue.
+  Requires: REVIEWER role or higher.
+  """
+  certificationQueue(
+    filter: CertificationQueueFilterInput
+    pagination: PaginationInput
+  ): CertificationQueueConnection!
+  
+  """
+  Get a single certification for verification.
+  Requires: REVIEWER role or higher.
+  """
+  certificationDetail(certificationId: ID!): CertificationQueueItem
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # MESSAGE MODERATION
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the message moderation queue.
+  Requires: REVIEWER role or higher.
+  """
+  moderationQueue(
+    filter: ModerationQueueFilterInput
+    pagination: PaginationInput
+  ): ModerationQueueConnection!
+  
+  """
+  Get a single message for moderation.
+  Requires: REVIEWER role or higher.
+  """
+  moderationDetail(messageId: ID!): ModerationQueueItem
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # ADMIN DASHBOARD & REPORTING
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get admin dashboard statistics.
+  Requires: ADMIN role or higher.
+  """
+  adminDashboardStats: AdminDashboardStats!
+  
+  """
+  Get SLA compliance report.
+  Requires: ADMIN role or higher.
+  """
+  slaReport(dateRange: DateRangeInput!): SlaReport!
+  
+  """
+  Get all vendors (admin view).
+  Requires: ADMIN role or higher.
+  """
+  allVendors(
+    filter: VendorFilterInput
+    pagination: PaginationInput
+  ): VendorConnection!
+}
+
+input VendorFilterInput {
+  status: [VendorStatus!]
+  values: [VendorValue!]
+  searchQuery: String
+  certificationStatus: CertificationStatus
+}
+
+enum VendorStatus {
+  ACTIVE
+  ONBOARDING
+  SUSPENDED
+  INACTIVE
+}
+
+type VendorConnection {
+  edges: [VendorEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type VendorEdge {
+  node: VendorProfile!
+  cursor: String!
+}
+
+# ==============================================================================
+# ADMIN MUTATIONS
+# ==============================================================================
+
+extend type Mutation {
+  # ─────────────────────────────────────────────────────────────────────────
+  # APPLICATION REVIEW
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Assign an application to a reviewer.
+  Requires: ADMIN role or higher.
+  """
+  assignApplication(input: AssignApplicationInput!): ApplicationQueueItem!
+  
+  """
+  Add a review note to an application.
+  Requires: REVIEWER role or higher.
+  """
+  addReviewNote(input: AddReviewNoteInput!): ReviewNote!
+  
+  """
+  Make a review decision on an application.
+  Requires: REVIEWER role or higher.
+  """
+  makeReviewDecision(input: ReviewDecisionInput!): VendorApplication!
+  
+  """
+  Request additional information from applicant.
+  Requires: REVIEWER role or higher.
+  """
+  requestAdditionalInfo(
+    applicationId: ID!
+    questions: [String!]!
+    note: String
+  ): VendorApplication!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # CERTIFICATION VERIFICATION
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Complete a checklist item for certification verification.
+  Requires: REVIEWER role or higher.
+  """
+  completeCertificationChecklistItem(
+    certificationId: ID!
+    itemId: ID!
+    completed: Boolean!
+  ): CertificationQueueItem!
+  
+  """
+  Make a verification decision on a certification.
+  Requires: REVIEWER role or higher.
+  """
+  verifyCertification(input: CertificationVerificationInput!): VendorCertification!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # MESSAGE MODERATION
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Make a moderation decision on a message.
+  Requires: REVIEWER role or higher.
+  """
+  moderateMessage(input: ModerationDecisionInput!): Message!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # VENDOR MANAGEMENT
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Suspend a vendor.
+  Requires: ADMIN role or higher.
+  """
+  suspendVendor(vendorId: ID!, reason: String!): VendorProfile!
+  
+  """
+  Reactivate a suspended vendor.
+  Requires: ADMIN role or higher.
+  """
+  reactivateVendor(vendorId: ID!, note: String): VendorProfile!
+  
+  """
+  Override a vendor's visibility score (admin override).
+  Requires: SUPER_ADMIN role.
+  """
+  overrideVisibilityScore(
+    vendorId: ID!
+    score: Int!
+    reason: String!
+  ): VendorProfile!
+}

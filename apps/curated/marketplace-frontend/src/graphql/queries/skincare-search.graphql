@@ -1,0 +1,93 @@
+# Skincare Semantic Search Queries
+# Feature: RDF Skincare Taxonomy Integration
+
+# Fragment for skincare product fields
+fragment SkincareProductFields on SkincareProduct {
+  id
+  productName
+  brand
+  category
+  subcategory
+  skinTypes
+  concerns
+  ingredients
+  benefits
+  keyBenefits
+  priceTier
+  texture
+  routineStep
+  volume
+  fragranceFree
+  vegan
+  crueltyFree
+  score
+}
+
+# Semantic search for skincare products
+query SearchSkincareProducts(
+  $query: String!
+  $filters: SkincareSearchFilters
+  $limit: Int
+) {
+  searchSkincareProducts(query: $query, filters: $filters, limit: $limit) {
+    ...SkincareProductFields
+  }
+}
+
+# Find products similar to a given product
+query FindSimilarSkincareProducts($productId: ID!, $limit: Int) {
+  findSimilarSkincareProducts(productId: $productId, limit: $limit) {
+    ...SkincareProductFields
+  }
+}
+
+# Get personalized product recommendations
+query RecommendSkincareProducts($profile: SkinProfileInput!, $limit: Int) {
+  recommendSkincareProducts(profile: $profile, limit: $limit) {
+    ...SkincareProductFields
+  }
+}
+
+# Get products by category
+query SkincareProductsByCategory($category: String!, $limit: Int) {
+  skincareProductsByCategory(category: $category, limit: $limit) {
+    ...SkincareProductFields
+  }
+}
+
+# Get a single skincare product
+query GetSkincareProduct($id: ID!) {
+  skincareProduct(id: $id) {
+    ...SkincareProductFields
+  }
+}
+
+# Build a complete skincare routine
+query BuildSkincareRoutine($profile: SkinProfileInput!) {
+  buildSkincareRoutine(profile: $profile) {
+    steps {
+      step
+      products {
+        ...SkincareProductFields
+      }
+    }
+  }
+}
+
+# Get all available categories
+query GetSkincareCategories {
+  skincareCategories
+}
+
+# Get filter options for UI
+query GetSkincareFilterOptions {
+  skincareFilterOptions {
+    skinTypes
+    concerns
+    categories
+    subcategories
+    textures
+    routineSteps
+    priceTiers
+  }
+}

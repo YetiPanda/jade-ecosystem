@@ -1,0 +1,133 @@
+# Task: T083 - GraphQL queries for product search
+# Marketplace product queries with progressive disclosure
+
+query SearchProducts(
+  $query: String
+  $filters: ProductFilters
+  $pagination: PaginationInput
+  $includeScan: Boolean
+) {
+  searchProducts(
+    query: $query
+    filters: $filters
+    pagination: $pagination
+    includeScan: $includeScan
+  ) {
+    items {
+      product {
+        id
+        name
+        description
+        featuredAsset {
+          preview
+        }
+      }
+      glance {
+        heroBenefit
+        rating
+        reviewCount
+        skinTypes
+      }
+      scan @include(if: $includeScan) {
+        keyIngredients {
+          name
+          percentage
+          purpose
+        }
+        benefits
+        howToUse
+        texture
+        concerns
+      }
+      pricingTiers {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      inventoryLevel
+      vendorId
+    }
+    totalItems
+    hasNextPage
+    hasPreviousPage
+  }
+}
+
+query GetProduct($id: ID!, $includeStudy: Boolean!) {
+  product(id: $id, includeStudy: $includeStudy) {
+    product {
+      id
+      name
+      description
+      featuredAsset {
+        preview
+      }
+    }
+    glance {
+      heroBenefit
+      rating
+      reviewCount
+      skinTypes
+    }
+    scan {
+      keyIngredients {
+        name
+        percentage
+        purpose
+      }
+      benefits
+      howToUse
+      texture
+      concerns
+    }
+    study @include(if: $includeStudy) {
+      fullIngredientList
+      clinicalData {
+        description
+        participants
+        duration
+        results
+      }
+      certifications
+      safetyInfo
+      contraindications
+      storageInstructions
+    }
+    pricingTiers {
+      minQuantity
+      unitPrice
+      discountPercentage
+    }
+    inventoryLevel
+    vendorId
+  }
+}
+
+query GetProductsByVendor($vendorId: ID!, $pagination: PaginationInput) {
+  productsByVendor(vendorId: $vendorId, pagination: $pagination) {
+    items {
+      product {
+        id
+        name
+        featuredAsset {
+          preview
+        }
+      }
+      glance {
+        heroBenefit
+        rating
+        reviewCount
+        skinTypes
+      }
+      pricingTiers {
+        minQuantity
+        unitPrice
+        discountPercentage
+      }
+      inventoryLevel
+      vendorId
+    }
+    totalItems
+    hasNextPage
+  }
+}

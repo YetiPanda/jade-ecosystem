@@ -1,0 +1,459 @@
+# Feedback Service GraphQL Contract
+# Version: 1.0.0
+# Status: DRAFT
+# Owner: Intelligence Team
+
+# ============================================
+# TYPES
+# ============================================
+
+"""
+Interaction event types for implicit feedback (Loop A)
+"""
+enum InteractionEventType {
+  IMPRESSION           # Product was shown to user
+  CLICK                # User clicked on product
+  ADD_TO_CART          # Product added to cart
+  REMOVE_FROM_CART     # Product removed from cart
+  PURCHASE             # Product purchased
+  DWELL                # Extended viewing time
+  SEARCH               # Search query executed
+  FILTER               # Filter applied
+  COMPARE              # Products compared
+  SHARE                # Product shared
+}
+
+"""
+Outcome types for explicit feedback (Loop B)
+"""
+enum OutcomeType {
+  IMPROVEMENT          # Positive skin improvement observed
+  NEUTRAL              # No significant change
+  IRRITATION           # Mild adverse reaction
+  BREAKOUT             # Acne/breakout occurred
+  ALLERGIC_REACTION    # Allergic response
+  SENSITIVITY          # Increased sensitivity
+  DRYNESS              # Drying effect
+  EXCESS_OIL           # Increased oiliness
+}
+
+"""
+Correction types for human-in-the-loop feedback (Loop C)
+"""
+enum CorrectionType {
+  TAXONOMY             # Atom classification error
+  INGREDIENT_LIST      # INCI list correction
+  CLAIM                # Marketing claim accuracy
+  RELATIONSHIP         # Causal relationship correction
+  TENSOR_VALUE         # Tensor dimension correction
+  CONSTRAINT           # Safety constraint correction
+  SOURCE               # Citation correction
+}
+
+"""
+Curator roles authorized for corrections
+"""
+enum CuratorRole {
+  ESTHETICIAN          # Licensed esthetician
+  DERMATOLOGIST        # Medical dermatologist
+  COSMETIC_CHEMIST     # Formulation chemist
+  REGULATORY           # Regulatory specialist
+  ADMIN                # System administrator
+}
+
+"""
+Skin type classification
+"""
+enum SkinType {
+  OILY
+  DRY
+  COMBINATION
+  NORMAL
+  SENSITIVE
+}
+
+"""
+Primary skin concerns
+"""
+enum SkinConcern {
+  ACNE
+  AGING
+  HYPERPIGMENTATION
+  ROSACEA
+  DEHYDRATION
+  SENSITIVITY
+  TEXTURE
+  PORES
+  GENERAL
+}
+
+"""
+Device types for interaction context
+"""
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  TABLET
+}
+
+# ============================================
+# INPUT TYPES
+# ============================================
+
+"""
+Input for tracking user interactions (high-volume, anonymized)
+"""
+input InteractionInput {
+  """Session hash (SHA-256, no PII)"""
+  sessionHash: String!
+  
+  """Type of interaction"""
+  eventType: InteractionEventType!
+  
+  """Related SKA atom ID (optional)"""
+  atomId: ID
+  
+  """Related product ID (optional)"""
+  productId: ID
+  
+  """Search query that led to this interaction"""
+  searchQuery: String
+  
+  """Position in result list (for CTR calculation)"""
+  position: Int
+  
+  """Time spent viewing in milliseconds"""
+  dwellTimeMs: Int
+  
+  """Device type"""
+  deviceType: DeviceType
+  
+  """Additional context (JSON)"""
+  context: JSON
+}
+
+"""
+Input for reporting product outcomes (explicit feedback)
+"""
+input OutcomeInput {
+  """Product ID the outcome relates to"""
+  productId: ID!
+  
+  """Type of outcome experienced"""
+  outcomeType: OutcomeType!
+  
+  """User's skin type"""
+  skinType: SkinType
+  
+  """User's primary skin concerns"""
+  skinConcerns: [SkinConcern!]
+  
+  """How long the product was used (days)"""
+  usageDurationDays: Int
+  
+  """Application frequency"""
+  applicationFrequency: String
+  
+  """Overall rating (1-5)"""
+  rating: Int @constraint(min: 1, max: 5)
+  
+  """Would repurchase?"""
+  wouldRepurchase: Boolean
+  
+  """Additional notes"""
+  notes: String
+  
+  """Before/after photo URL (optional)"""
+  photoEvidenceUrl: String
+}
+
+"""
+Input for submitting data corrections (curator-only)
+"""
+input CorrectionInput {
+  """Entity type being corrected"""
+  entityType: String!
+  
+  """Entity ID being corrected"""
+  entityId: ID!
+  
+  """Type of correction"""
+  correctionType: CorrectionType!
+  
+  """Value before correction (JSON)"""
+  beforeValue: JSON!
+  
+  """Value after correction (JSON)"""
+  afterValue: JSON!
+  
+  """Reason for correction (required)"""
+  reason: String!
+  
+  """Scientific source for correction (if applicable)"""
+  scientificSource: String
+}
+
+"""
+Date range filter for analytics queries
+"""
+input DateRange {
+  start: DateTime!
+  end: DateTime!
+}
+
+"""
+Segment dimensions for analytics filtering
+"""
+enum SegmentDimension {
+  SKIN_TYPE
+  PRIMARY_CONCERN
+  EXPERIENCE_LEVEL
+  PRICE_SENSITIVITY
+  AGE_BRACKET
+}
+
+# ============================================
+# OUTPUT TYPES
+# ============================================
+
+"""
+Tracked interaction event (returned for debugging/confirmation)
+"""
+type InteractionEvent {
+  id: ID!
+  sessionHash: String!
+  eventType: InteractionEventType!
+  atomId: ID
+  productId: ID
+  searchQuery: String
+  position: Int
+  dwellTimeMs: Int
+  deviceType: DeviceType
+  createdAt: DateTime!
+}
+
+"""
+Reported outcome event
+"""
+type OutcomeEvent {
+  id: ID!
+  userId: ID!
+  productId: ID!
+  outcomeType: OutcomeType!
+  skinType: SkinType
+  skinConcerns: [SkinConcern!]
+  usageDurationDays: Int
+  applicationFrequency: String
+  rating: Int
+  wouldRepurchase: Boolean
+  notes: String
+  photoEvidenceUrl: String
+  verifiedPurchase: Boolean!
+  createdAt: DateTime!
+}
+
+"""
+Data correction record
+"""
+type DataCorrection {
+  id: ID!
+  correctedBy: ID!
+  curatorRole: CuratorRole!
+  entityType: String!
+  entityId: ID!
+  correctionType: CorrectionType!
+  beforeValue: JSON!
+  afterValue: JSON!
+  reason: String!
+  scientificSource: String
+  peerReviewed: Boolean!
+  approvedBy: ID
+  approvedAt: DateTime
+  createdAt: DateTime!
+}
+
+"""
+Interaction statistics for a time period
+"""
+type InteractionStats {
+  period: DateRange!
+  totalInteractions: Int!
+  byEventType: [EventTypeCount!]!
+  uniqueSessions: Int!
+  avgDwellTimeMs: Float
+  topSearchQueries: [QueryCount!]!
+}
+
+"""
+Count per event type
+"""
+type EventTypeCount {
+  eventType: InteractionEventType!
+  count: Int!
+}
+
+"""
+Count per search query
+"""
+type QueryCount {
+  query: String!
+  count: Int!
+}
+
+"""
+Outcome statistics with optional segmentation
+"""
+type OutcomeStats {
+  period: DateRange!
+  totalOutcomes: Int!
+  byOutcomeType: [OutcomeTypeCount!]!
+  averageRating: Float
+  positiveOutcomeRate: Float!
+  repurchaseIntentRate: Float
+  segments: [SegmentStats!]
+}
+
+"""
+Count per outcome type
+"""
+type OutcomeTypeCount {
+  outcomeType: OutcomeType!
+  count: Int!
+}
+
+"""
+Statistics for a specific segment
+"""
+type SegmentStats {
+  dimension: SegmentDimension!
+  value: String!
+  totalOutcomes: Int!
+  positiveOutcomeRate: Float!
+  averageRating: Float
+}
+
+# ============================================
+# QUERIES
+# ============================================
+
+type Query {
+  """
+  Get interaction statistics for a time period
+  Requires: ANALYTICS role
+  """
+  interactionSummary(period: DateRange!): InteractionStats!
+  
+  """
+  Get outcome statistics with optional segmentation
+  Requires: ANALYTICS role
+  """
+  outcomeSummary(
+    period: DateRange!
+    segmentBy: [SegmentDimension!]
+  ): OutcomeStats!
+  
+  """
+  Get pending corrections awaiting review
+  Requires: CURATOR role
+  """
+  pendingCorrections(limit: Int = 20): [DataCorrection!]!
+  
+  """
+  Get correction history for an entity
+  Requires: CURATOR role
+  """
+  correctionHistory(entityType: String!, entityId: ID!): [DataCorrection!]!
+  
+  """
+  Get calibration metrics (confidence vs actual outcomes)
+  Requires: ANALYTICS role
+  """
+  calibrationMetrics(period: DateRange!): CalibrationReport!
+}
+
+"""
+Calibration report comparing predictions to outcomes
+"""
+type CalibrationReport {
+  period: DateRange!
+  
+  """When we said HIGH confidence, actual positive rate"""
+  highConfidenceAccuracy: Float!
+  
+  """When we said MODERATE confidence, actual positive rate"""
+  moderateConfidenceAccuracy: Float!
+  
+  """When we said LOW confidence, actual positive rate"""
+  lowConfidenceAccuracy: Float!
+  
+  """Correlation between match_score and outcome rating"""
+  matchScoreCorrelation: Float!
+  
+  """Data points used for calculation"""
+  sampleSize: Int!
+}
+
+# ============================================
+# MUTATIONS
+# ============================================
+
+type Mutation {
+  """
+  Track a user interaction (high-volume, async)
+  No authentication required (anonymous)
+  Rate limited: 100/sec per session
+  """
+  trackInteraction(input: InteractionInput!): Boolean!
+  
+  """
+  Report a product outcome (explicit feedback)
+  Requires: Authenticated user
+  """
+  reportOutcome(input: OutcomeInput!): OutcomeEvent!
+  
+  """
+  Submit a data correction for review
+  Requires: CURATOR role
+  """
+  submitCorrection(input: CorrectionInput!): DataCorrection!
+  
+  """
+  Approve a pending correction
+  Requires: ADMIN or peer CURATOR role
+  """
+  approveCorrection(correctionId: ID!): DataCorrection!
+  
+  """
+  Reject a pending correction
+  Requires: ADMIN or peer CURATOR role
+  """
+  rejectCorrection(correctionId: ID!, reason: String!): DataCorrection!
+}
+
+# ============================================
+# SUBSCRIPTIONS (Future)
+# ============================================
+
+# type Subscription {
+#   """
+#   Subscribe to new corrections for review
+#   Requires: CURATOR role
+#   """
+#   newCorrectionSubmitted: DataCorrection!
+#   
+#   """
+#   Subscribe to outcome reports for a product
+#   Requires: VENDOR role (own products only)
+#   """
+#   outcomeReported(productId: ID!): OutcomeEvent!
+# }
+
+# ============================================
+# CUSTOM SCALARS
+# ============================================
+
+"""JSON scalar for flexible data structures"""
+scalar JSON
+
+"""DateTime scalar in ISO 8601 format"""
+scalar DateTime

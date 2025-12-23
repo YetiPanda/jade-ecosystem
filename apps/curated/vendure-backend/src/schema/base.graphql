@@ -1,0 +1,85 @@
+# JADE Spa Marketplace - Base GraphQL Schema
+# Core type definitions shared across all schemas
+
+scalar DateTime
+scalar JSON
+scalar Upload
+"""
+Pagination input for cursor-based pagination
+"""
+input PaginationInput {
+  first: Int
+  after: String
+  last: Int
+  before: String
+}
+"""
+Page information for cursor-based pagination
+"""
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+"""
+Common sorting options
+"""
+enum SortOrder {
+  ASC
+  DESC
+}
+"""
+Money type for currency values
+"""
+type Money {
+  amount: Float!
+  currency: String!
+}
+
+input MoneyInput {
+  amount: Float!
+  currency: String!
+}
+"""
+Address type
+"""
+type Address {
+  street1: String!
+  street2: String
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}
+
+input AddressInput {
+  street1: String!
+  street2: String
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}
+"""
+Date range filter
+"""
+input DateRangeInput {
+  startDate: DateTime!
+  endDate: DateTime!
+}
+"""
+Common error type
+"""
+type Error {
+  code: String!
+  message: String!
+  field: String
+}
+"""
+Success response
+"""
+type SuccessResponse {
+  success: Boolean!
+  message: String
+}

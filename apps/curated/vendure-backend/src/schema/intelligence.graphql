@@ -1,0 +1,479 @@
+# Intelligence MVP Schema
+# DermaLogica Intelligence Integration - Knowledge Thresholds, Evidence, Causal Chains
+
+# ============================================
+# Knowledge Threshold Types (T1-T8)
+# ============================================
+
+"""
+Knowledge Threshold Levels (T1-T8)
+Hierarchical classification of knowledge complexity and access levels
+"""
+enum KnowledgeThreshold {
+  T1_SKIN_BIOLOGY
+  T2_INGREDIENT_SCIENCE
+  T3_PRODUCT_FORMULATION
+  T4_TREATMENT_PROTOCOLS
+  T5_CONTRAINDICATIONS
+  T6_PROFESSIONAL_TECHNIQUES
+  T7_REGULATORY_COMPLIANCE
+  T8_SYSTEMIC_PATTERNS
+}
+
+"""
+Evidence Level Classification
+7-tier system for scientific rigor
+"""
+enum EvidenceLevel {
+  ANECDOTAL
+  IN_VITRO
+  ANIMAL
+  HUMAN_PILOT
+  HUMAN_CONTROLLED
+  META_ANALYSIS
+  GOLD_STANDARD
+}
+
+"""
+Causal Direction for graph traversal
+"""
+enum CausalDirection {
+  UPSTREAM
+  DOWNSTREAM
+  BOTH
+}
+
+"""
+Progressive Disclosure Level
+"""
+enum DisclosureLevel {
+  GLANCE
+  SCAN
+  STUDY
+}
+
+"""
+User Access Level for threshold filtering
+"""
+enum AccessLevel {
+  PUBLIC
+  REGISTERED
+  PROFESSIONAL
+  EXPERT
+}
+
+"""
+Interaction Type between ingredients
+"""
+enum InteractionType {
+  SYNERGY
+  CONFLICT
+  NEUTRAL
+  SEQUENCING
+}
+
+"""
+Synergy Type classification
+"""
+enum SynergyType {
+  ENHANCEMENT
+  STABILIZATION
+  PENETRATION
+  PROTECTION
+  COMPLEMENTARY
+}
+
+"""
+Conflict Type classification
+"""
+enum ConflictType {
+  INACTIVATION
+  IRRITATION
+  PH_INCOMPATIBILITY
+  PENETRATION_BARRIER
+  OXIDATION
+  DILUTION
+}
+
+# ============================================
+# Intelligence Types
+# ============================================
+
+"""
+Claim Evidence - scientific backing for SKA atom claims
+"""
+type ClaimEvidence {
+  id: ID!
+  atomId: ID!
+  claim: String!
+  evidenceLevel: EvidenceLevel!
+  sourceType: String
+  sourceReference: String
+  publicationYear: Int
+  sampleSize: Int
+  studyDuration: String
+  confidenceScore: Float
+  notes: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+Efficacy Indicator - measurable outcomes for atoms
+"""
+type EfficacyIndicator {
+  id: ID!
+  atomId: ID!
+  indicatorName: String!
+  measurementType: String
+  baselineValue: Float
+  targetValue: Float
+  unit: String
+  timeToEffect: String
+  optimalMin: Float
+  optimalMax: Float
+  goldilocksZone: String
+  evidenceLevel: EvidenceLevel
+  notes: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+Causal Chain Node for graph traversal
+"""
+type CausalChainNode {
+  atom: SkincareAtom!
+  relationship: SkincareRelationship
+  depth: Int!
+  direction: String!
+  mechanismSummary: String
+}
+
+"""
+Why Explanation - causal path with evidence
+"""
+type WhyExplanation {
+  summary: String!
+  path: [CausalPathStep!]!
+  confidenceScore: Float!
+  evidenceStrength: Float!
+  disclosureContent: DisclosureContent!
+}
+
+"""
+Causal Path Step
+"""
+type CausalPathStep {
+  atom: SkincareAtom!
+  relationship: SkincareRelationship
+  mechanismSummary: String!
+}
+
+"""
+Progressive Disclosure Content
+"""
+type DisclosureContent {
+  glance: String!
+  scan: String!
+  study: String!
+}
+
+"""
+Evidence Summary for an atom
+"""
+type EvidenceSummary {
+  totalClaims: Int!
+  averageEvidenceStrength: Float!
+  highestEvidenceLevel: EvidenceLevel
+  claimsByLevel: JSON!
+}
+
+"""
+Efficacy Summary for an atom
+"""
+type EfficacySummary {
+  indicators: [EfficacyIndicator!]!
+  averageImprovement: Float!
+  shortestTimeframe: String
+  highQualityCount: Int!
+}
+
+"""
+Ingredient Interaction result
+"""
+type IngredientInteraction {
+  atomA: SkincareAtom!
+  atomB: SkincareAtom!
+  interactionType: InteractionType!
+  synergyType: SynergyType
+  conflictType: ConflictType
+  severity: Int!
+  mechanism: String!
+  recommendation: String!
+  waitTime: String
+}
+
+"""
+Compatibility Analysis Result
+"""
+type CompatibilityResult {
+  overallScore: Int!
+  compatible: Boolean!
+  interactions: [IngredientInteraction!]!
+  synergies: [IngredientInteraction!]!
+  conflicts: [IngredientInteraction!]!
+  sequenceRecommendation: [SkincareAtom!]!
+  warnings: [String!]!
+  tips: [String!]!
+}
+
+"""
+Intelligence Search Result
+"""
+type IntelligenceSearchResult {
+  atom: SkincareAtom!
+  semanticScore: Float!
+  tensorScore: Float!
+  combinedScore: Float!
+  knowledgeThreshold: KnowledgeThreshold
+  evidenceStrength: Float!
+}
+
+"""
+Intelligence Search Response
+"""
+type IntelligenceSearchResponse {
+  results: [IntelligenceSearchResult!]!
+  totalCount: Int!
+  query: String
+  executionTimeMs: Int
+}
+
+"""
+Atom with full Intelligence data
+"""
+type AtomWithIntelligence {
+  atom: SkincareAtom
+  accessible: Boolean!
+  evidenceSummary: EvidenceSummary
+  efficacySummary: EfficacySummary
+  goldilocksParameters: [GoldilocksParameter!]!
+  whyItWorks: String
+  causalSummary: String
+}
+
+# ============================================
+# Input Types
+# ============================================
+
+"""
+Claim Evidence input for mutations
+"""
+input ClaimEvidenceInput {
+  claim: String!
+  evidenceLevel: EvidenceLevel!
+  sourceType: String
+  sourceReference: String
+  publicationYear: Int
+  sampleSize: Int
+  studyDuration: String
+  confidenceScore: Float
+  notes: String
+}
+
+"""
+Efficacy Indicator input for mutations
+"""
+input EfficacyIndicatorInput {
+  indicatorName: String!
+  measurementType: String
+  baselineValue: Float
+  targetValue: Float
+  unit: String
+  timeToEffect: String
+  optimalMin: Float
+  optimalMax: Float
+  goldilocksZone: String
+  evidenceLevel: EvidenceLevel
+  notes: String
+}
+
+"""
+Intelligence Search filters
+"""
+input IntelligenceSearchFilters {
+  thresholds: [KnowledgeThreshold!]
+  minEvidenceLevel: EvidenceLevel
+  atomTypes: [SkincareAtomType!]
+  minHydration: Float
+  minAntiAging: Float
+  maxSensitivity: Float
+}
+
+# ============================================
+# Query Extensions
+# ============================================
+
+extend type Query {
+  """Navigate causal chain from an atom"""
+  intelligenceCausalChain(
+    atomId: ID!
+    direction: CausalDirection!
+    maxDepth: Int
+    accessLevel: AccessLevel
+  ): [CausalChainNode!]!
+
+  """Find causal path between two atoms"""
+  intelligenceFindPath(
+    fromAtomId: ID!
+    toAtomId: ID!
+    accessLevel: AccessLevel
+  ): [CausalPathStep!]!
+
+  """Get Why It Works explanation"""
+  intelligenceWhyExplanation(
+    atomId: ID!
+    targetAtomId: ID
+    accessLevel: AccessLevel
+  ): WhyExplanation
+
+  """Get atom with full intelligence data"""
+  intelligenceAtom(
+    atomId: ID!
+    accessLevel: AccessLevel
+  ): AtomWithIntelligence!
+
+  """Get claim evidence for an atom"""
+  intelligenceClaimEvidence(
+    atomId: ID!
+    minLevel: EvidenceLevel
+  ): [ClaimEvidence!]!
+
+  """Get evidence summary for an atom"""
+  intelligenceEvidenceSummary(atomId: ID!): EvidenceSummary!
+
+  """Get efficacy indicators for an atom"""
+  intelligenceEfficacyIndicators(
+    atomId: ID!
+    highQualityOnly: Boolean
+  ): [EfficacyIndicator!]!
+
+  """Get efficacy summary for an atom"""
+  intelligenceEfficacySummary(atomId: ID!): EfficacySummary!
+
+  """Analyze compatibility between ingredients"""
+  intelligenceAnalyzeCompatibility(
+    atomIds: [ID!]!
+    accessLevel: AccessLevel
+  ): CompatibilityResult!
+
+  """Search with intelligence filters"""
+  intelligenceSearch(
+    query: String!
+    filters: IntelligenceSearchFilters
+    limit: Int
+    semanticWeight: Float
+    tensorWeight: Float
+  ): IntelligenceSearchResponse!
+
+  """Find similar atoms by tensor profile"""
+  intelligenceFindSimilar(
+    atomId: ID!
+    limit: Int
+  ): [IntelligenceSearchResult!]!
+
+  """Get Goldilocks parameters for an atom"""
+  intelligenceGoldilocksParameters(atomId: ID!): [GoldilocksParameter!]!
+
+  """Check if user has access to threshold"""
+  intelligenceCheckAccess(
+    threshold: KnowledgeThreshold!
+    accessLevel: AccessLevel!
+  ): Boolean!
+
+  """Get max accessible threshold for access level"""
+  intelligenceMaxThreshold(accessLevel: AccessLevel!): KnowledgeThreshold!
+}
+
+# ============================================
+# Mutation Extensions
+# ============================================
+
+extend type Mutation {
+  """Add claim evidence to an atom"""
+  intelligenceAddClaimEvidence(
+    atomId: ID!
+    input: ClaimEvidenceInput!
+  ): ClaimEvidence!
+
+  """Update claim evidence"""
+  intelligenceUpdateClaimEvidence(
+    id: ID!
+    input: ClaimEvidenceInput!
+  ): ClaimEvidence!
+
+  """Delete claim evidence"""
+  intelligenceDeleteClaimEvidence(id: ID!): Boolean!
+
+  """Add efficacy indicator to an atom"""
+  intelligenceAddEfficacyIndicator(
+    atomId: ID!
+    input: EfficacyIndicatorInput!
+  ): EfficacyIndicator!
+
+  """Update efficacy indicator"""
+  intelligenceUpdateEfficacyIndicator(
+    id: ID!
+    input: EfficacyIndicatorInput!
+  ): EfficacyIndicator!
+
+  """Delete efficacy indicator"""
+  intelligenceDeleteEfficacyIndicator(id: ID!): Boolean!
+
+  """Update atom knowledge threshold"""
+  intelligenceSetAtomThreshold(
+    atomId: ID!
+    threshold: KnowledgeThreshold!
+  ): SkincareAtom!
+
+  """Update atom Why It Works explanation"""
+  intelligenceSetWhyItWorks(
+    atomId: ID!
+    whyItWorks: String!
+    causalSummary: String
+  ): SkincareAtom!
+
+  """Sync atom embedding to vector database"""
+  intelligenceSyncEmbedding(atomId: ID!): Boolean!
+
+  """Batch sync embeddings"""
+  intelligenceBatchSyncEmbeddings(atomIds: [ID!]!): JSON!
+}
+
+# ============================================
+# Field Resolvers - Extend SkincareAtom with Intelligence fields
+# ============================================
+
+extend type SkincareAtom {
+  """Knowledge threshold level"""
+  knowledgeThreshold: KnowledgeThreshold
+
+  """Why this ingredient/concept works"""
+  whyItWorks: String
+
+  """Summary of causal relationships"""
+  causalSummary: String
+
+  """Claim evidence for this atom"""
+  claimEvidences: [ClaimEvidence!]!
+
+  """Efficacy indicators for this atom"""
+  efficacyIndicators: [EfficacyIndicator!]!
+
+  """Evidence summary"""
+  evidenceSummary: EvidenceSummary
+
+  """Efficacy summary"""
+  efficacySummary: EfficacySummary
+}

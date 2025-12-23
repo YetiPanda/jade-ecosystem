@@ -1,0 +1,117 @@
+# Task: T121 - GraphQL queries for availability
+# Scheduling availability queries for calendar and booking
+
+query ProviderAvailability(
+  $providerId: ID!
+  $startDate: DateTime!
+  $endDate: DateTime!
+  $serviceType: String
+) {
+  providerAvailability(
+    providerId: $providerId
+    startDate: $startDate
+    endDate: $endDate
+    serviceType: $serviceType
+  ) {
+    providerId
+    providerName
+    availableSlots {
+      startTime
+      endTime
+      duration
+      capacity
+      bookedCount
+      isAvailable
+      slotId
+    }
+    timezone
+  }
+}
+
+query AvailableSlots(
+  $serviceType: String!
+  $locationId: ID
+  $startDate: DateTime!
+  $endDate: DateTime!
+  $preferredProviderId: ID
+) {
+  availableSlots(
+    serviceType: $serviceType
+    locationId: $locationId
+    startDate: $startDate
+    endDate: $endDate
+    preferredProviderId: $preferredProviderId
+  ) {
+    startTime
+    endTime
+    duration
+    capacity
+    bookedCount
+    isAvailable
+    slotId
+  }
+}
+
+query ProviderDaySchedule($providerId: ID!, $date: DateTime!) {
+  providerDaySchedule(providerId: $providerId, date: $date) {
+    workingHours {
+      startTime
+      endTime
+    }
+    appointments {
+      id
+      appointmentNumber
+      startTime
+      endTime
+      serviceType
+      status
+      clientId
+    }
+    blockedTimes {
+      id
+      type
+      startTime
+      endTime
+      reason
+    }
+    availableSlots {
+      startTime
+      endTime
+      isAvailable
+    }
+  }
+}
+
+query NextAvailableSlot(
+  $providerId: ID!
+  $serviceType: String!
+  $afterDate: DateTime!
+  $duration: Int
+) {
+  nextAvailableSlot(
+    providerId: $providerId
+    serviceType: $serviceType
+    afterDate: $afterDate
+    duration: $duration
+  ) {
+    startTime
+    endTime
+    duration
+    capacity
+    bookedCount
+    isAvailable
+    slotId
+  }
+}
+
+query ProviderUtilization(
+  $providerId: ID!
+  $startDate: DateTime!
+  $endDate: DateTime!
+) {
+  providerUtilization(
+    providerId: $providerId
+    startDate: $startDate
+    endDate: $endDate
+  )
+}

@@ -1,0 +1,1912 @@
+"""
+Governance GraphQL Schema
+
+Sprint G3: Governance GraphQL API
+ISO 42001 AI Management System (AIMS) Compliance
+
+This schema provides queries and mutations for AI governance tracking,
+including system registration, compliance assessment, incident management,
+and human oversight documentation.
+"""
+
+# ============================================================================
+# ENUMS
+# ============================================================================
+
+"""
+AI System Type Classification
+"""
+enum AISystemType {
+  """Recommender system (product recommendations, suggestions)"""
+  RECOMMENDER
+
+  """Classifier system (categorization, tagging)"""
+  CLASSIFIER
+
+  """Analyzer system (content analysis, insights)"""
+  ANALYZER
+
+  """Generator system (content generation, synthesis)"""
+  GENERATOR
+}
+
+"""
+Risk Category per EU AI Act / ISO 42001
+"""
+enum RiskCategory {
+  """Minimal risk - basic AI applications"""
+  MINIMAL
+
+  """Limited risk - systems with transparency obligations"""
+  LIMITED
+
+  """High risk - critical applications requiring compliance"""
+  HIGH
+
+  """Unacceptable risk - prohibited systems"""
+  UNACCEPTABLE
+}
+
+"""
+Human Oversight Level (ISO 42001 Annex A.9)
+"""
+enum OversightLevel {
+  """Human approves each AI decision before execution"""
+  IN_THE_LOOP
+
+  """Human monitors AI with ability to intervene"""
+  ON_THE_LOOP
+
+  """Human sets parameters and oversees overall system"""
+  IN_COMMAND
+}
+
+"""
+Compliance Status per Requirement
+"""
+enum ComplianceStatus {
+  """Fully compliant with requirement"""
+  COMPLIANT
+
+  """Substantially compliant (minor gaps)"""
+  SUBSTANTIALLY_COMPLIANT
+
+  """Partially compliant (significant gaps)"""
+  PARTIALLY_COMPLIANT
+
+  """Not compliant"""
+  NON_COMPLIANT
+
+  """Requirement not applicable to this system"""
+  NOT_APPLICABLE
+
+  """Not yet assessed"""
+  NOT_ASSESSED
+}
+
+"""
+AI Incident Severity (FMEA-style)
+"""
+enum IncidentSeverity {
+  """Catastrophic - severe harm, major business impact"""
+  CATASTROPHIC
+
+  """Critical - significant harm, major degradation"""
+  CRITICAL
+
+  """Marginal - minor harm, some degradation"""
+  MARGINAL
+
+  """Negligible - minimal impact"""
+  NEGLIGIBLE
+}
+
+"""
+Incident Response Workflow Steps (7-step process)
+"""
+enum IncidentStep {
+  """Step 1: Detect the incident"""
+  DETECT
+
+  """Step 2: Assess severity and scope"""
+  ASSESS
+
+  """Step 3: Stabilize the system"""
+  STABILIZE
+
+  """Step 4: Report to stakeholders"""
+  REPORT
+
+  """Step 5: Investigate root cause"""
+  INVESTIGATE
+
+  """Step 6: Correct the issue"""
+  CORRECT
+
+  """Step 7: Verify resolution"""
+  VERIFY
+}
+
+"""
+Detection Method for Incidents
+"""
+enum DetectionMethod {
+  """User-reported outcome or complaint"""
+  USER_REPORT
+
+  """Automated monitoring alert"""
+  MONITORING
+
+  """Internal audit finding"""
+  AUDIT
+
+  """External audit or regulator"""
+  EXTERNAL_AUDIT
+}
+
+"""
+Human Oversight Action Types (A.9 Control)
+"""
+enum OversightActionType {
+  """Override AI decision with human judgment"""
+  OVERRIDE
+
+  """Intervene to modify AI output"""
+  INTERVENTION
+
+  """Emergency shutdown of AI system"""
+  SHUTDOWN
+
+  """Explicit approval of AI recommendation"""
+  APPROVAL
+}
+
+"""
+Compliance Framework Names
+"""
+enum ComplianceFramework {
+  """ISO/IEC 42001:2023 AI Management System"""
+  ISO_42001
+
+  """NIST AI Risk Management Framework"""
+  NIST_AI_RMF
+
+  """EU AI Act"""
+  EU_AI_ACT
+
+  """GDPR (for data protection)"""
+  GDPR
+
+  """SOC 2 (for AI controls)"""
+  SOC2
+
+  """OECD AI Principles"""
+  OECD_AI
+}
+
+# ============================================================================
+# TYPES
+# ============================================================================
+
+"""
+AI System Registry
+Tracks all AI systems requiring governance oversight per ISO 42001
+"""
+type AISystem {
+  """Unique system identifier"""
+  id: ID!
+
+  """System name (e.g., "Product Recommendation Engine")"""
+  systemName: String!
+
+  """AI system type classification"""
+  systemType: AISystemType!
+
+  """Risk category per EU AI Act / ISO 42001"""
+  riskCategory: RiskCategory!
+
+  """Intended purpose of the AI system"""
+  intendedPurpose: String!
+
+  """Operational domain (e.g., "skincare_recommendations")"""
+  operationalDomain: String
+
+  """Human oversight level required (ISO 42001 A.9)"""
+  humanOversightLevel: OversightLevel!
+
+  """Date of last risk assessment"""
+  lastRiskAssessmentDate: DateTime
+
+  """Next scheduled review date"""
+  nextReviewDate: DateTime
+
+  """System owner"""
+  owner: User
+
+  """Compliance states for this system"""
+  complianceStates: [ComplianceState!]
+
+  """Incidents affecting this system"""
+  incidents: [AIIncident!]
+
+  """Human oversight actions for this system"""
+  oversightActions: [OversightAction!]
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+"""
+AI Compliance State
+Tracks compliance status for each ISO 42001 requirement per AI system
+"""
+type ComplianceState {
+  """Unique identifier"""
+  id: ID!
+
+  """AI System being assessed"""
+  system: AISystem!
+
+  """ISO 42001 requirement clause (e.g., "iso42001_8.4.2")"""
+  requirementClause: String!
+
+  """Compliance status for this requirement"""
+  complianceStatus: ComplianceStatus!
+
+  """Evidence artifact IDs"""
+  evidenceIds: [ID!]
+
+  """Assessor who performed the assessment"""
+  assessedBy: User
+
+  """Assessment timestamp"""
+  assessedAt: DateTime
+
+  """Gap analysis findings"""
+  gapAnalysis: String
+
+  """Remediation plan to address gaps"""
+  remediationPlan: String
+
+  """Target date for remediation completion"""
+  targetDate: DateTime
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+"""
+AI Incident
+Tracks AI-related incidents through a 7-step response workflow
+"""
+type AIIncident {
+  """Unique incident identifier"""
+  id: ID!
+
+  """Incident title"""
+  title: String!
+
+  """Incident description"""
+  description: String!
+
+  """Link to user-reported outcome event"""
+  outcomeEventId: ID
+
+  """Affected AI system"""
+  affectedSystem: AISystem!
+
+  """Incident severity"""
+  severity: IncidentSeverity!
+
+  """Current step in 7-step workflow"""
+  currentStep: IncidentStep!
+
+  """How the incident was detected"""
+  detectionMethod: DetectionMethod
+
+  """When the incident occurred"""
+  occurredAt: DateTime!
+
+  """When the incident was detected"""
+  detectedAt: DateTime!
+
+  """When the incident was resolved"""
+  resolvedAt: DateTime
+
+  """Root cause analysis findings"""
+  rootCause: String
+
+  """Corrective actions taken"""
+  correctiveAction: String
+
+  """Lessons learned documentation"""
+  lessonsLearned: String
+
+  """Whether stakeholder notification was sent"""
+  notificationSent: Boolean!
+
+  """13-D incident tensor position for similarity search"""
+  tensorPosition: [Float!]
+
+  """Workflow progress percentage (0-100)"""
+  workflowProgress: Int!
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+"""
+Human Oversight Action
+Documents human interventions, overrides, and approvals for AI decisions (ISO 42001 A.9)
+"""
+type OversightAction {
+  """Unique identifier"""
+  id: ID!
+
+  """AI System for which oversight was exercised"""
+  system: AISystem!
+
+  """Type of oversight action"""
+  actionType: OversightActionType!
+
+  """User who triggered the oversight action"""
+  triggeredBy: User!
+
+  """ID of the recommendation or output subject to oversight"""
+  recommendationId: ID
+
+  """Original AI output before human intervention"""
+  originalOutput: JSON
+
+  """Modified output after human intervention"""
+  modifiedOutput: JSON
+
+  """Human justification for the oversight action"""
+  justification: String!
+
+  """Risk assessment notes"""
+  riskAssessment: String
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+}
+
+"""
+Compliance Assessment Summary
+Provides overview of compliance status across all requirements
+"""
+type ComplianceSummary {
+  """System ID"""
+  systemId: ID!
+
+  """System name"""
+  systemName: String!
+
+  """System risk category"""
+  riskCategory: RiskCategory!
+
+  """Total number of requirements"""
+  totalRequirements: Int!
+
+  """Number of assessed requirements"""
+  assessed: Int!
+
+  """Number of compliant requirements"""
+  compliant: Int!
+
+  """Number of substantially compliant requirements"""
+  substantiallyCompliant: Int!
+
+  """Number of partially compliant requirements"""
+  partiallyCompliant: Int!
+
+  """Number of non-compliant requirements"""
+  nonCompliant: Int!
+
+  """Number of not applicable requirements"""
+  notApplicable: Int!
+
+  """Number of not assessed requirements"""
+  notAssessed: Int!
+
+  """Compliance percentage (0-100)"""
+  compliancePercentage: Int!
+
+  """Gap count (non-compliant + partially compliant)"""
+  gapCount: Int!
+}
+
+"""
+Gap Analysis Report
+Details compliance gaps for a requirement
+"""
+type GapAnalysis {
+  """Requirement clause"""
+  requirementClause: String!
+
+  """Requirement title"""
+  requirementTitle: String!
+
+  """Current compliance status"""
+  currentStatus: ComplianceStatus!
+
+  """Gap description"""
+  gapDescription: String
+
+  """Remediation plan"""
+  remediationPlan: String
+
+  """Target completion date"""
+  targetDate: DateTime
+
+  """Risk level of this gap"""
+  riskLevel: String!
+}
+
+"""
+Similar Incident Result
+Incident with similarity score
+"""
+type SimilarIncident {
+  """The similar incident"""
+  incident: AIIncident!
+
+  """Similarity score (0-1, higher is more similar)"""
+  similarity: Float!
+}
+
+"""
+Incident Statistics
+Summary metrics for incidents
+"""
+type IncidentStats {
+  """Total number of incidents"""
+  totalIncidents: Int!
+
+  """Number of open (unresolved) incidents"""
+  openIncidents: Int!
+
+  """Number of resolved incidents"""
+  resolvedIncidents: Int!
+
+  """Incidents by severity"""
+  bySeverity: JSON!
+
+  """Incidents by workflow step"""
+  byStep: JSON!
+
+  """Average resolution time in hours"""
+  avgResolutionTimeHours: Float
+}
+
+"""
+Oversight Statistics
+Summary metrics for human oversight actions
+"""
+type OversightStats {
+  """Total number of oversight actions"""
+  totalActions: Int!
+
+  """Actions by type"""
+  byActionType: JSON!
+
+  """Actions by system"""
+  bySystem: JSON!
+
+  """Override rate percentage"""
+  overrideRate: Float!
+
+  """Intervention rate percentage"""
+  interventionRate: Float!
+}
+
+"""
+System Registration Result
+Result of registering a new AI system with compliance baseline
+"""
+type SystemRegistrationResult {
+  """The registered system"""
+  system: AISystem!
+
+  """Number of compliance states created"""
+  complianceStatesCreated: Int!
+}
+
+# ============================================================================
+# INPUT TYPES
+# ============================================================================
+
+"""
+Input for registering a new AI system
+"""
+input RegisterAISystemInput {
+  """System name"""
+  systemName: String!
+
+  """AI system type"""
+  systemType: AISystemType!
+
+  """Risk category"""
+  riskCategory: RiskCategory!
+
+  """Intended purpose"""
+  intendedPurpose: String!
+
+  """Operational domain"""
+  operationalDomain: String
+
+  """Human oversight level"""
+  humanOversightLevel: OversightLevel!
+
+  """Last risk assessment date"""
+  lastRiskAssessmentDate: DateTime
+
+  """Next review date (auto-calculated if not provided)"""
+  nextReviewDate: DateTime
+
+  """Owner user ID"""
+  ownerId: ID
+}
+
+"""
+Input for updating an AI system
+"""
+input UpdateAISystemInput {
+  """System ID"""
+  id: ID!
+
+  """System name"""
+  systemName: String
+
+  """Risk category"""
+  riskCategory: RiskCategory
+
+  """Intended purpose"""
+  intendedPurpose: String
+
+  """Human oversight level"""
+  humanOversightLevel: OversightLevel
+
+  """Last risk assessment date"""
+  lastRiskAssessmentDate: DateTime
+
+  """Next review date"""
+  nextReviewDate: DateTime
+}
+
+"""
+Input for recording a compliance assessment
+"""
+input RecordComplianceAssessmentInput {
+  """System ID"""
+  systemId: ID!
+
+  """Requirement clause"""
+  requirementClause: String!
+
+  """Compliance status"""
+  complianceStatus: ComplianceStatus!
+
+  """Evidence artifact IDs"""
+  evidenceIds: [ID!]
+
+  """Assessor user ID"""
+  assessedById: ID
+
+  """Gap analysis"""
+  gapAnalysis: String
+
+  """Remediation plan"""
+  remediationPlan: String
+
+  """Target date for remediation"""
+  targetDate: DateTime
+}
+
+"""
+Input for creating an AI incident
+"""
+input CreateAIIncidentInput {
+  """Incident title"""
+  title: String!
+
+  """Incident description"""
+  description: String!
+
+  """Link to outcome event"""
+  outcomeEventId: ID
+
+  """Affected system ID"""
+  affectedSystemId: ID!
+
+  """Severity level"""
+  severity: IncidentSeverity!
+
+  """Detection method"""
+  detectionMethod: DetectionMethod
+
+  """When incident occurred"""
+  occurredAt: DateTime!
+
+  """When incident was detected"""
+  detectedAt: DateTime!
+}
+
+"""
+Input for advancing incident workflow
+"""
+input AdvanceIncidentWorkflowInput {
+  """Incident ID"""
+  id: ID!
+
+  """Notes about step completion"""
+  notes: String
+}
+
+"""
+Input for completing incident assessment
+"""
+input CompleteIncidentAssessmentInput {
+  """Incident ID"""
+  id: ID!
+
+  """Assessed severity"""
+  severity: IncidentSeverity!
+
+  """Assessment notes"""
+  assessmentNotes: String!
+}
+
+"""
+Input for recording human oversight action
+"""
+input RecordOversightActionInput {
+  """System ID"""
+  systemId: ID!
+
+  """Action type"""
+  actionType: OversightActionType!
+
+  """User ID who triggered action"""
+  triggeredById: ID!
+
+  """Recommendation ID"""
+  recommendationId: ID
+
+  """Original AI output"""
+  originalOutput: JSON
+
+  """Modified output"""
+  modifiedOutput: JSON
+
+  """Justification"""
+  justification: String!
+
+  """Risk assessment notes"""
+  riskAssessment: String
+}
+
+"""
+Filters for querying AI systems
+"""
+input AISystemFilters {
+  """Filter by risk category"""
+  riskCategory: [RiskCategory!]
+
+  """Filter by system type"""
+  systemType: [AISystemType!]
+
+  """Filter by operational domain"""
+  operationalDomain: String
+
+  """Filter by owner"""
+  ownerId: ID
+
+  """Filter systems requiring review"""
+  requiresReview: Boolean
+}
+
+"""
+Filters for querying incidents
+"""
+input IncidentFilters {
+  """Filter by workflow step"""
+  status: [IncidentStep!]
+
+  """Filter by severity"""
+  severity: [IncidentSeverity!]
+
+  """Filter by system"""
+  systemId: ID
+
+  """Filter by date range start"""
+  startDate: DateTime
+
+  """Filter by date range end"""
+  endDate: DateTime
+
+  """Filter resolved/unresolved"""
+  resolved: Boolean
+}
+
+# ============================================================================
+# QUERIES
+# ============================================================================
+
+extend type Query {
+  """
+  Get all AI systems with optional filters
+  """
+  aiSystems(filters: AISystemFilters): [AISystem!]!
+
+  """
+  Get a specific AI system by ID
+  """
+  aiSystem(id: ID!): AISystem
+
+  """
+  Get compliance summary for a system
+  """
+  complianceSummary(systemId: ID!): ComplianceSummary!
+
+  """
+  Get gap analysis report for a system
+  """
+  gapAnalysisReport(systemId: ID!): [GapAnalysis!]!
+
+  """
+  Get compliance dashboard data
+  """
+  complianceDashboard(systemId: ID): [ComplianceSummary!]!
+
+  """
+  Get all AI incidents with optional filters
+  """
+  aiIncidents(filters: IncidentFilters): [AIIncident!]!
+
+  """
+  Get a specific incident by ID
+  """
+  aiIncident(id: ID!): AIIncident
+
+  """
+  Find similar incidents using tensor similarity search
+  """
+  similarIncidents(
+    """Incident ID to find similar incidents for"""
+    incidentId: ID!
+
+    """Similarity threshold (0-1)"""
+    threshold: Float = 0.5
+
+    """Maximum number of results"""
+    limit: Int = 10
+  ): [SimilarIncident!]!
+
+  """
+  Get incident statistics
+  """
+  incidentStats(systemId: ID): IncidentStats!
+
+  """
+  Get human oversight actions
+  """
+  oversightActions(
+    """Filter by system"""
+    systemId: ID
+
+    """Filter by user"""
+    userId: ID
+
+    """Filter by action type"""
+    actionType: OversightActionType
+  ): [OversightAction!]!
+
+  """
+  Get oversight statistics
+  """
+  oversightStats(
+    """Filter by system"""
+    systemId: ID
+
+    """Date range start"""
+    startDate: DateTime
+
+    """Date range end"""
+    endDate: DateTime
+  ): OversightStats!
+}
+
+# ============================================================================
+# MUTATIONS
+# ============================================================================
+
+extend type Mutation {
+  """
+  Register a new AI system with automatic compliance baseline
+  """
+  registerAISystem(input: RegisterAISystemInput!): SystemRegistrationResult!
+
+  """
+  Update an existing AI system
+  """
+  updateAISystem(input: UpdateAISystemInput!): AISystem!
+
+  """
+  Record a compliance assessment
+  """
+  recordComplianceAssessment(input: RecordComplianceAssessmentInput!): ComplianceState!
+
+  """
+  Create a new AI incident
+  """
+  createAIIncident(input: CreateAIIncidentInput!): AIIncident!
+
+  """
+  Advance incident to next workflow step
+  """
+  advanceIncidentWorkflow(input: AdvanceIncidentWorkflowInput!): AIIncident!
+
+  """
+  Complete incident assessment step
+  """
+  completeIncidentAssessment(input: CompleteIncidentAssessmentInput!): AIIncident!
+
+  """
+  Resolve an incident
+  """
+  resolveIncident(
+    """Incident ID"""
+    id: ID!
+
+    """Lessons learned"""
+    lessonsLearned: String
+  ): AIIncident!
+
+  """
+  Record a human oversight action
+  """
+  recordOversightAction(input: RecordOversightActionInput!): OversightAction!
+}
+
+# ============================================================================
+# DASHBOARD & OBSERVABILITY (Sprint G4.5)
+# ============================================================================
+
+"""
+Governance Metrics Snapshot
+Real-time metrics for governance dashboards with 1-minute caching
+"""
+type GovernanceMetricsSnapshot {
+  """Total number of AI systems registered"""
+  systemsTotal: Int!
+
+  """Number of active AI systems"""
+  systemsActive: Int!
+
+  """Systems categorized by risk level"""
+  systemsByRiskCategory: RiskCategoryMetrics!
+
+  """Systems categorized by oversight level"""
+  systemsByOversightLevel: OversightLevelMetrics!
+
+  """Total number of incidents (all time)"""
+  incidentsTotal: Int!
+
+  """Number of currently open incidents"""
+  incidentsOpen: Int!
+
+  """Number of resolved incidents"""
+  incidentsClosed: Int!
+
+  """Incidents categorized by severity"""
+  incidentsBySeverity: SeverityMetrics!
+
+  """Incidents categorized by workflow step"""
+  incidentsByStep: WorkflowStepMetrics!
+
+  """Average incident resolution time in hours"""
+  averageResolutionTimeHours: Float!
+
+  """Average compliance percentage across all systems"""
+  averageCompliancePercentage: Float!
+
+  """Number of systems with 100% compliance"""
+  systemsFullyCompliant: Int!
+
+  """Number of systems with partial compliance (1-99%)"""
+  systemsPartiallyCompliant: Int!
+
+  """Number of systems with 0% compliance"""
+  systemsNonCompliant: Int!
+
+  """Total requirements assessed across all systems"""
+  totalRequirementsAssessed: Int!
+
+  """Total number of human oversight actions"""
+  oversightActionsTotal: Int!
+
+  """Oversight actions by type"""
+  oversightActionsByType: OversightActionMetrics!
+
+  """Override rate (overrides / total actions)"""
+  overrideRate: Float!
+
+  """Intervention rate (interventions / total actions)"""
+  interventionRate: Float!
+
+  """Timestamp when metrics were captured"""
+  capturedAt: DateTime!
+}
+
+"""
+Risk Category Metrics
+"""
+type RiskCategoryMetrics {
+  MINIMAL: Int!
+  LIMITED: Int!
+  HIGH: Int!
+  UNACCEPTABLE: Int!
+}
+
+"""
+Oversight Level Metrics
+"""
+type OversightLevelMetrics {
+  HUMAN_ONLY: Int!
+  IN_THE_LOOP: Int!
+  ON_THE_LOOP: Int!
+}
+
+"""
+Severity Metrics
+"""
+type SeverityMetrics {
+  NEGLIGIBLE: Int!
+  MARGINAL: Int!
+  CRITICAL: Int!
+  CATASTROPHIC: Int!
+}
+
+"""
+Workflow Step Metrics
+"""
+type WorkflowStepMetrics {
+  DETECT: Int!
+  ASSESS: Int!
+  STABILIZE: Int!
+  REPORT: Int!
+  INVESTIGATE: Int!
+  CORRECT: Int!
+  VERIFY: Int!
+}
+
+"""
+Oversight Action Metrics
+"""
+type OversightActionMetrics {
+  OVERRIDE: Int!
+  INTERVENTION: Int!
+  SHUTDOWN: Int!
+  APPROVAL: Int!
+}
+
+"""
+Executive Summary
+High-level governance metrics for executive dashboards
+"""
+type ExecutiveSummary {
+  """Number of high/unacceptable risk systems with <80% compliance"""
+  systemsAtRisk: Int!
+
+  """Number of critical incidents currently open"""
+  criticalIncidentsOpen: Int!
+
+  """Overall compliance score (0-100)"""
+  complianceScore: Int!
+
+  """Oversight interventions in last 24 hours"""
+  oversightInterventions24h: Int!
+
+  """Top 5 systems ranked by risk and compliance"""
+  topRisks: [SystemRisk!]!
+}
+
+"""
+System Risk Summary
+"""
+type SystemRisk {
+  """System ID"""
+  systemId: ID!
+
+  """System name"""
+  systemName: String!
+
+  """Risk category"""
+  riskCategory: RiskCategory!
+
+  """Compliance percentage (0-100)"""
+  compliancePercentage: Float!
+
+  """Number of open incidents"""
+  openIncidents: Int!
+}
+
+"""
+Metric Trend
+Time-series data for trend analysis
+"""
+type MetricTrend {
+  """Metric name"""
+  metric: String!
+
+  """Data points over time"""
+  dataPoints: [MetricDataPoint!]!
+
+  """Trend direction"""
+  trend: TrendDirection!
+
+  """Percentage change from first to last data point"""
+  changePercentage: Float!
+}
+
+"""
+Metric Data Point
+Single point in time-series data
+"""
+type MetricDataPoint {
+  """Timestamp of data point"""
+  timestamp: DateTime!
+
+  """Metric value"""
+  value: Float!
+
+  """Optional label"""
+  label: String
+}
+
+"""
+Trend Direction
+"""
+enum TrendDirection {
+  INCREASING
+  DECREASING
+  STABLE
+}
+
+"""
+SKA Agentic Metrics
+Metrics for Semantic Knowledge Atoms agentic architecture
+Placeholder until SKA integration (Phase 2)
+"""
+type SKAAgenticMetrics {
+  """Number of appreciating assets (knowledge graphs)"""
+  appreciatingAssetCount: Int!
+
+  """Number of depreciating assets (RAG pipelines, etc.)"""
+  depreciatingAssetCount: Int!
+
+  """Network effect strength (0.0-1.0)"""
+  networkEffectStrength: Float!
+
+  """Number of queries using symbolic reasoning (SPARQL)"""
+  symbolicQueryCount: Int!
+
+  """Number of queries using neural reasoning (embeddings)"""
+  neuralQueryCount: Int!
+
+  """Number of queries using hybrid reasoning"""
+  hybridQueryCount: Int!
+
+  """Data entropy level (0.0-1.0)"""
+  entropyLevel: Float!
+
+  """Queries per second capacity"""
+  queriesPerSecondCapacity: Int!
+
+  """Maximum multi-hop traversal depth"""
+  multiHopMaxDepth: Int!
+
+  """Whether SKA metrics are enabled (true after Phase 2)"""
+  isEnabled: Boolean!
+}
+
+"""
+Performance Metrics
+System performance and health metrics
+"""
+type PerformanceMetrics {
+  """Average query time in milliseconds"""
+  averageQueryTime: Float!
+
+  """Number of slow queries (>1s)"""
+  slowQueryCount: Int!
+
+  """Average incident detection lag in minutes"""
+  averageIncidentDetectionLag: Float!
+
+  """Average compliance assessment time in minutes"""
+  averageComplianceAssessmentTime: Float!
+
+  """System uptime percentage"""
+  uptimePercentage: Float!
+
+  """Error rate (errors per 1000 requests)"""
+  errorRate: Float!
+}
+
+# ============================================================================
+# DASHBOARD QUERIES (Sprint G4.5)
+# ============================================================================
+
+extend type Query {
+  """
+  Get comprehensive governance metrics snapshot
+  Cached for 1 minute for performance
+  """
+  governanceMetrics(
+    """Force refresh cache"""
+    forceRefresh: Boolean
+  ): GovernanceMetricsSnapshot!
+
+  """
+  Get executive summary for high-level dashboards
+  """
+  executiveSummary: ExecutiveSummary!
+
+  """
+  Get metric trend over time
+  """
+  metricTrend(
+    """Metric name (systemsTotal, incidentsOpen, etc.)"""
+    metric: String!
+
+    """Start date"""
+    startDate: DateTime!
+
+    """End date"""
+    endDate: DateTime!
+
+    """Interval in hours (default: 24)"""
+    intervalHours: Int
+  ): MetricTrend!
+
+  """
+  Get SKA agentic architecture metrics
+  Returns placeholder data until SKA integration (Phase 2)
+  """
+  skaAgenticMetrics: SKAAgenticMetrics!
+
+  """
+  Get system performance metrics
+  """
+  performanceMetrics: PerformanceMetrics!
+}
+
+# ============================================================================
+# ALERTING RULES ENGINE (Sprint G4.6)
+# ============================================================================
+
+"""
+Alert Rule Type
+"""
+enum AlertRuleType {
+  """Threshold-based metric alert (e.g., systems_at_risk > 5)"""
+  METRIC_THRESHOLD
+
+  """Event pattern alert (e.g., >10 incidents in 24h)"""
+  EVENT_PATTERN
+
+  """Composite rule combining multiple conditions"""
+  COMPOSITE
+}
+
+"""
+Alert Severity
+"""
+enum AlertSeverity {
+  """Informational alert"""
+  INFO
+
+  """Warning alert requiring attention"""
+  WARNING
+
+  """Critical alert requiring immediate action"""
+  CRITICAL
+}
+
+"""
+Comparison Operator
+"""
+enum ComparisonOperator {
+  """Greater than"""
+  GT
+
+  """Greater than or equal"""
+  GTE
+
+  """Less than"""
+  LT
+
+  """Less than or equal"""
+  LTE
+
+  """Equal"""
+  EQ
+
+  """Not equal"""
+  NE
+}
+
+"""
+Notification Channel
+"""
+enum NotificationChannel {
+  """Email notification"""
+  EMAIL
+
+  """Slack notification"""
+  SLACK
+
+  """Webhook notification"""
+  WEBHOOK
+
+  """In-app notification"""
+  IN_APP
+}
+
+"""
+Alert Status
+"""
+enum AlertStatus {
+  """Alert is active and unacknowledged"""
+  ACTIVE
+
+  """Alert has been acknowledged but not resolved"""
+  ACKNOWLEDGED
+
+  """Alert has been resolved"""
+  RESOLVED
+
+  """Alert was a false positive"""
+  FALSE_POSITIVE
+}
+
+"""
+Alert Rule
+Defines automated monitoring rules for governance metrics
+"""
+type AlertRule {
+  """Unique identifier"""
+  id: ID!
+
+  """Rule name"""
+  name: String!
+
+  """Rule description"""
+  description: String
+
+  """Rule type"""
+  ruleType: AlertRuleType!
+
+  """Alert severity when triggered"""
+  severity: AlertSeverity!
+
+  """Rule condition (JSON)"""
+  condition: JSON!
+
+  """Whether rule is active"""
+  isActive: Boolean!
+
+  """Notification channels"""
+  notificationChannels: [NotificationChannel!]!
+
+  """Cooldown period in minutes"""
+  cooldownMinutes: Int!
+
+  """Number of times this rule has triggered"""
+  triggerCount: Int!
+
+  """Last time this rule triggered"""
+  lastTriggeredAt: DateTime
+
+  """When rule was created"""
+  createdAt: DateTime!
+
+  """When rule was last updated"""
+  updatedAt: DateTime!
+
+  """User who created the rule"""
+  createdBy: User
+
+  """Recent alerts from this rule"""
+  recentAlerts: [GovernanceAlert!]!
+}
+
+"""
+Governance Alert
+Represents a triggered alert from an alert rule
+"""
+type GovernanceAlert {
+  """Unique identifier"""
+  id: ID!
+
+  """Alert rule that triggered this alert"""
+  rule: AlertRule!
+
+  """Alert severity (copied from rule at trigger time)"""
+  severity: AlertSeverity!
+
+  """Alert status"""
+  status: AlertStatus!
+
+  """Alert title"""
+  title: String!
+
+  """Alert message"""
+  message: String!
+
+  """Metric value that triggered the alert (JSON)"""
+  triggerValue: JSON
+
+  """Alert metadata (JSON)"""
+  metadata: JSON
+
+  """When the alert was triggered"""
+  triggeredAt: DateTime!
+
+  """User who acknowledged the alert"""
+  acknowledgedBy: User
+
+  """When the alert was acknowledged"""
+  acknowledgedAt: DateTime
+
+  """Acknowledgement notes"""
+  acknowledgementNotes: String
+
+  """User who resolved the alert"""
+  resolvedBy: User
+
+  """When the alert was resolved"""
+  resolvedAt: DateTime
+
+  """Resolution notes"""
+  resolutionNotes: String
+
+  """Notifications sent for this alert"""
+  notificationsSent: [String!]
+
+  """When the alert was last updated"""
+  updatedAt: DateTime!
+}
+
+"""
+Notification Result
+Result of sending a notification
+"""
+type NotificationResult {
+  """Notification channel"""
+  channel: NotificationChannel!
+
+  """Whether notification was sent successfully"""
+  success: Boolean!
+
+  """Error message if failed"""
+  error: String
+
+  """Message ID from notification service"""
+  messageId: String
+}
+
+"""
+Input for creating an alert rule
+"""
+input CreateAlertRuleInput {
+  """Rule name"""
+  name: String!
+
+  """Rule description"""
+  description: String
+
+  """Rule type"""
+  ruleType: AlertRuleType!
+
+  """Alert severity"""
+  severity: AlertSeverity!
+
+  """Rule condition (JSON)"""
+  condition: JSON!
+
+  """Notification channels"""
+  notificationChannels: [NotificationChannel!]!
+
+  """Cooldown period in minutes (default: 60)"""
+  cooldownMinutes: Int
+
+  """Whether rule is active (default: true)"""
+  isActive: Boolean
+}
+
+"""
+Input for updating an alert rule
+"""
+input UpdateAlertRuleInput {
+  """Rule ID"""
+  id: ID!
+
+  """Rule name"""
+  name: String
+
+  """Rule description"""
+  description: String
+
+  """Alert severity"""
+  severity: AlertSeverity
+
+  """Rule condition (JSON)"""
+  condition: JSON
+
+  """Notification channels"""
+  notificationChannels: [NotificationChannel!]
+
+  """Cooldown period in minutes"""
+  cooldownMinutes: Int
+
+  """Whether rule is active"""
+  isActive: Boolean
+}
+
+"""
+Input for acknowledging an alert
+"""
+input AcknowledgeAlertInput {
+  """Alert ID"""
+  alertId: ID!
+
+  """Acknowledgement notes"""
+  notes: String
+}
+
+"""
+Input for resolving an alert
+"""
+input ResolveAlertInput {
+  """Alert ID"""
+  alertId: ID!
+
+  """Resolution notes"""
+  notes: String
+}
+
+# ============================================================================
+# ALERT QUERIES (Sprint G4.6)
+# ============================================================================
+
+extend type Query {
+  """
+  Get all alert rules
+  """
+  alertRules(
+    """Filter by active status"""
+    isActive: Boolean
+  ): [AlertRule!]!
+
+  """
+  Get a specific alert rule by ID
+  """
+  alertRule(id: ID!): AlertRule
+
+  """
+  Get active alerts
+  """
+  activeAlerts(
+    """Filter by severity"""
+    severity: AlertSeverity
+  ): [GovernanceAlert!]!
+
+  """
+  Get a specific alert by ID
+  """
+  alert(id: ID!): GovernanceAlert
+
+  """
+  Get alert history
+  """
+  alertHistory(
+    """Maximum number of alerts to return"""
+    limit: Int
+  ): [GovernanceAlert!]!
+}
+
+# ============================================================================
+# ALERT MUTATIONS (Sprint G4.6)
+# ============================================================================
+
+extend type Mutation {
+  """
+  Create a new alert rule
+  """
+  createAlertRule(input: CreateAlertRuleInput!): AlertRule!
+
+  """
+  Update an existing alert rule
+  """
+  updateAlertRule(input: UpdateAlertRuleInput!): AlertRule!
+
+  """
+  Delete an alert rule
+  """
+  deleteAlertRule(id: ID!): Boolean!
+
+  """
+  Acknowledge an alert
+  """
+  acknowledgeAlert(input: AcknowledgeAlertInput!): GovernanceAlert!
+
+  """
+  Resolve an alert
+  """
+  resolveAlert(input: ResolveAlertInput!): GovernanceAlert!
+
+  """
+  Mark an alert as false positive
+  """
+  markAlertFalsePositive(
+    """Alert ID"""
+    alertId: ID!
+
+    """Explanation"""
+    notes: String
+  ): GovernanceAlert!
+
+  """
+  Test a notification channel
+  """
+  testNotificationChannel(
+    """Notification channel to test"""
+    channel: NotificationChannel!
+
+    """Test message"""
+    testMessage: String!
+  ): NotificationResult!
+
+  """
+  Manually evaluate all alert rules
+  """
+  evaluateAlertRules: [GovernanceAlert!]!
+}
+
+# ============================================================================
+# AUDIT TRAIL API (Sprint G4.7)
+# ============================================================================
+
+"""
+Governance Event Type
+Events tracked in the audit log
+"""
+enum GovernanceEventType {
+  SYSTEM_REGISTERED
+  SYSTEM_UPDATED
+  SYSTEM_DEACTIVATED
+  INCIDENT_CREATED
+  INCIDENT_DETECTED
+  INCIDENT_ASSESSED
+  INCIDENT_RESOLVED
+  COMPLIANCE_ASSESSED
+  COMPLIANCE_UPDATED
+  OVERSIGHT_APPROVAL_GIVEN
+  OVERSIGHT_OVERRIDE_PERFORMED
+  OVERSIGHT_INTERVENTION
+  OVERSIGHT_SHUTDOWN
+  ALERT_RULE_CREATED
+  ALERT_RULE_UPDATED
+  ALERT_TRIGGERED
+  ALERT_ACKNOWLEDGED
+  ALERT_RESOLVED
+}
+
+"""
+Governance Event Category
+High-level grouping of event types
+"""
+enum GovernanceEventCategory {
+  SYSTEM_LIFECYCLE
+  INCIDENT_MANAGEMENT
+  COMPLIANCE_TRACKING
+  HUMAN_OVERSIGHT
+  ALERTING
+}
+
+"""
+Governance Entity Type
+Types of entities tracked in audit logs
+"""
+enum GovernanceEntityType {
+  AI_SYSTEM
+  INCIDENT
+  COMPLIANCE_STATE
+  OVERSIGHT_ACTION
+  ALERT_RULE
+  ALERT
+}
+
+"""
+Governance Action
+CRUD operations tracked
+"""
+enum GovernanceAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  APPROVE
+  REJECT
+  OVERRIDE
+  INTERVENE
+}
+
+"""
+Actor Type
+Type of actor performing the action
+"""
+enum ActorType {
+  USER
+  SYSTEM
+  AI_AGENT
+}
+
+"""
+Governance Audit Log
+Complete audit trail entry with sequence number for integrity verification
+"""
+type GovernanceAuditLog {
+  """Unique identifier"""
+  id: ID!
+
+  """Globally unique sequence number for integrity checking"""
+  sequenceNumber: Int!
+
+  """Event type"""
+  eventType: GovernanceEventType!
+
+  """Event category (auto-derived from event type)"""
+  eventCategory: GovernanceEventCategory!
+
+  """Entity type affected"""
+  entityType: GovernanceEntityType!
+
+  """Entity ID affected"""
+  entityId: ID!
+
+  """Action performed"""
+  action: GovernanceAction!
+
+  """Actor who performed the action"""
+  actorId: ID
+
+  """Actor type"""
+  actorType: ActorType!
+
+  """Description of what happened"""
+  description: String
+
+  """Additional metadata (JSON)"""
+  metadata: JSON
+
+  """Previous state before change (JSON)"""
+  previousState: JSON
+
+  """New state after change (JSON)"""
+  newState: JSON
+
+  """When the event occurred"""
+  timestamp: DateTime!
+}
+
+"""
+Audit Trail Summary
+Statistical summary of audit activity for an entity
+"""
+type AuditTrailSummary {
+  """Entity type"""
+  entityType: GovernanceEntityType!
+
+  """Entity ID"""
+  entityId: ID!
+
+  """Total number of audit events"""
+  totalEvents: Int!
+
+  """First audit event timestamp"""
+  firstEvent: DateTime!
+
+  """Most recent audit event timestamp"""
+  lastEvent: DateTime!
+
+  """Number of unique actors"""
+  uniqueActors: Int!
+
+  """Event counts by type"""
+  eventsByType: JSON!
+
+  """Event counts by action"""
+  eventsByAction: JSON!
+}
+
+"""
+Activity Timeline Entry
+User activity with formatted description
+"""
+type ActivityTimelineEntry {
+  """When the activity occurred"""
+  timestamp: DateTime!
+
+  """Event type"""
+  eventType: GovernanceEventType!
+
+  """Action performed"""
+  action: GovernanceAction!
+
+  """Actor ID"""
+  actorId: ID
+
+  """Actor type"""
+  actorType: ActorType!
+
+  """Human-readable description"""
+  description: String!
+
+  """Additional metadata (JSON)"""
+  metadata: JSON
+}
+
+"""
+Audit Log Integrity Report
+Verification of audit log sequence integrity
+"""
+type AuditLogIntegrityReport {
+  """Whether the audit log is valid (no gaps)"""
+  isValid: Boolean!
+
+  """Gaps found in sequence numbers"""
+  gaps: [SequenceGap!]!
+
+  """Total number of audit records"""
+  totalRecords: Int!
+
+  """When the verification was performed"""
+  verifiedAt: DateTime!
+}
+
+"""
+Sequence Gap
+Gap in audit log sequence numbers
+"""
+type SequenceGap {
+  """Starting sequence number of gap"""
+  from: Int!
+
+  """Ending sequence number of gap"""
+  to: Int!
+
+  """Number of missing records"""
+  count: Int!
+}
+
+"""
+Filters for querying audit logs
+"""
+input AuditLogFilters {
+  """Filter by event types"""
+  eventTypes: [GovernanceEventType!]
+
+  """Filter by event categories"""
+  eventCategories: [GovernanceEventCategory!]
+
+  """Filter by entity type"""
+  entityType: GovernanceEntityType
+
+  """Filter by specific entity ID"""
+  entityId: ID
+
+  """Filter by actor ID"""
+  actorId: ID
+
+  """Filter by actor types"""
+  actorTypes: [ActorType!]
+
+  """Filter by actions"""
+  actions: [GovernanceAction!]
+
+  """Start date for time range"""
+  startDate: DateTime
+
+  """End date for time range"""
+  endDate: DateTime
+
+  """Maximum number of results"""
+  limit: Int
+
+  """Offset for pagination"""
+  offset: Int
+}
+
+# ============================================================================
+# AUDIT TRAIL QUERIES (Sprint G4.7)
+# ============================================================================
+
+extend type Query {
+  """
+  Query audit logs with filters
+  Supports comprehensive filtering and pagination
+  """
+  auditLogs(
+    """Filters to apply"""
+    filters: AuditLogFilters
+  ): [GovernanceAuditLog!]!
+
+  """
+  Get complete audit trail for a specific entity
+  Ordered by timestamp descending (newest first)
+  """
+  entityAuditTrail(
+    """Entity type"""
+    entityType: GovernanceEntityType!
+
+    """Entity ID"""
+    entityId: ID!
+
+    """Maximum number of results (default: 100)"""
+    limit: Int
+  ): [GovernanceAuditLog!]!
+
+  """
+  Get statistical summary of audit activity for an entity
+  """
+  entityAuditSummary(
+    """Entity type"""
+    entityType: GovernanceEntityType!
+
+    """Entity ID"""
+    entityId: ID!
+  ): AuditTrailSummary!
+
+  """
+  Get activity timeline for a specific actor (user)
+  Formatted with human-readable descriptions
+  """
+  actorActivity(
+    """Actor ID (user ID)"""
+    actorId: ID!
+
+    """Maximum number of results (default: 50)"""
+    limit: Int
+  ): [ActivityTimelineEntry!]!
+
+  """
+  Get recent audit events across all entities
+  Useful for governance dashboard activity feed
+  """
+  recentAuditEvents(
+    """Maximum number of results (default: 100)"""
+    limit: Int
+
+    """Filter by event categories"""
+    categories: [GovernanceEventCategory!]
+  ): [GovernanceAuditLog!]!
+
+  """
+  Verify audit log integrity
+  Checks for gaps in sequence numbers that could indicate tampering
+  """
+  verifyAuditLogIntegrity: AuditLogIntegrityReport!
+}

@@ -1,0 +1,1000 @@
+/**
+ * Progressive Disclosure Pattern - Styles
+ *
+ * Design principles:
+ * - Smooth transitions between levels
+ * - Clear visual hierarchy
+ * - Mobile-first responsive design
+ * - Accessibility considerations
+ * - Professional aesthetics
+ */
+
+/* ============================================
+   CSS Variables (Tokens)
+   ============================================ */
+:root {
+  /* Colors */
+  --progressive-primary: #2563eb;
+  --progressive-primary-hover: #1d4ed8;
+  --progressive-success: #10b981;
+  --progressive-warning: #f59e0b;
+  --progressive-danger: #ef4444;
+  --progressive-gray-50: #f9fafb;
+  --progressive-gray-100: #f3f4f6;
+  --progressive-gray-200: #e5e7eb;
+  --progressive-gray-300: #d1d5db;
+  --progressive-gray-400: #9ca3af;
+  --progressive-gray-500: #6b7280;
+  --progressive-gray-600: #4b5563;
+  --progressive-gray-700: #374151;
+  --progressive-gray-800: #1f2937;
+  --progressive-gray-900: #111827;
+
+  /* Typography */
+  --progressive-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --progressive-font-size-xs: 0.75rem;
+  --progressive-font-size-sm: 0.875rem;
+  --progressive-font-size-base: 1rem;
+  --progressive-font-size-lg: 1.125rem;
+  --progressive-font-size-xl: 1.25rem;
+  --progressive-font-size-2xl: 1.5rem;
+  --progressive-font-size-3xl: 1.875rem;
+
+  /* Spacing */
+  --progressive-space-1: 0.25rem;
+  --progressive-space-2: 0.5rem;
+  --progressive-space-3: 0.75rem;
+  --progressive-space-4: 1rem;
+  --progressive-space-5: 1.25rem;
+  --progressive-space-6: 1.5rem;
+  --progressive-space-8: 2rem;
+  --progressive-space-10: 2.5rem;
+  --progressive-space-12: 3rem;
+
+  /* Border Radius */
+  --progressive-radius-sm: 0.25rem;
+  --progressive-radius-md: 0.375rem;
+  --progressive-radius-lg: 0.5rem;
+  --progressive-radius-xl: 0.75rem;
+
+  /* Shadows */
+  --progressive-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --progressive-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --progressive-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --progressive-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --progressive-transition-fast: 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --progressive-transition-normal: 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --progressive-transition-slow: 500ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ============================================
+   Base Progressive Content Container
+   ============================================ */
+.progressive-content {
+  position: relative;
+  font-family: var(--progressive-font-family);
+  background: white;
+  border-radius: var(--progressive-radius-lg);
+  overflow: hidden;
+  transition: all var(--progressive-transition-normal);
+  cursor: pointer;
+}
+
+.progressive-content:focus-visible {
+  outline: 2px solid var(--progressive-primary);
+  outline-offset: 2px;
+}
+
+/* Level-specific sizing */
+.progressive-glance {
+  box-shadow: var(--progressive-shadow-sm);
+  max-width: 320px;
+}
+
+.progressive-glance:hover {
+  box-shadow: var(--progressive-shadow-md);
+  transform: translateY(-2px);
+}
+
+.progressive-scan {
+  box-shadow: var(--progressive-shadow-md);
+  max-width: 480px;
+}
+
+.progressive-study {
+  box-shadow: var(--progressive-shadow-xl);
+  max-width: 800px;
+}
+
+/* Transitioning state */
+.progressive-transitioning {
+  pointer-events: none;
+}
+
+/* ============================================
+   Product Glance (3-second view)
+   ============================================ */
+.product-glance {
+  padding: var(--progressive-space-4);
+  transition: all var(--progressive-transition-normal);
+}
+
+.product-glance__image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--progressive-gray-100);
+  border-radius: var(--progressive-radius-md);
+  overflow: hidden;
+  margin-bottom: var(--progressive-space-4);
+}
+
+.product-glance__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--progressive-transition-normal);
+}
+
+.product-glance:hover .product-glance__image {
+  transform: scale(1.05);
+}
+
+.product-glance__stock-badge {
+  position: absolute;
+  top: var(--progressive-space-2);
+  right: var(--progressive-space-2);
+  padding: var(--progressive-space-1) var(--progressive-space-3);
+  border-radius: var(--progressive-radius-md);
+  font-size: var(--progressive-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.product-glance__stock-badge--in {
+  background: var(--progressive-success);
+  color: white;
+}
+
+.product-glance__stock-badge--out {
+  background: var(--progressive-danger);
+  color: white;
+}
+
+.product-glance__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-2);
+}
+
+.product-glance__name {
+  font-size: var(--progressive-font-size-lg);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-glance__hero-benefit {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-glance__rating {
+  display: flex;
+  align-items: center;
+  gap: var(--progressive-space-2);
+}
+
+.product-glance__rating-stars {
+  display: flex;
+  gap: var(--progressive-space-1);
+}
+
+.star {
+  font-size: var(--progressive-font-size-base);
+  line-height: 1;
+}
+
+.star--full {
+  color: var(--progressive-warning);
+}
+
+.star--half {
+  color: var(--progressive-warning);
+  opacity: 0.6;
+}
+
+.star--empty {
+  color: var(--progressive-gray-300);
+}
+
+.product-glance__review-count {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-500);
+}
+
+.product-glance__price-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--progressive-space-2);
+}
+
+.product-glance__price {
+  font-size: var(--progressive-font-size-2xl);
+  font-weight: 700;
+  color: var(--progressive-gray-900);
+}
+
+.product-glance__hint {
+  text-align: center;
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-400);
+  margin-top: var(--progressive-space-3);
+  padding-top: var(--progressive-space-3);
+  border-top: 1px solid var(--progressive-gray-200);
+  opacity: 0;
+  transition: opacity var(--progressive-transition-fast);
+}
+
+.product-glance:hover .product-glance__hint {
+  opacity: 1;
+}
+
+/* ============================================
+   Product Scan (30-second view)
+   ============================================ */
+.product-scan {
+  padding: var(--progressive-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-6);
+}
+
+.product-scan__header {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--progressive-space-6);
+}
+
+.product-scan__image-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background: var(--progressive-gray-100);
+  border-radius: var(--progressive-radius-lg);
+  overflow: hidden;
+}
+
+.product-scan__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-scan__brand-logo {
+  position: absolute;
+  bottom: var(--progressive-space-2);
+  right: var(--progressive-space-2);
+  max-width: 60px;
+  max-height: 30px;
+  background: white;
+  padding: var(--progressive-space-1);
+  border-radius: var(--progressive-radius-sm);
+  box-shadow: var(--progressive-shadow-sm);
+}
+
+.product-scan__header-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-3);
+}
+
+.product-scan__brand {
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 500;
+  color: var(--progressive-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.product-scan__name {
+  font-size: var(--progressive-font-size-2xl);
+  font-weight: 700;
+  color: var(--progressive-gray-900);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.product-scan__hero-benefit {
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.product-scan__rating {
+  display: flex;
+  align-items: center;
+  gap: var(--progressive-space-2);
+}
+
+.product-scan__rating-stars {
+  display: flex;
+  gap: var(--progressive-space-1);
+}
+
+.product-scan__review-count {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-500);
+}
+
+.product-scan__price-info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--progressive-space-3);
+}
+
+.product-scan__price {
+  font-size: var(--progressive-font-size-3xl);
+  font-weight: 700;
+  color: var(--progressive-gray-900);
+}
+
+.product-scan__size {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+}
+
+.product-scan__price-per-unit {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-500);
+}
+
+.product-scan__stock {
+  margin-top: var(--progressive-space-2);
+}
+
+.product-scan__stock-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--progressive-space-2) var(--progressive-space-4);
+  border-radius: var(--progressive-radius-md);
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 600;
+}
+
+.product-scan__stock-badge--in {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--progressive-success);
+}
+
+.product-scan__stock-badge--out {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--progressive-danger);
+}
+
+/* Sections */
+.product-scan__section {
+  padding: var(--progressive-space-4);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-md);
+}
+
+.product-scan__section-title {
+  font-size: var(--progressive-font-size-base);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+  margin: 0 0 var(--progressive-space-3) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-size: var(--progressive-font-size-sm);
+}
+
+/* Benefits */
+.product-scan__benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-2);
+}
+
+.product-scan__benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--progressive-space-2);
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+  line-height: 1.6;
+}
+
+.product-scan__benefit-icon {
+  color: var(--progressive-success);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Ingredients */
+.product-scan__ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-2);
+}
+
+.product-scan__ingredient {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-1);
+  padding: var(--progressive-space-3);
+  background: white;
+  border-radius: var(--progressive-radius-sm);
+  border-left: 3px solid var(--progressive-gray-300);
+}
+
+.product-scan__ingredient--active {
+  border-left-color: var(--progressive-primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.product-scan__ingredient-name {
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+}
+
+.product-scan__ingredient-purpose {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-600);
+  line-height: 1.5;
+}
+
+/* Skin Types */
+.product-scan__skin-types-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--progressive-space-2);
+}
+
+.product-scan__skin-type-badge {
+  padding: var(--progressive-space-2) var(--progressive-space-3);
+  background: white;
+  border: 1px solid var(--progressive-gray-300);
+  border-radius: var(--progressive-radius-md);
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+  font-weight: 500;
+}
+
+/* Certifications */
+.product-scan__certifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-3);
+}
+
+.product-scan__certification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--progressive-space-3);
+  padding: var(--progressive-space-3);
+  background: white;
+  border-radius: var(--progressive-radius-sm);
+}
+
+.product-scan__certification-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.product-scan__certification-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-1);
+}
+
+.product-scan__certification-name {
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+}
+
+.product-scan__certification-description {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-600);
+  line-height: 1.5;
+}
+
+.product-scan__hint {
+  text-align: center;
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-primary);
+  padding: var(--progressive-space-4);
+  background: rgba(37, 99, 235, 0.05);
+  border-radius: var(--progressive-radius-md);
+  font-weight: 500;
+}
+
+/* ============================================
+   Product Study (5+ minute deep dive)
+   ============================================ */
+.product-study {
+  padding: var(--progressive-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-6);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.product-study__header {
+  border-bottom: 2px solid var(--progressive-gray-200);
+  padding-bottom: var(--progressive-space-4);
+}
+
+.product-study__title {
+  font-size: var(--progressive-font-size-3xl);
+  font-weight: 700;
+  color: var(--progressive-gray-900);
+  margin: 0 0 var(--progressive-space-2) 0;
+  line-height: 1.2;
+}
+
+.product-study__subtitle {
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-600);
+  margin: 0;
+}
+
+/* Tabs */
+.product-study__tabs {
+  display: flex;
+  gap: var(--progressive-space-2);
+  border-bottom: 2px solid var(--progressive-gray-200);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.product-study__tab {
+  padding: var(--progressive-space-3) var(--progressive-space-4);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 500;
+  color: var(--progressive-gray-600);
+  cursor: pointer;
+  transition: all var(--progressive-transition-fast);
+  white-space: nowrap;
+  position: relative;
+  bottom: -2px;
+}
+
+.product-study__tab:hover {
+  color: var(--progressive-primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.product-study__tab--active {
+  color: var(--progressive-primary);
+  border-bottom-color: var(--progressive-primary);
+  font-weight: 600;
+}
+
+.product-study__tab:focus-visible {
+  outline: 2px solid var(--progressive-primary);
+  outline-offset: 2px;
+  border-radius: var(--progressive-radius-sm);
+}
+
+/* Tab Content */
+.product-study__content {
+  min-height: 300px;
+}
+
+.product-study__tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-6);
+  animation: fadeIn var(--progressive-transition-fast);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-study__section-title {
+  font-size: var(--progressive-font-size-lg);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+  margin: 0 0 var(--progressive-space-4) 0;
+}
+
+.product-study__description {
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-700);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Protocols */
+.product-study__protocols-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-3);
+}
+
+.product-study__protocol {
+  padding: var(--progressive-space-4);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-md);
+  border-left: 4px solid var(--progressive-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-1);
+}
+
+.product-study__protocol-name {
+  font-size: var(--progressive-font-size-base);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+}
+
+.product-study__protocol-role {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+}
+
+/* Vendor Info */
+.product-study__vendor-info {
+  padding: var(--progressive-space-4);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-md);
+  font-size: var(--progressive-font-size-sm);
+}
+
+.product-study__vendor-info p {
+  margin: var(--progressive-space-2) 0;
+  color: var(--progressive-gray-700);
+}
+
+/* Ingredients Table */
+.product-study__ingredients-note {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+  font-style: italic;
+  margin: 0 0 var(--progressive-space-4) 0;
+}
+
+.product-study__ingredients-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-2);
+}
+
+.product-study__ingredient-row {
+  padding: var(--progressive-space-4);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-md);
+  border-left: 3px solid var(--progressive-gray-300);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--progressive-space-4);
+}
+
+.product-study__ingredient-row--active {
+  background: rgba(37, 99, 235, 0.05);
+  border-left-color: var(--progressive-primary);
+}
+
+.product-study__ingredient-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--progressive-space-1);
+  flex: 1;
+}
+
+.product-study__ingredient-name {
+  font-size: var(--progressive-font-size-base);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+  display: flex;
+  align-items: center;
+  gap: var(--progressive-space-2);
+}
+
+.product-study__ingredient-badge {
+  display: inline-block;
+  padding: var(--progressive-space-1) var(--progressive-space-2);
+  background: var(--progressive-primary);
+  color: white;
+  border-radius: var(--progressive-radius-sm);
+  font-size: var(--progressive-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.product-study__ingredient-inci {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+  font-family: monospace;
+}
+
+.product-study__ingredient-details {
+  display: flex;
+  align-items: center;
+  gap: var(--progressive-space-3);
+}
+
+.product-study__ingredient-percentage {
+  font-size: var(--progressive-font-size-sm);
+  font-weight: 600;
+  color: var(--progressive-primary);
+  min-width: 50px;
+  text-align: right;
+}
+
+.product-study__ingredient-purpose {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-600);
+  max-width: 250px;
+}
+
+/* Clinical Studies */
+.product-study__study {
+  padding: var(--progressive-space-5);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-lg);
+  margin-bottom: var(--progressive-space-4);
+}
+
+.product-study__study-title {
+  font-size: var(--progressive-font-size-lg);
+  font-weight: 600;
+  color: var(--progressive-gray-900);
+  margin: 0 0 var(--progressive-space-3) 0;
+}
+
+.product-study__study-summary {
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-700);
+  line-height: 1.7;
+  margin: 0 0 var(--progressive-space-3) 0;
+}
+
+.product-study__study-methodology,
+.product-study__study-results {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+  margin: var(--progressive-space-2) 0;
+  line-height: 1.6;
+}
+
+.product-study__study-source {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-500);
+  margin-top: var(--progressive-space-3);
+}
+
+/* Efficacy Metrics */
+.product-study__metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--progressive-space-4);
+}
+
+.product-study__metric {
+  padding: var(--progressive-space-5);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-lg);
+  text-align: center;
+  border: 2px solid var(--progressive-gray-200);
+}
+
+.product-study__metric-claim {
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+  margin-bottom: var(--progressive-space-2);
+}
+
+.product-study__metric-value {
+  font-size: var(--progressive-font-size-3xl);
+  font-weight: 700;
+  color: var(--progressive-primary);
+  margin-bottom: var(--progressive-space-1);
+}
+
+.product-study__metric-timeframe {
+  font-size: var(--progressive-font-size-xs);
+  color: var(--progressive-gray-500);
+}
+
+/* Usage Instructions */
+.product-study__usage-frequency,
+.product-study__usage-instructions {
+  margin-bottom: var(--progressive-space-4);
+}
+
+.product-study__usage-instructions p {
+  margin-top: var(--progressive-space-2);
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-700);
+  line-height: 1.7;
+}
+
+.product-study__usage-tips ul,
+.product-study__usage-warnings ul,
+.product-study__allergens ul,
+.product-study__contraindications ul,
+.product-study__best-for ul,
+.product-study__pairs-with ul,
+.product-study__avoid-with ul {
+  margin-top: var(--progressive-space-2);
+  padding-left: var(--progressive-space-5);
+}
+
+.product-study__usage-tips li,
+.product-study__usage-warnings li,
+.product-study__allergens li,
+.product-study__contraindications li,
+.product-study__best-for li,
+.product-study__pairs-with li,
+.product-study__avoid-with li {
+  margin: var(--progressive-space-2) 0;
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+  line-height: 1.6;
+}
+
+.product-study__usage-warnings {
+  padding: var(--progressive-space-4);
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 4px solid var(--progressive-danger);
+  border-radius: var(--progressive-radius-md);
+}
+
+/* Safety */
+.product-study__safety {
+  padding: var(--progressive-space-5);
+  background: var(--progressive-gray-50);
+  border-radius: var(--progressive-radius-lg);
+}
+
+.product-study__safety p {
+  margin: var(--progressive-space-2) 0;
+  font-size: var(--progressive-font-size-sm);
+  color: var(--progressive-gray-700);
+}
+
+/* Professional Notes */
+.product-study__best-for,
+.product-study__pairs-with,
+.product-study__avoid-with,
+.product-study__professional-notes {
+  margin-bottom: var(--progressive-space-4);
+}
+
+.product-study__pairs-with {
+  padding: var(--progressive-space-4);
+  background: rgba(16, 185, 129, 0.05);
+  border-left: 4px solid var(--progressive-success);
+  border-radius: var(--progressive-radius-md);
+}
+
+.product-study__avoid-with {
+  padding: var(--progressive-space-4);
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 4px solid var(--progressive-danger);
+  border-radius: var(--progressive-radius-md);
+}
+
+.product-study__professional-notes p {
+  margin-top: var(--progressive-space-2);
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-700);
+  line-height: 1.7;
+}
+
+.product-study__no-data {
+  font-size: var(--progressive-font-size-base);
+  color: var(--progressive-gray-500);
+  font-style: italic;
+  text-align: center;
+  padding: var(--progressive-space-8);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+  .product-scan__header {
+    grid-template-columns: 1fr;
+  }
+
+  .product-scan__image-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .product-study {
+    padding: var(--progressive-space-4);
+  }
+
+  .product-study__tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .product-study__metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .progressive-content,
+  .product-glance__image,
+  .product-study__tab-content {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .progressive-content {
+    border: 2px solid currentColor;
+  }
+
+  .product-scan__section,
+  .product-study__study,
+  .product-study__metric {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Print styles */
+@media print {
+  .progressive-content {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .product-glance__hint,
+  .product-scan__hint {
+    display: none;
+  }
+
+  .product-study {
+    max-height: none;
+    overflow: visible;
+  }
+}

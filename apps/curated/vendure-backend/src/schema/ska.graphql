@@ -1,0 +1,575 @@
+# SKA (Skincare Knowledge Atoms) Schema
+# GraphQL types for the skincare intelligence knowledge graph
+
+"""
+7 Categorical Pillars organizing skincare knowledge
+"""
+type SkincarePillar {
+  id: ID!
+  number: Int!
+  name: String!
+  slug: String!
+  description: String
+  iconUrl: String
+  hexColor: String
+  displayOrder: Int!
+  atomCount: Int!
+  atoms(limit: Int): [SkincareAtom!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+8 Atom Types for Skincare Industry Knowledge
+"""
+enum SkincareAtomType {
+  COMPANY
+  BRAND
+  PRODUCT
+  INGREDIENT
+  REGULATION
+  TREND
+  SCIENTIFIC_CONCEPT
+  MARKET_DATA
+}
+
+"""
+Market Segments (5 categories)
+"""
+enum MarketSegment {
+  MASS
+  PRESTIGE
+  LUXURY
+  MEDICAL
+  NATURAL
+}
+
+"""
+Price Points (4 tiers)
+"""
+enum PricePoint {
+  BUDGET
+  MID_RANGE
+  PREMIUM
+  LUXURY
+}
+
+"""
+Relationship Types (16 semantic relationships)
+"""
+enum SkincareRelationshipType {
+  ENABLES
+  INHIBITS
+  PREREQUISITE_OF
+  CONSEQUENCE_OF
+  FORMULATED_WITH
+  SYNERGIZES_WITH
+  CONFLICTS_WITH
+  REPLACES
+  ACQUIRES
+  COMPETES_WITH
+  OWNED_BY
+  REGULATES
+  RESTRICTS
+  APPROVES
+  INFLUENCES
+  DISRUPTS
+}
+
+"""
+Source Types (6 evidence types)
+"""
+enum SourceType {
+  PEER_REVIEWED
+  REGULATORY_DOCUMENT
+  PATENT
+  MARKET_RESEARCH
+  COMPANY_FILING
+  INDUSTRY_REPORT
+}
+
+"""
+Progressive Disclosure Detail Level
+"""
+enum DetailLevel {
+  GLANCE
+  SCAN
+  STUDY
+}
+
+"""
+Skincare Knowledge Atom - core knowledge unit
+"""
+type SkincareAtom {
+  id: ID!
+  pillarId: ID!
+  pillar: SkincarePillar
+  atomType: SkincareAtomType!
+  title: String!
+  slug: String!
+
+  # Temporal data
+  yearEstablished: Int
+  yearIntroduced: Int
+  patentYear: Int
+  regulationYear: Int
+  trendEmergenceYear: Int
+
+  # Progressive disclosure content
+  glanceText: String!
+  scanText: String!
+  studyText: String!
+
+  # Classification
+  marketSegment: MarketSegment
+  pricePoint: PricePoint
+  targetDemographics: [String!]
+  keyIngredients: [String!]
+
+  # Ingredient-specific fields
+  inciName: String
+  casNumber: String
+  molecularFormula: String
+  molecularWeight: Float
+  maxConcentration: Float
+  phRangeMin: Float
+  phRangeMax: Float
+
+  # Market metrics
+  marketCap: Float
+  annualRevenue: Float
+  marketShare: Float
+  growthRate: Float
+
+  # Scores (0-1 scale)
+  innovationScore: Float
+  sustainabilityScore: Float
+  efficacyScore: Float
+
+  # Regulatory compliance
+  fdaApproved: Boolean
+  euCompliant: Boolean
+  crueltyFree: Boolean
+  cleanBeauty: Boolean
+  veganCertified: Boolean
+
+  # Media assets
+  logoUrl: String
+  productImageUrl: String
+  infographicUrl: String
+  videoUrl: String
+  bannerImageUrl: String
+  imageUrls: [String!]
+
+  # Relationships
+  parentCompanyId: ID
+  parentCompany: SkincareAtom
+
+  # Purging information
+  causesPurging: Boolean
+  purgingDurationWeeks: Int
+  purgingDescription: String
+
+  # Featured content
+  featured: Boolean
+  featuredOrder: Int
+  viewCount: Int
+
+  # Metadata
+  sources: JSON
+  metadata: JSON
+
+  # Computed fields
+  tensor: SkincareAtomTensor
+  relationships: [SkincareRelationship!]!
+  goldilocksParameters: [GoldilocksParameter!]!
+
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+17-D Domain Tensor for skincare matching
+"""
+type SkincareAtomTensor {
+  id: ID!
+  atomId: ID!
+
+  # 17 skincare domain dimensions
+  hydrationIndex: Float!
+  sebumRegulation: Float!
+  antiAgingPotency: Float!
+  brighteningEfficacy: Float!
+  antiInflammatory: Float!
+  barrierRepair: Float!
+  exfoliationStrength: Float!
+  antioxidantCapacity: Float!
+  collagenStimulation: Float!
+  sensitivityRisk: Float!
+  photosensitivity: Float!
+  phDependency: Float!
+  molecularPenetration: Float!
+  stabilityRating: Float!
+  compatibilityScore: Float!
+  clinicalEvidenceLevel: Float!
+  marketSaturation: Float!
+
+  # Precomputed vector
+  tensorVector: [Float!]
+
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+Semantic/causal relationship between atoms
+"""
+type SkincareRelationship {
+  id: ID!
+  fromAtomId: ID!
+  fromAtom: SkincareAtom
+  toAtomId: ID!
+  toAtom: SkincareAtom
+  relationshipType: SkincareRelationshipType!
+  strength: Float
+  establishedYear: Int
+  evidenceDescription: String
+  sourceUrl: String
+  sourceType: SourceType
+  metadata: JSON
+  createdAt: String!
+}
+
+"""
+Goldilocks parameter - optimal ranges for ingredients/protocols
+"""
+type GoldilocksParameter {
+  id: ID!
+  atomId: ID!
+  parameterName: String!
+  parameterUnit: String
+  optimalMin: Float!
+  optimalMax: Float!
+  absoluteMin: Float
+  absoluteMax: Float
+  context: String
+  skinType: String
+  notes: String
+  sourceType: SourceType
+  sourceUrl: String
+  evidenceLevel: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+"""
+Search filters for SKA queries
+"""
+input SKASearchFilters {
+  atomTypes: [SkincareAtomType!]
+  pillars: [Int!]
+  marketSegments: [MarketSegment!]
+  pricePoints: [PricePoint!]
+  yearRange: [Int!]
+  containsIngredients: [String!]
+  excludesIngredients: [String!]
+  fdaApproved: Boolean
+  euCompliant: Boolean
+  crueltyFree: Boolean
+  minInnovationScore: Float
+  minEfficacyScore: Float
+  causesPurging: Boolean
+}
+
+"""
+Search result with relevance score
+"""
+type SKASearchResult {
+  atom: SkincareAtom!
+  relevanceScore: Float
+  highlights: [SKAHighlight!]
+}
+
+"""
+Search highlight showing where matches occurred
+"""
+type SKAHighlight {
+  field: String!
+  matches: [String!]!
+}
+
+"""
+Paginated search response
+"""
+type SKASearchResponse {
+  results: [SKASearchResult!]!
+  totalCount: Int!
+  query: String
+  executionTimeMs: Int
+  hasMore: Boolean!
+}
+
+"""
+Causal chain node for prerequisite/consequence traversal
+"""
+type SKACausalNode {
+  atom: SkincareAtom!
+  relationship: SkincareRelationship!
+  depth: Int!
+}
+
+"""
+Causal chain response
+"""
+type SKACausalChain {
+  atom: SkincareAtom!
+  prerequisites: [SKACausalNode!]!
+  consequences: [SKACausalNode!]!
+  maxDepth: Int!
+}
+
+"""
+Compatibility check result
+"""
+type SKACompatibilityResult {
+  compatible: Boolean!
+  score: Float!
+  conflicts: [SkincareRelationship!]!
+  synergies: [SkincareRelationship!]!
+  warnings: [String!]!
+  recommendations: [String!]!
+}
+
+"""
+Purging information response
+"""
+type SKAPurgingInfo {
+  causesPurging: Boolean!
+  durationWeeks: Int
+  description: String
+  relatedIngredients: [SkincareAtom!]!
+}
+
+"""
+Knowledge graph statistics
+"""
+type SKAKnowledgeGraphStats {
+  totalAtoms: Int!
+  totalRelationships: Int!
+  totalPillars: Int!
+  atomsByType: JSON!
+  atomsByPillar: JSON!
+  topIngredients: [SkincareAtom!]!
+  recentlyAdded: [SkincareAtom!]!
+}
+
+"""
+17-D Tensor profile for ingredient matching
+"""
+input SKATensorProfileInput {
+  hydrationIndex: Float
+  sebumRegulation: Float
+  antiAgingPotency: Float
+  brighteningEfficacy: Float
+  antiInflammatory: Float
+  barrierRepair: Float
+  exfoliationStrength: Float
+  antioxidantCapacity: Float
+  collagenStimulation: Float
+  sensitivityRisk: Float
+  photosensitivity: Float
+  phDependency: Float
+  molecularPenetration: Float
+  stabilityRating: Float
+  compatibilityScore: Float
+  clinicalEvidenceLevel: Float
+  marketSaturation: Float
+}
+
+# ============================================
+# Marketing Compliance Scoring Types
+# ============================================
+
+"""
+Compliance severity levels
+"""
+enum ComplianceSeverity {
+  CRITICAL
+  WARNING
+  INFO
+}
+
+"""
+Single compliance warning for a flagged claim
+"""
+type SKAComplianceWarning {
+  claim: String!
+  claimType: String!
+  issue: String!
+  regulation: String!
+  severity: ComplianceSeverity!
+  suggestion: String!
+  confidence: Float!
+  matchedAtomId: ID
+  matchedAtomTitle: String
+}
+
+"""
+AI-generated suggestion for compliant alternative
+"""
+type SKAComplianceSuggestion {
+  originalClaim: String!
+  suggestedReplacement: String!
+  explanation: String!
+  regulationReference: String
+}
+
+"""
+Full compliance score result
+"""
+type SKAComplianceScore {
+  overallScore: Int!
+  passed: Boolean!
+  totalClaims: Int!
+  criticalCount: Int!
+  warningCount: Int!
+  infoCount: Int!
+  warnings: [SKAComplianceWarning!]!
+  suggestions: [SKAComplianceSuggestion!]!
+  analyzedAt: String!
+  processingTimeMs: Int!
+}
+
+"""
+Quick compliance check result
+"""
+type SKAQuickComplianceResult {
+  passed: Boolean!
+  criticalIssues: [String!]!
+}
+
+# ============================================
+# Query Extensions
+# ============================================
+
+# Extend Query type with SKA queries
+extend type Query {
+  """Get all skincare pillars"""
+  skincarePillars: [SkincarePillar!]!
+
+  """Get a specific pillar by ID"""
+  skincarePillar(id: ID!): SkincarePillar
+
+  """Get a skincare atom by ID"""
+  skincareAtom(id: ID!, detailLevel: DetailLevel): SkincareAtom
+
+  """Get a skincare atom by slug"""
+  skincareAtomBySlug(slug: String!, detailLevel: DetailLevel): SkincareAtom
+
+  """Get a skincare atom by INCI name (ingredients only)"""
+  skincareAtomByInci(inciName: String!): SkincareAtom
+
+  """Search skincare atoms with filters"""
+  skaSearchAtoms(
+    query: String
+    filters: SKASearchFilters
+    limit: Int
+    offset: Int
+  ): SKASearchResponse!
+
+  """Get causal chain (prerequisites and consequences) for an atom"""
+  skaCausalChain(atomId: ID!, maxDepth: Int): SKACausalChain!
+
+  """Check compatibility between multiple ingredients"""
+  skaCheckCompatibility(atomIds: [ID!]!): SKACompatibilityResult!
+
+  """Get purging information for an ingredient"""
+  skaGetPurgingInfo(atomId: ID!): SKAPurgingInfo!
+
+  """Get knowledge graph statistics"""
+  skaKnowledgeGraphStats: SKAKnowledgeGraphStats!
+
+  """Score marketing copy for FDA/FTC compliance"""
+  skaScoreCompliance(copy: String!, productId: ID): SKAComplianceScore!
+
+  """Quick compliance check - pass/fail with critical issues only"""
+  skaQuickComplianceCheck(copy: String!): SKAQuickComplianceResult!
+}
+
+# Extend Mutation type with SKA mutations
+extend type Mutation {
+  """Create a new skincare atom"""
+  skaCreateAtom(
+    pillarId: ID!
+    atomType: SkincareAtomType!
+    title: String!
+    slug: String!
+    glanceText: String!
+    scanText: String!
+    studyText: String!
+    inciName: String
+    casNumber: String
+    marketSegment: MarketSegment
+    pricePoint: PricePoint
+    metadata: JSON
+  ): SkincareAtom!
+
+  """Update a skincare atom"""
+  skaUpdateAtom(
+    id: ID!
+    title: String
+    glanceText: String
+    scanText: String
+    studyText: String
+    marketSegment: MarketSegment
+    pricePoint: PricePoint
+    innovationScore: Float
+    sustainabilityScore: Float
+    efficacyScore: Float
+    fdaApproved: Boolean
+    euCompliant: Boolean
+    crueltyFree: Boolean
+    causesPurging: Boolean
+    purgingDurationWeeks: Int
+    purgingDescription: String
+    metadata: JSON
+  ): SkincareAtom!
+
+  """Delete a skincare atom"""
+  skaDeleteAtom(id: ID!): Boolean!
+
+  """Create a relationship between atoms"""
+  skaCreateRelationship(
+    fromAtomId: ID!
+    toAtomId: ID!
+    relationshipType: SkincareRelationshipType!
+    strength: Float
+    evidenceDescription: String
+    sourceUrl: String
+    sourceType: SourceType
+  ): SkincareRelationship!
+
+  """Delete a relationship"""
+  skaDeleteRelationship(id: ID!): Boolean!
+
+  """Set Goldilocks parameter for an atom"""
+  skaSetGoldilocksParameter(
+    atomId: ID!
+    parameterName: String!
+    parameterUnit: String
+    optimalMin: Float!
+    optimalMax: Float!
+    absoluteMin: Float
+    absoluteMax: Float
+    context: String
+    skinType: String
+    notes: String
+    evidenceLevel: String
+  ): GoldilocksParameter!
+
+  """Generate or update 17-D tensor for an atom"""
+  skaGenerateTensor17D(
+    atomId: ID!
+    tensor: SKATensorProfileInput!
+  ): SkincareAtomTensor!
+}

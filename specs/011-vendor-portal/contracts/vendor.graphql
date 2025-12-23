@@ -1,0 +1,1146 @@
+# Vendor Portal GraphQL Contract
+
+"""
+JADE Vendor Portal API
+Version: 1.0.0
+Status: Draft
+
+This contract defines the GraphQL schema for all vendor-facing features.
+Vendors interact with this API through the Vendor Portal UI.
+"""
+
+# ==============================================================================
+# SCALARS & ENUMS
+# ==============================================================================
+
+scalar DateTime
+scalar JSON
+scalar URL
+scalar EmailAddress
+scalar HexColor
+
+"""
+Values that vendors can claim for their brand.
+Spas can filter/search by these values.
+"""
+enum VendorValue {
+  # Ingredient Philosophy
+  CLEAN_BEAUTY
+  ORGANIC
+  NATURAL
+  VEGAN
+  CRUELTY_FREE
+  FRAGRANCE_FREE
+  PARABEN_FREE
+  SULFATE_FREE
+  
+  # Sustainability
+  SUSTAINABLE
+  ECO_PACKAGING
+  REFILLABLE
+  ZERO_WASTE
+  CARBON_NEUTRAL
+  REEF_SAFE
+  
+  # Founder Identity
+  WOMAN_FOUNDED
+  BIPOC_OWNED
+  LGBTQ_OWNED
+  VETERAN_OWNED
+  FAMILY_OWNED
+  SMALL_BATCH
+  
+  # Specialization
+  MEDICAL_GRADE
+  ESTHETICIAN_DEVELOPED
+  DERMATOLOGIST_TESTED
+  CLINICAL_RESULTS
+  PROFESSIONAL_ONLY
+}
+
+"""
+Official certifications that require verification.
+Human-in-the-loop verification is required for final approval.
+"""
+enum CertificationType {
+  USDA_ORGANIC
+  ECOCERT
+  LEAPING_BUNNY
+  PETA_CERTIFIED
+  B_CORP
+  MADE_SAFE
+  EWG_VERIFIED
+  FSC_CERTIFIED
+  COSMOS_ORGANIC
+  COSMOS_NATURAL
+  FAIR_TRADE
+  WOMEN_OWNED_WBENC
+  MINORITY_OWNED_NMSDC
+}
+
+"""
+Verification status for certifications.
+Pending → (Under Review) → Verified | Rejected | Expired
+"""
+enum CertificationStatus {
+  PENDING
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+"""
+Order status in the fulfillment workflow.
+"""
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+  DISPUTED
+}
+
+"""
+Application status in the review workflow.
+"""
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ADDITIONAL_INFO_REQUESTED
+  APPROVED
+  CONDITIONALLY_APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+"""
+Onboarding step status.
+"""
+enum OnboardingStepStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+"""
+Message sender type.
+"""
+enum MessageSenderType {
+  VENDOR
+  SPA
+  SYSTEM
+}
+
+"""
+Conversation context type.
+"""
+enum ConversationContextType {
+  ORDER
+  PRODUCT
+  GENERAL
+}
+
+"""
+Discovery source - how spas find vendors.
+"""
+enum DiscoverySource {
+  SEARCH
+  BROWSE
+  VALUES_FILTER
+  RECOMMENDATION
+  DIRECT
+}
+
+"""
+Trend direction for metrics.
+"""
+enum TrendDirection {
+  UP
+  FLAT
+  DOWN
+}
+
+"""
+Recommendation priority level.
+"""
+enum RecommendationPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+"""
+Sort direction.
+"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+# ==============================================================================
+# INPUT TYPES
+# ==============================================================================
+
+"""
+Date range filter for analytics queries.
+"""
+input DateRangeInput {
+  start: DateTime!
+  end: DateTime!
+}
+
+"""
+Pagination input.
+"""
+input PaginationInput {
+  limit: Int = 25
+  offset: Int = 0
+}
+
+"""
+Order filter criteria.
+"""
+input OrderFilterInput {
+  status: [OrderStatus!]
+  dateRange: DateRangeInput
+  spaId: ID
+  searchQuery: String
+}
+
+"""
+Order sort options.
+"""
+input OrderSortInput {
+  field: OrderSortField!
+  direction: SortDirection!
+}
+
+enum OrderSortField {
+  CREATED_AT
+  UPDATED_AT
+  TOTAL
+  STATUS
+}
+
+"""
+Input for updating vendor profile.
+"""
+input UpdateVendorProfileInput {
+  brandName: String
+  tagline: String
+  founderStory: String
+  missionStatement: String
+  brandVideoUrl: URL
+  logoUrl: URL
+  heroImageUrl: URL
+  brandColorPrimary: HexColor
+  brandColorSecondary: HexColor
+  galleryImages: [URL!]
+  websiteUrl: URL
+  socialLinks: SocialLinksInput
+  foundedYear: Int
+  headquarters: String
+  teamSize: TeamSize
+  values: [VendorValue!]
+}
+
+enum TeamSize {
+  SOLO
+  TWO_TO_TEN
+  ELEVEN_TO_FIFTY
+  FIFTY_ONE_TO_TWO_HUNDRED
+  TWO_HUNDRED_PLUS
+}
+
+input SocialLinksInput {
+  instagram: URL
+  facebook: URL
+  tiktok: URL
+  linkedin: URL
+}
+
+"""
+Input for adding a certification.
+"""
+input AddCertificationInput {
+  type: CertificationType!
+  certificateNumber: String
+  expirationDate: DateTime
+  documentUrl: URL!
+}
+
+"""
+Input for updating order status.
+"""
+input UpdateOrderStatusInput {
+  orderId: ID!
+  status: OrderStatus!
+  note: String
+}
+
+"""
+Input for adding shipping information.
+"""
+input AddShippingInfoInput {
+  orderId: ID!
+  carrier: String!
+  trackingNumber: String!
+  estimatedDelivery: DateTime
+}
+
+"""
+Input for sending a message.
+"""
+input SendMessageInput {
+  conversationId: ID
+  spaId: ID
+  content: String!
+  contextType: ConversationContextType
+  contextReferenceId: ID
+}
+
+"""
+Input for submitting a vendor application.
+"""
+input VendorApplicationInput {
+  # Contact Info
+  contactFirstName: String!
+  contactLastName: String!
+  contactEmail: EmailAddress!
+  contactPhone: String
+  contactRole: String!
+  
+  # Company Info
+  brandName: String!
+  legalName: String!
+  website: URL!
+  yearFounded: Int!
+  headquarters: String!
+  employeeCount: String!
+  annualRevenue: String
+  
+  # Product Info
+  productCategories: [String!]!
+  skuCount: String!
+  priceRange: String!
+  targetMarket: [String!]!
+  currentDistribution: [String!]
+  
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [CertificationType!]
+  
+  # Why Jade
+  whyJade: String!
+  
+  # Documents
+  productCatalogUrl: URL
+  lineSheetUrl: URL
+  insuranceCertificateUrl: URL
+  businessLicenseUrl: URL
+}
+
+"""
+Input for completing an onboarding step.
+"""
+input CompleteOnboardingStepInput {
+  stepId: ID!
+  data: JSON
+}
+
+# ==============================================================================
+# TYPES - VENDOR PROFILE
+# ==============================================================================
+
+"""
+Vendor profile with brand identity, values, and certifications.
+"""
+type VendorProfile {
+  id: ID!
+  vendorId: ID!
+  
+  # Brand Identity
+  brandName: String!
+  tagline: String
+  founderStory: String
+  missionStatement: String
+  brandVideoUrl: URL
+  
+  # Visual Identity
+  logoUrl: URL
+  heroImageUrl: URL
+  brandColorPrimary: HexColor
+  brandColorSecondary: HexColor
+  galleryImages: [URL!]!
+  
+  # Contact & Links
+  websiteUrl: URL
+  socialLinks: SocialLinks
+  
+  # Business Info
+  foundedYear: Int
+  headquarters: String
+  teamSize: TeamSize
+  
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [VendorCertification!]!
+  
+  # Profile Health
+  completenessScore: Int!
+  completenessRecommendations: [String!]!
+  
+  # Timestamps
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SocialLinks {
+  instagram: URL
+  facebook: URL
+  tiktok: URL
+  linkedin: URL
+}
+
+"""
+A verified certification for a vendor.
+"""
+type VendorCertification {
+  id: ID!
+  type: CertificationType!
+  certificateNumber: String
+  issuingBody: String!
+  expirationDate: DateTime
+  verificationStatus: CertificationStatus!
+  documentUrl: URL
+  verifiedAt: DateTime
+  verifiedBy: String
+  rejectionReason: String
+  createdAt: DateTime!
+}
+
+# ==============================================================================
+# TYPES - DASHBOARD & ANALYTICS
+# ==============================================================================
+
+"""
+Vendor dashboard with all key metrics.
+"""
+type VendorDashboard {
+  overview: DashboardOverview!
+  trends: DashboardTrends!
+  spaInsights: SpaInsights!
+  productInsights: ProductInsights!
+  discoveryInsights: DiscoveryInsights!
+}
+
+type DashboardOverview {
+  totalRevenue: Float!
+  revenueTrend: TrendIndicator!
+  totalOrders: Int!
+  ordersTrend: TrendIndicator!
+  activeSpas: Int!
+  newSpasThisMonth: Int!
+  averageOrderValue: Float!
+  reorderRate: Float!
+  reorderRateTrend: TrendIndicator!
+}
+
+type TrendIndicator {
+  direction: TrendDirection!
+  percentChange: Float!
+  comparisonPeriod: String!
+}
+
+type DashboardTrends {
+  revenueOverTime: [TimeSeriesDataPoint!]!
+  ordersOverTime: [TimeSeriesDataPoint!]!
+  newSpasOverTime: [TimeSeriesDataPoint!]!
+}
+
+type TimeSeriesDataPoint {
+  date: DateTime!
+  value: Float!
+}
+
+"""
+Insights about spa relationships.
+Vendors can see high-level sales data for their own products.
+"""
+type SpaInsights {
+  topSpas: [SpaPerformance!]!
+  growingSpas: [SpaPerformance!]!
+  atRiskSpas: [SpaPerformance!]!
+  newSpas: [SpaPerformance!]!
+}
+
+"""
+Performance data for a spa relationship.
+Limited to vendor's own product sales data.
+"""
+type SpaPerformance {
+  spaId: ID!
+  spaName: String!
+  spaLocation: String!
+  
+  # Vendor's sales to this spa (their own data)
+  totalOrders: Int!
+  totalRevenue: Float!
+  lastOrderDate: DateTime
+  reorderFrequencyDays: Int
+  topProducts: [String!]!
+  growthTrend: TrendDirection!
+  lifetimeValue: Float!
+}
+
+type ProductInsights {
+  topProducts: [ProductPerformance!]!
+  risingProducts: [ProductPerformance!]!
+  decliningProducts: [ProductPerformance!]!
+  neverOrdered: [ProductPerformance!]!
+}
+
+type ProductPerformance {
+  productId: ID!
+  productName: String!
+  sku: String!
+  totalUnits: Int!
+  totalRevenue: Float!
+  uniqueSpas: Int!
+  reorderRate: Float!
+  averageRating: Float
+  trendDirection: TrendDirection!
+}
+
+"""
+Discovery analytics - how spas find this vendor.
+High-level insights without proprietary algorithm details.
+"""
+type DiscoveryInsights {
+  impressions: ImpressionStats!
+  valuesPerformance: [ValuePerformance!]!
+  profileEngagement: ProfileEngagement!
+  recommendations: [DiscoveryRecommendation!]!
+  visibilityScore: VisibilityScore!
+}
+
+type ImpressionStats {
+  total: Int!
+  bySource: ImpressionsBySource!
+  trend: TrendDirection!
+  trendPercent: Float!
+}
+
+type ImpressionsBySource {
+  search: Int!
+  browse: Int!
+  valuesFilter: Int!
+  recommendation: Int!
+  direct: Int!
+}
+
+type ValuePerformance {
+  value: VendorValue!
+  impressions: Int!
+  clicks: Int!
+  conversions: Int!
+  conversionRate: Float!
+  rank: Int!
+  totalVendorsWithValue: Int!
+}
+
+type ProfileEngagement {
+  profileViews: Int!
+  avgTimeOnProfileSeconds: Int!
+  catalogBrowses: Int!
+  productClicks: Int!
+  contactClicks: Int!
+  bounceRate: Float!
+}
+
+type DiscoveryRecommendation {
+  id: ID!
+  type: RecommendationType!
+  priority: RecommendationPriority!
+  title: String!
+  description: String!
+  actionLabel: String!
+  actionRoute: String!
+  potentialImpact: String!
+}
+
+enum RecommendationType {
+  PROFILE
+  VALUES
+  PRODUCTS
+  CERTIFICATIONS
+  CONTENT
+}
+
+type VisibilityScore {
+  score: Int!
+  maxScore: Int!
+  level: VisibilityLevel!
+  factors: [VisibilityFactor!]!
+}
+
+enum VisibilityLevel {
+  NEEDS_WORK
+  FAIR
+  GOOD
+  EXCELLENT
+}
+
+type VisibilityFactor {
+  name: String!
+  score: Int!
+  maxScore: Int!
+  description: String!
+}
+
+# ==============================================================================
+# TYPES - ORDERS
+# ==============================================================================
+
+"""
+A vendor order from a spa.
+"""
+type VendorOrder {
+  id: ID!
+  orderNumber: String!
+  
+  # Spa Info
+  spaId: ID!
+  spaName: String!
+  spaContact: SpaContact!
+  shippingAddress: Address!
+  
+  # Order Details
+  items: [OrderItem!]!
+  subtotal: Float!
+  shipping: Float!
+  tax: Float!
+  total: Float!
+  
+  # Status
+  status: OrderStatus!
+  statusHistory: [StatusChange!]!
+  
+  # Fulfillment
+  fulfillment: FulfillmentInfo
+  
+  # Communication
+  conversationId: ID
+  
+  # Timestamps
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SpaContact {
+  name: String!
+  email: EmailAddress!
+  phone: String
+}
+
+type Address {
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}
+
+type OrderItem {
+  productId: ID!
+  productName: String!
+  sku: String!
+  imageUrl: URL
+  quantity: Int!
+  unitPrice: Float!
+  totalPrice: Float!
+}
+
+type StatusChange {
+  status: OrderStatus!
+  changedAt: DateTime!
+  changedBy: String!
+  note: String
+}
+
+type FulfillmentInfo {
+  carrier: String
+  trackingNumber: String
+  trackingUrl: URL
+  estimatedDelivery: DateTime
+  actualDelivery: DateTime
+}
+
+type VendorOrderConnection {
+  edges: [VendorOrderEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type VendorOrderEdge {
+  node: VendorOrder!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# ==============================================================================
+# TYPES - MESSAGING
+# ==============================================================================
+
+"""
+A conversation between a vendor and a spa.
+Messages may be moderated for policy compliance.
+"""
+type Conversation {
+  id: ID!
+  
+  # Participants
+  vendorId: ID!
+  spaId: ID!
+  spaName: String!
+  spaContactName: String!
+  
+  # Context (optional link to order/product)
+  context: ConversationContext
+  
+  # Messages
+  messages(limit: Int = 50, before: DateTime): [Message!]!
+  
+  # Status
+  status: ConversationStatus!
+  unreadCount: Int!
+  lastMessageAt: DateTime
+  
+  createdAt: DateTime!
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+type ConversationContext {
+  type: ConversationContextType!
+  referenceId: ID
+  referenceName: String
+}
+
+"""
+A message in a conversation.
+"""
+type Message {
+  id: ID!
+  senderId: ID!
+  senderType: MessageSenderType!
+  senderName: String!
+  content: String!
+  attachments: [Attachment!]
+  
+  # Moderation status
+  moderationStatus: ModerationStatus!
+  moderationReason: String
+  
+  readAt: DateTime
+  createdAt: DateTime!
+}
+
+enum ModerationStatus {
+  APPROVED
+  PENDING_REVIEW
+  FLAGGED
+  REJECTED
+}
+
+type Attachment {
+  type: AttachmentType!
+  url: URL!
+  name: String!
+  size: Int
+}
+
+enum AttachmentType {
+  IMAGE
+  DOCUMENT
+  PRODUCT_LINK
+}
+
+type ConversationConnection {
+  edges: [ConversationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+  totalUnread: Int!
+}
+
+type ConversationEdge {
+  node: Conversation!
+  cursor: String!
+}
+
+# ==============================================================================
+# TYPES - APPLICATION & ONBOARDING
+# ==============================================================================
+
+"""
+A vendor application to join the marketplace.
+"""
+type VendorApplication {
+  id: ID!
+  
+  # Status
+  status: ApplicationStatus!
+  statusHistory: [ApplicationStatusChange!]!
+  
+  # Contact Info
+  contactFirstName: String!
+  contactLastName: String!
+  contactEmail: EmailAddress!
+  contactPhone: String
+  contactRole: String!
+  
+  # Company Info
+  brandName: String!
+  legalName: String!
+  website: URL!
+  yearFounded: Int!
+  headquarters: String!
+  employeeCount: String!
+  annualRevenue: String
+  
+  # Product Info
+  productCategories: [String!]!
+  skuCount: String!
+  priceRange: String!
+  targetMarket: [String!]!
+  currentDistribution: [String!]
+  
+  # Values & Certifications
+  values: [VendorValue!]!
+  certifications: [CertificationType!]
+  
+  # Why Jade
+  whyJade: String!
+  
+  # Documents
+  documents: ApplicationDocuments
+  
+  # SLA
+  submittedAt: DateTime!
+  slaDeadline: DateTime!
+  decidedAt: DateTime
+}
+
+type ApplicationStatusChange {
+  status: ApplicationStatus!
+  changedAt: DateTime!
+  changedBy: String
+  note: String
+}
+
+type ApplicationDocuments {
+  productCatalogUrl: URL
+  lineSheetUrl: URL
+  insuranceCertificateUrl: URL
+  businessLicenseUrl: URL
+}
+
+"""
+Vendor onboarding progress after approval.
+"""
+type VendorOnboarding {
+  id: ID!
+  vendorId: ID!
+  applicationId: ID!
+  
+  # Steps
+  steps: [OnboardingStep!]!
+  
+  # Progress
+  completedSteps: Int!
+  totalSteps: Int!
+  requiredStepsRemaining: Int!
+  percentComplete: Int!
+  
+  # Support
+  successManagerName: String
+  successManagerEmail: EmailAddress
+  
+  # Timeline
+  startedAt: DateTime!
+  targetCompletionDate: DateTime!
+  completedAt: DateTime
+}
+
+type OnboardingStep {
+  id: ID!
+  name: String!
+  description: String!
+  order: Int!
+  status: OnboardingStepStatus!
+  required: Boolean!
+  helpArticleUrl: URL
+  completedAt: DateTime
+}
+
+# ==============================================================================
+# QUERIES
+# ==============================================================================
+
+type Query {
+  # ─────────────────────────────────────────────────────────────────────────
+  # VENDOR PROFILE
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the current vendor's profile.
+  """
+  vendorProfile: VendorProfile!
+  
+  """
+  Get available values for the values picker.
+  """
+  availableValues: [VendorValueInfo!]!
+  
+  """
+  Get available certification types.
+  """
+  availableCertifications: [CertificationTypeInfo!]!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # DASHBOARD & ANALYTICS
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the vendor dashboard with all metrics.
+  """
+  vendorDashboard(dateRange: DateRangeInput!): VendorDashboard!
+  
+  """
+  Get detailed spa relationship data.
+  """
+  spaRelationship(spaId: ID!): SpaPerformance
+  
+  """
+  Get detailed product performance data.
+  """
+  productPerformance(productId: ID!): ProductPerformance
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # ORDERS
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get vendor orders with filtering and pagination.
+  """
+  vendorOrders(
+    filter: OrderFilterInput
+    sort: OrderSortInput
+    pagination: PaginationInput
+  ): VendorOrderConnection!
+  
+  """
+  Get a single order by ID.
+  """
+  vendorOrder(id: ID!): VendorOrder
+  
+  """
+  Get order counts by status for quick stats.
+  """
+  orderStatusCounts: OrderStatusCounts!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # MESSAGING
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get all conversations for the vendor.
+  """
+  vendorConversations(
+    pagination: PaginationInput
+    status: ConversationStatus
+  ): ConversationConnection!
+  
+  """
+  Get a single conversation by ID.
+  """
+  vendorConversation(id: ID!): Conversation
+  
+  """
+  Search conversations by content.
+  """
+  searchConversations(query: String!): [Conversation!]!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # APPLICATION & ONBOARDING
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Get the vendor's application (if in application phase).
+  """
+  vendorApplication(id: ID!): VendorApplication
+  
+  """
+  Get the vendor's onboarding progress (if approved).
+  """
+  vendorOnboarding: VendorOnboarding
+}
+
+# ==============================================================================
+# MUTATIONS
+# ==============================================================================
+
+type Mutation {
+  # ─────────────────────────────────────────────────────────────────────────
+  # VENDOR PROFILE
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Update the vendor profile.
+  """
+  updateVendorProfile(input: UpdateVendorProfileInput!): VendorProfile!
+  
+  """
+  Add a certification for verification.
+  Human-in-the-loop verification will be performed.
+  """
+  addCertification(input: AddCertificationInput!): VendorCertification!
+  
+  """
+  Remove a certification.
+  """
+  removeCertification(certificationId: ID!): Boolean!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # ORDERS
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Update the status of an order.
+  """
+  updateOrderStatus(input: UpdateOrderStatusInput!): VendorOrder!
+  
+  """
+  Add shipping information to an order.
+  """
+  addShippingInfo(input: AddShippingInfoInput!): VendorOrder!
+  
+  """
+  Bulk update order statuses.
+  """
+  bulkUpdateOrderStatus(
+    orderIds: [ID!]!
+    status: OrderStatus!
+    note: String
+  ): [VendorOrder!]!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # MESSAGING
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Send a message in a conversation.
+  Messages may be subject to moderation.
+  """
+  sendMessage(input: SendMessageInput!): Message!
+  
+  """
+  Mark messages as read.
+  """
+  markMessagesRead(conversationId: ID!): Conversation!
+  
+  """
+  Archive a conversation.
+  """
+  archiveConversation(conversationId: ID!): Conversation!
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # APPLICATION & ONBOARDING
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  """
+  Submit a vendor application.
+  """
+  submitVendorApplication(input: VendorApplicationInput!): VendorApplication!
+  
+  """
+  Withdraw a pending application.
+  """
+  withdrawApplication(applicationId: ID!): VendorApplication!
+  
+  """
+  Complete an onboarding step.
+  """
+  completeOnboardingStep(input: CompleteOnboardingStepInput!): OnboardingStep!
+  
+  """
+  Skip an optional onboarding step.
+  """
+  skipOnboardingStep(stepId: ID!): OnboardingStep!
+}
+
+# ==============================================================================
+# SUBSCRIPTIONS
+# ==============================================================================
+
+type Subscription {
+  """
+  Subscribe to new messages in conversations.
+  """
+  messageReceived: Message!
+  
+  """
+  Subscribe to order status updates.
+  """
+  orderStatusChanged(orderId: ID): VendorOrder!
+  
+  """
+  Subscribe to new orders.
+  """
+  newOrder: VendorOrder!
+}
+
+# ==============================================================================
+# SUPPORTING TYPES
+# ==============================================================================
+
+type VendorValueInfo {
+  value: VendorValue!
+  displayName: String!
+  description: String!
+  category: String!
+  icon: String!
+}
+
+type CertificationTypeInfo {
+  type: CertificationType!
+  displayName: String!
+  description: String!
+  issuingBody: String!
+  verificationRequired: Boolean!
+}
+
+type OrderStatusCounts {
+  pending: Int!
+  confirmed: Int!
+  processing: Int!
+  shipped: Int!
+  delivered: Int!
+  cancelled: Int!
+  disputed: Int!
+}

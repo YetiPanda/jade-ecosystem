@@ -1,0 +1,228 @@
+# User Settings Schema
+# Settings for user profile, notifications, and app preferences
+
+type Query {
+  """Get current user's settings"""
+  mySettings: UserSettings
+
+  """Get user settings by user ID (admin only)"""
+  userSettings(userId: ID!): UserSettings
+}
+
+type Mutation {
+  """Update current user's profile settings"""
+  updateProfileSettings(input: UpdateProfileSettingsInput!): UserSettingsResult!
+
+  """Update current user's notification preferences"""
+  updateNotificationSettings(input: UpdateNotificationSettingsInput!): UserSettingsResult!
+
+  """Update current user's app preferences"""
+  updateAppPreferences(input: UpdateAppPreferencesInput!): UserSettingsResult!
+
+  """Update all user settings at once"""
+  updateUserSettings(input: UpdateUserSettingsInput!): UserSettingsResult!
+
+  """Reset user settings to defaults"""
+  resetUserSettings: UserSettingsResult!
+}
+
+"""
+User Settings - Complete settings object for a user
+"""
+type UserSettings {
+  id: ID!
+  userId: ID!
+
+  # Profile Settings
+  profile: ProfileSettings!
+
+  # Notification Preferences
+  notifications: NotificationSettings!
+
+  # App Preferences
+  preferences: AppPreferences!
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Profile Settings - User display and contact preferences
+"""
+type ProfileSettings {
+  """Display name shown in the app"""
+  displayName: String
+
+  """User's timezone for scheduling"""
+  timezone: String!
+
+  """Preferred language code"""
+  language: String!
+
+  """Date format preference"""
+  dateFormat: DateFormat!
+
+  """Time format preference (12h/24h)"""
+  timeFormat: TimeFormat!
+
+  """Phone number for SMS notifications"""
+  phoneNumber: String
+
+  """Whether phone is verified for SMS"""
+  phoneVerified: Boolean!
+}
+
+"""
+Notification Settings - User's notification preferences
+"""
+type NotificationSettings {
+  """Receive email notifications"""
+  emailEnabled: Boolean!
+
+  """Receive push notifications"""
+  pushEnabled: Boolean!
+
+  """Receive SMS notifications"""
+  smsEnabled: Boolean!
+
+  """Appointment reminder notifications"""
+  appointmentReminders: Boolean!
+
+  """Hours before appointment to send reminder"""
+  reminderHours: Int!
+
+  """Order status update notifications"""
+  orderUpdates: Boolean!
+
+  """Marketing and promotional emails"""
+  marketingEmails: Boolean!
+
+  """Weekly digest of activity"""
+  weeklyDigest: Boolean!
+
+  """New product announcements"""
+  productAnnouncements: Boolean!
+
+  """Community activity notifications"""
+  communityActivity: Boolean!
+}
+
+"""
+App Preferences - UI and behavior preferences
+"""
+type AppPreferences {
+  """UI theme preference"""
+  theme: ThemePreference!
+
+  """Default landing page after login"""
+  defaultView: DefaultView!
+
+  """Sidebar collapsed by default"""
+  sidebarCollapsed: Boolean!
+
+  """Show product prices including tax"""
+  showPricesWithTax: Boolean!
+
+  """Preferred currency for display"""
+  currency: String!
+
+  """Number of items per page in lists"""
+  itemsPerPage: Int!
+
+  """Enable keyboard shortcuts"""
+  keyboardShortcuts: Boolean!
+
+  """Compact mode for dense information display"""
+  compactMode: Boolean!
+}
+
+"""
+Theme preference options
+"""
+enum ThemePreference {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+"""
+Default view after login
+"""
+enum DefaultView {
+  DASHBOARD
+  MARKETPLACE
+  APPOINTMENTS
+  CLIENTS
+  ECOSYSTEM
+  AURA
+  SANCTUARY
+}
+
+"""
+Date format options
+"""
+enum DateFormat {
+  MM_DD_YYYY
+  DD_MM_YYYY
+  YYYY_MM_DD
+}
+
+"""
+Time format options
+"""
+enum TimeFormat {
+  TWELVE_HOUR
+  TWENTY_FOUR_HOUR
+}
+
+"""
+Input types for mutations
+"""
+
+input UpdateProfileSettingsInput {
+  displayName: String
+  timezone: String
+  language: String
+  dateFormat: DateFormat
+  timeFormat: TimeFormat
+  phoneNumber: String
+}
+
+input UpdateNotificationSettingsInput {
+  emailEnabled: Boolean
+  pushEnabled: Boolean
+  smsEnabled: Boolean
+  appointmentReminders: Boolean
+  reminderHours: Int
+  orderUpdates: Boolean
+  marketingEmails: Boolean
+  weeklyDigest: Boolean
+  productAnnouncements: Boolean
+  communityActivity: Boolean
+}
+
+input UpdateAppPreferencesInput {
+  theme: ThemePreference
+  defaultView: DefaultView
+  sidebarCollapsed: Boolean
+  showPricesWithTax: Boolean
+  currency: String
+  itemsPerPage: Int
+  keyboardShortcuts: Boolean
+  compactMode: Boolean
+}
+
+input UpdateUserSettingsInput {
+  profile: UpdateProfileSettingsInput
+  notifications: UpdateNotificationSettingsInput
+  preferences: UpdateAppPreferencesInput
+}
+
+"""
+Result type for settings operations
+"""
+type UserSettingsResult {
+  success: Boolean!
+  settings: UserSettings
+  errors: [Error!]
+}

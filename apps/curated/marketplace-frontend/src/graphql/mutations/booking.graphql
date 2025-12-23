@@ -1,0 +1,131 @@
+# Task: T122 - GraphQL mutations for booking operations
+# Appointment booking, rescheduling, and cancellation
+
+mutation BookAppointment($input: BookAppointmentInput!) {
+  bookAppointment(input: $input) {
+    success
+    appointment {
+      id
+      appointmentNumber
+      clientId
+      providerId
+      serviceType
+      duration
+      startTime
+      endTime
+      timezone
+      status
+      notes
+      requestedProducts
+      paymentStatus
+      createdAt
+      updatedAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+    warnings
+  }
+}
+
+mutation RescheduleAppointment($input: RescheduleInput!) {
+  rescheduleAppointment(input: $input) {
+    success
+    appointment {
+      id
+      appointmentNumber
+      startTime
+      endTime
+      status
+      updatedAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+    warnings
+  }
+}
+
+mutation CancelAppointment(
+  $appointmentId: ID!
+  $reason: String!
+  $cancelledBy: CancelledBy!
+) {
+  cancelAppointment(
+    appointmentId: $appointmentId
+    reason: $reason
+    cancelledBy: $cancelledBy
+  ) {
+    success
+    appointment {
+      id
+      appointmentNumber
+      status
+      cancellationInfo {
+        cancelledBy
+        cancelledAt
+        reason
+        cancellationFee
+        refundIssued
+      }
+    }
+    errors {
+      code
+      message
+      field
+    }
+    warnings
+  }
+}
+
+mutation CheckInAppointment($appointmentId: ID!) {
+  checkInAppointment(appointmentId: $appointmentId) {
+    success
+    appointment {
+      id
+      appointmentNumber
+      status
+      updatedAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation BlockProviderTime($input: BlockTimeInput!) {
+  blockProviderTime(input: $input) {
+    success
+    blockedTime {
+      id
+      providerId
+      type
+      startTime
+      endTime
+      reason
+      isRecurring
+      recurrenceRule {
+        frequency
+        interval
+        count
+        until
+        byDay
+      }
+    }
+    errors
+  }
+}
+
+mutation UnblockProviderTime($availabilityId: ID!) {
+  unblockProviderTime(availabilityId: $availabilityId) {
+    success
+    message
+    errors
+  }
+}

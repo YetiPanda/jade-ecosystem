@@ -1,0 +1,422 @@
+{
+  "metadata": {
+    "framework": "ISO/IEC 42001:2023",
+    "version": "1.0.0",
+    "created": "2025-01-15",
+    "author": "SKA Regulatory Knowledge Engine",
+    "description": "Knowledge atoms for AI Management System (AIMS) requirements",
+    "atomCount": 78,
+    "tensorDimensions": [
+      "criticality",
+      "implementationComplexity",
+      "evidenceBurden",
+      "automationPotential",
+      "auditFrequency",
+      "jurisdictionScope",
+      "dataTypeSensitivity",
+      "humanOversightRequirement",
+      "transparencyRequirement",
+      "technicalSpecificity",
+      "organizationalScope",
+      "riskTier",
+      "maturityLevel"
+    ]
+  },
+  "thresholds": {
+    "T1": {
+      "id": "T1_AIMS_Foundation",
+      "name": "AIMS Foundation",
+      "description": "Organizational context, leadership commitment, and foundational planning requirements",
+      "clauseRange": "4.1-6.2",
+      "emergenceMetaphor": "The primordial soup of governance - necessary conditions before AI controls can emerge"
+    },
+    "T2": {
+      "id": "T2_Resource_Infrastructure",
+      "name": "Resource Infrastructure",
+      "description": "Support mechanisms including resources, competence, awareness, communication, and documentation",
+      "clauseRange": "7.1-7.5",
+      "emergenceMetaphor": "The energy and material inputs that enable complex AI governance to form"
+    },
+    "T3": {
+      "id": "T3_Operational_Controls",
+      "name": "Operational Controls",
+      "description": "Day-to-day operational planning, risk assessment, risk treatment, and AI system lifecycle management",
+      "clauseRange": "8.1-8.4",
+      "emergenceMetaphor": "Active processes maintaining the AI governance ecosystem - metabolism of compliance"
+    },
+    "T4": {
+      "id": "T4_Performance_Evaluation",
+      "name": "Performance Evaluation",
+      "description": "Monitoring, measurement, internal audit, and management review cycles",
+      "clauseRange": "9.1-9.3",
+      "emergenceMetaphor": "Feedback loops that enable learning and adaptation - consciousness of the system"
+    },
+    "T5": {
+      "id": "T5_Continual_Improvement",
+      "name": "Continual Improvement",
+      "description": "Nonconformity handling and improvement mechanisms",
+      "clauseRange": "10.1-10.2",
+      "emergenceMetaphor": "Evolution and optimization - the system becomes more fit over time"
+    },
+    "T6": {
+      "id": "T6_AI_Controls_Annex",
+      "name": "AI-Specific Controls (Annex A)",
+      "description": "Normative AI controls covering policies, accountability, risk management, resources, impact assessment, life cycle, data, and information",
+      "annexRange": "A.2-A.10",
+      "emergenceMetaphor": "Specialized organs for AI-specific functions - differentiated compliance capabilities"
+    }
+  },
+  "atoms": [
+    {
+      "atomId": "iso42001_4.1_org_context",
+      "thresholdId": "T1_AIMS_Foundation",
+      "clause": "4.1",
+      "title": "Understanding the Organization and Its Context",
+      "atomContent": {
+        "glance": "Determine internal/external issues relevant to AI management",
+        "scan": "The organization shall determine external and internal issues that are relevant to its purpose and that affect its ability to achieve the intended outcome(s) of its AI management system.",
+        "study": "Organizations must systematically identify and analyze external issues (regulatory environment, market conditions, technological trends) and internal issues (organizational values, culture, capabilities, governance structure)."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": [],
+      "enabledAtoms": ["iso42001_4.2_stakeholder_needs", "iso42001_4.3_scope", "iso42001_6.1_risk_planning"],
+      "tensorCoordinates": {
+        "criticality": 0.9,
+        "implementationComplexity": 0.5,
+        "evidenceBurden": 0.6,
+        "automationPotential": 0.3,
+        "auditFrequency": 0.4,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.3,
+        "humanOversightRequirement": 0.7,
+        "transparencyRequirement": 0.5,
+        "technicalSpecificity": 0.2,
+        "organizationalScope": 1.0,
+        "riskTier": 0.5,
+        "maturityLevel": 0.2
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "GOVERN", "category": "1.1"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(1)"},
+        {"framework": "SOC2", "criterion": "CC1.1"}
+      ],
+      "evidenceArtifacts": ["Context analysis document", "PESTLE analysis", "AI landscape assessment", "Stakeholder register"]
+    },
+    {
+      "atomId": "iso42001_4.2_stakeholder_needs",
+      "thresholdId": "T1_AIMS_Foundation",
+      "clause": "4.2",
+      "title": "Understanding the Needs and Expectations of Interested Parties",
+      "atomContent": {
+        "glance": "Identify AI stakeholders and their requirements",
+        "scan": "The organization shall determine the interested parties relevant to the AIMS and their relevant requirements.",
+        "study": "Interested parties include internal (employees, management, AI developers) and external (customers, regulators, affected communities) stakeholders."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_4.1_org_context"],
+      "enabledAtoms": ["iso42001_4.3_scope", "iso42001_5.2_policy", "iso42001_6.2_objectives"],
+      "tensorCoordinates": {
+        "criticality": 0.85,
+        "implementationComplexity": 0.6,
+        "evidenceBurden": 0.5,
+        "automationPotential": 0.2,
+        "auditFrequency": 0.5,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.4,
+        "humanOversightRequirement": 0.8,
+        "transparencyRequirement": 0.7,
+        "technicalSpecificity": 0.2,
+        "organizationalScope": 0.9,
+        "riskTier": 0.5,
+        "maturityLevel": 0.2
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "GOVERN", "category": "1.2"},
+        {"framework": "EU_AI_ACT", "article": "Article 13"},
+        {"framework": "GDPR", "article": "Article 35(9)"}
+      ],
+      "evidenceArtifacts": ["Stakeholder register", "Requirements matrix", "Stakeholder engagement records"]
+    },
+    {
+      "atomId": "iso42001_4.3_scope",
+      "thresholdId": "T1_AIMS_Foundation",
+      "clause": "4.3",
+      "title": "Determining the Scope of the AI Management System",
+      "atomContent": {
+        "glance": "Define AIMS boundaries and applicability",
+        "scan": "The organization shall determine the boundaries and applicability of the AIMS to establish its scope.",
+        "study": "Scope determination requires boundary definition, applicability assessment, interface management, and documentation."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_4.1_org_context", "iso42001_4.2_stakeholder_needs"],
+      "enabledAtoms": ["iso42001_4.4_aims_establishment", "iso42001_6.1_risk_planning", "iso42001_8.2_risk_assessment"],
+      "tensorCoordinates": {
+        "criticality": 0.95,
+        "implementationComplexity": 0.7,
+        "evidenceBurden": 0.7,
+        "automationPotential": 0.2,
+        "auditFrequency": 0.6,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.3,
+        "humanOversightRequirement": 0.6,
+        "transparencyRequirement": 0.8,
+        "technicalSpecificity": 0.4,
+        "organizationalScope": 1.0,
+        "riskTier": 0.6,
+        "maturityLevel": 0.3
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MAP", "category": "1.1"},
+        {"framework": "EU_AI_ACT", "article": "Article 6"},
+        {"framework": "ISO27001", "clause": "4.3"}
+      ],
+      "evidenceArtifacts": ["AIMS scope statement", "AI system inventory", "Exclusions justification document"]
+    },
+    {
+      "atomId": "iso42001_6.1.4_risk_assessment_requirement",
+      "thresholdId": "T1_AIMS_Foundation",
+      "clause": "6.1.4",
+      "title": "AI Risk Assessment",
+      "atomContent": {
+        "glance": "Conduct AI risk assessments at planned intervals",
+        "scan": "The organization shall conduct and document AI risk assessments at planned intervals or when significant changes occur.",
+        "study": "AI risk assessment must consider risks to individuals, organizational risks, and societal/environmental risks from AI systems."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_6.1_risk_planning"],
+      "enabledAtoms": ["iso42001_8.2_risk_assessment", "iso42001_8.3_risk_treatment", "iso42001_A.5.4_impact_assessment"],
+      "tensorCoordinates": {
+        "criticality": 1.0,
+        "implementationComplexity": 0.8,
+        "evidenceBurden": 0.9,
+        "automationPotential": 0.5,
+        "auditFrequency": 0.9,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.7,
+        "humanOversightRequirement": 0.9,
+        "transparencyRequirement": 0.8,
+        "technicalSpecificity": 0.7,
+        "organizationalScope": 0.8,
+        "riskTier": 1.0,
+        "maturityLevel": 0.5
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MEASURE", "category": "1.1"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(2)"},
+        {"framework": "GDPR", "article": "Article 35"}
+      ],
+      "evidenceArtifacts": ["AI risk assessment reports", "Risk assessment schedule", "Assessment methodology"]
+    },
+    {
+      "atomId": "iso42001_8.2_risk_assessment",
+      "thresholdId": "T3_Operational_Controls",
+      "clause": "8.2",
+      "title": "AI System Risk Assessment",
+      "atomContent": {
+        "glance": "Perform AI risk assessments at planned intervals",
+        "scan": "The organization shall perform AI system risk assessments at planned intervals or when significant changes are proposed.",
+        "study": "Risk assessment execution includes conducting at planned intervals, applying criteria consistently, and documenting results."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_6.1_risk_planning", "iso42001_6.1.4_risk_assessment_requirement", "iso42001_8.1_operational_planning"],
+      "enabledAtoms": ["iso42001_8.3_risk_treatment", "iso42001_9.1_monitoring", "iso42001_A.5.4_impact_assessment"],
+      "tensorCoordinates": {
+        "criticality": 1.0,
+        "implementationComplexity": 0.8,
+        "evidenceBurden": 0.9,
+        "automationPotential": 0.5,
+        "auditFrequency": 0.9,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.7,
+        "humanOversightRequirement": 0.9,
+        "transparencyRequirement": 0.8,
+        "technicalSpecificity": 0.8,
+        "organizationalScope": 0.8,
+        "riskTier": 1.0,
+        "maturityLevel": 0.6
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MEASURE", "category": "2.1-2.13"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(2)"},
+        {"framework": "ISO31000", "clause": "6.4"}
+      ],
+      "evidenceArtifacts": ["Risk assessment reports", "Risk registers", "Assessment schedules"]
+    },
+    {
+      "atomId": "iso42001_8.3_risk_treatment",
+      "thresholdId": "T3_Operational_Controls",
+      "clause": "8.3",
+      "title": "AI System Risk Treatment",
+      "atomContent": {
+        "glance": "Select and implement AI risk treatment options",
+        "scan": "The organization shall define and apply an AI system risk treatment process.",
+        "study": "Risk treatment includes selecting options (avoid, mitigate, transfer, accept), determining controls, and producing a Statement of Applicability."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_8.2_risk_assessment", "iso42001_6.1.4_risk_assessment_requirement"],
+      "enabledAtoms": ["iso42001_9.1_monitoring", "iso42001_9.2_internal_audit", "iso42001_A.5.5_lifecycle_treatment"],
+      "tensorCoordinates": {
+        "criticality": 0.95,
+        "implementationComplexity": 0.8,
+        "evidenceBurden": 0.8,
+        "automationPotential": 0.4,
+        "auditFrequency": 0.8,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.6,
+        "humanOversightRequirement": 0.9,
+        "transparencyRequirement": 0.7,
+        "technicalSpecificity": 0.7,
+        "organizationalScope": 0.8,
+        "riskTier": 0.9,
+        "maturityLevel": 0.6
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MANAGE", "category": "1.1-4.3"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(4)"},
+        {"framework": "ISO31000", "clause": "6.5"}
+      ],
+      "evidenceArtifacts": ["Statement of Applicability", "Risk treatment plans", "Residual risk acceptance records"]
+    },
+    {
+      "atomId": "iso42001_9.1_monitoring",
+      "thresholdId": "T4_Performance_Evaluation",
+      "clause": "9.1",
+      "title": "Monitoring, Measurement, Analysis and Evaluation",
+      "atomContent": {
+        "glance": "Monitor and measure AIMS performance",
+        "scan": "The organization shall determine what needs to be monitored and measured.",
+        "study": "AI-specific monitoring includes model performance metrics, drift detection, fairness metrics, safety incidents."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_6.2_objectives", "iso42001_8.2_risk_assessment", "iso42001_8.3_risk_treatment"],
+      "enabledAtoms": ["iso42001_9.2_internal_audit", "iso42001_9.3_management_review", "iso42001_10.1_improvement"],
+      "tensorCoordinates": {
+        "criticality": 0.9,
+        "implementationComplexity": 0.7,
+        "evidenceBurden": 0.7,
+        "automationPotential": 0.8,
+        "auditFrequency": 0.9,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.5,
+        "humanOversightRequirement": 0.7,
+        "transparencyRequirement": 0.7,
+        "technicalSpecificity": 0.7,
+        "organizationalScope": 0.9,
+        "riskTier": 0.6,
+        "maturityLevel": 0.5
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MEASURE", "category": "1.1-3.3"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(9)"},
+        {"framework": "ISO27001", "clause": "9.1"}
+      ],
+      "evidenceArtifacts": ["Monitoring procedures", "Performance dashboards", "Analysis reports"]
+    },
+    {
+      "atomId": "iso42001_10.2_nonconformity",
+      "thresholdId": "T5_Continual_Improvement",
+      "clause": "10.2",
+      "title": "Nonconformity and Corrective Action",
+      "atomContent": {
+        "glance": "React to nonconformities and take corrective action",
+        "scan": "When a nonconformity occurs, the organization shall react and take corrective action.",
+        "study": "For AI systems, nonconformities may include model failures, bias incidents, safety events, compliance gaps."
+      },
+      "contentType": "requirement",
+      "prerequisiteAtoms": ["iso42001_9.2_internal_audit", "iso42001_9.3_management_review", "iso42001_10.1_improvement"],
+      "enabledAtoms": [],
+      "tensorCoordinates": {
+        "criticality": 0.9,
+        "implementationComplexity": 0.6,
+        "evidenceBurden": 0.7,
+        "automationPotential": 0.5,
+        "auditFrequency": 0.8,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.4,
+        "humanOversightRequirement": 0.8,
+        "transparencyRequirement": 0.7,
+        "technicalSpecificity": 0.4,
+        "organizationalScope": 0.9,
+        "riskTier": 0.7,
+        "maturityLevel": 0.5
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MANAGE", "category": "3.1"},
+        {"framework": "EU_AI_ACT", "article": "Article 16(f)"},
+        {"framework": "ISO27001", "clause": "10.2"}
+      ],
+      "evidenceArtifacts": ["Nonconformity reports", "Root cause analyses", "Corrective action records"]
+    },
+    {
+      "atomId": "iso42001_A.5.4_impact_assessment",
+      "thresholdId": "T6_AI_Controls_Annex",
+      "clause": "A.5.4",
+      "title": "AI System Impact Assessment",
+      "atomContent": {
+        "glance": "Assess impacts of AI systems on individuals, groups, and society",
+        "scan": "Impact assessments shall be conducted for AI systems to identify potential adverse effects.",
+        "study": "Impact assessment covers individual impacts, group impacts, and societal impacts."
+      },
+      "contentType": "control",
+      "prerequisiteAtoms": ["iso42001_6.1.4_risk_assessment_requirement", "iso42001_A.5.1_risk_approach"],
+      "enabledAtoms": ["iso42001_A.5.5_lifecycle_treatment", "iso42001_8.3_risk_treatment"],
+      "tensorCoordinates": {
+        "criticality": 1.0,
+        "implementationComplexity": 0.8,
+        "evidenceBurden": 0.9,
+        "automationPotential": 0.4,
+        "auditFrequency": 0.8,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.8,
+        "humanOversightRequirement": 0.9,
+        "transparencyRequirement": 0.9,
+        "technicalSpecificity": 0.6,
+        "organizationalScope": 0.8,
+        "riskTier": 1.0,
+        "maturityLevel": 0.6
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "MAP", "category": "2.1-2.3"},
+        {"framework": "EU_AI_ACT", "article": "Article 9(2)"},
+        {"framework": "GDPR", "article": "Article 35"}
+      ],
+      "evidenceArtifacts": ["Impact assessment reports", "Stakeholder analysis", "Mitigation plans"]
+    },
+    {
+      "atomId": "iso42001_A.9_human_oversight",
+      "thresholdId": "T6_AI_Controls_Annex",
+      "clause": "A.9",
+      "title": "Use of AI Systems - Human Oversight",
+      "atomContent": {
+        "glance": "Implement human oversight appropriate to AI system risk",
+        "scan": "Human oversight mechanisms shall be implemented for AI systems proportionate to the risk level.",
+        "study": "Oversight mechanisms include human-in-the-loop, human-on-the-loop, and human-in-command patterns."
+      },
+      "contentType": "control",
+      "prerequisiteAtoms": ["iso42001_A.4.2_competence_controls", "iso42001_A.5.3_system_categorization"],
+      "enabledAtoms": ["iso42001_9.1_monitoring"],
+      "tensorCoordinates": {
+        "criticality": 0.95,
+        "implementationComplexity": 0.7,
+        "evidenceBurden": 0.7,
+        "automationPotential": 0.3,
+        "auditFrequency": 0.8,
+        "jurisdictionScope": 1.0,
+        "dataTypeSensitivity": 0.5,
+        "humanOversightRequirement": 1.0,
+        "transparencyRequirement": 0.8,
+        "technicalSpecificity": 0.6,
+        "organizationalScope": 0.8,
+        "riskTier": 0.9,
+        "maturityLevel": 0.6
+      },
+      "crossFrameworkMappings": [
+        {"framework": "NIST_AI_RMF", "function": "GOVERN", "category": "1.5"},
+        {"framework": "EU_AI_ACT", "article": "Article 14"},
+        {"framework": "OECD_AI_Principles", "principle": "1.4"}
+      ],
+      "evidenceArtifacts": ["Oversight procedures", "Override logs", "Monitoring dashboards", "Intervention records"]
+    }
+  ],
+  "note": "This is a condensed version with key atoms. Full file has 78 atoms with complete details. See source at /Users/jessegarza/claude-mcp/SemanticTech/FraseAI-IncidentResponse/iso42001-ska-atoms.json"
+}

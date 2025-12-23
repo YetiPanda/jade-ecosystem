@@ -1,0 +1,441 @@
+# ========================================
+# Wholesale Application GraphQL Schema
+# Week 8: Practitioner Verification System
+#
+# Defines types and operations for wholesale account applications.
+# ========================================
+
+# ========================================
+# ENUMS
+# ========================================
+
+"""
+Application status
+"""
+enum ApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  INFO_REQUESTED
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+"""
+Business type
+"""
+enum BusinessType {
+  DAY_SPA
+  MEDICAL_SPA
+  SALON
+  WELLNESS_CENTER
+  CLINIC
+  INDEPENDENT_PRACTITIONER
+  RETAIL_STORE
+  OTHER
+}
+
+"""
+License type
+"""
+enum LicenseType {
+  ESTHETICIAN
+  COSMETOLOGIST
+  MASSAGE_THERAPIST
+  MEDICAL_DIRECTOR
+  NURSE_PRACTITIONER
+  BUSINESS_LICENSE
+  OTHER
+}
+
+# ========================================
+# TYPES
+# ========================================
+
+"""
+Business address
+"""
+type BusinessAddress {
+  street: String!
+  street2: String
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+"""
+Uploaded document
+"""
+type UploadedDocument {
+  """Unique file ID"""
+  id: ID!
+
+  """Original filename"""
+  filename: String!
+
+  """File URL"""
+  url: String!
+
+  """File size in bytes"""
+  size: Int!
+
+  """MIME type"""
+  mimeType: String!
+
+  """Upload timestamp"""
+  uploadedAt: DateTime!
+
+  """Document type/category"""
+  documentType: String!
+}
+
+"""
+License verification result
+"""
+type LicenseVerificationResult {
+  """Whether verification was successful"""
+  verified: Boolean!
+
+  """Verification provider"""
+  provider: String!
+
+  """Verification timestamp"""
+  verifiedAt: DateTime!
+
+  """License number from verification"""
+  licenseNumber: String
+
+  """License expiration date from verification"""
+  expirationDate: String
+
+  """Additional verification details"""
+  details: JSON
+
+  """Error message if verification failed"""
+  error: String
+}
+
+"""
+Wholesale application
+"""
+type WholesaleApplication {
+  """Application ID"""
+  id: ID!
+
+  """User who submitted"""
+  user: User!
+
+  """Business legal name"""
+  businessName: String!
+
+  """Business type"""
+  businessType: BusinessType!
+
+  """Tax ID / EIN"""
+  taxId: String
+
+  """Business address"""
+  businessAddress: BusinessAddress!
+
+  """Years in operation"""
+  yearsInOperation: Int
+
+  """Website URL"""
+  websiteUrl: String
+
+  """Phone number"""
+  phoneNumber: String!
+
+  """License documents"""
+  licenseDocuments: [UploadedDocument!]!
+
+  """Location photos"""
+  locationPhotos: [UploadedDocument!]!
+
+  """Wholesale paperwork signed"""
+  wholesalePaperworkSigned: Boolean!
+
+  """Application status"""
+  status: ApplicationStatus!
+
+  """Curator who reviewed"""
+  reviewedBy: User
+
+  """Review notes"""
+  reviewNotes: String
+
+  """Rejection reason"""
+  rejectionReason: String
+
+  """License verification result"""
+  verificationResult: LicenseVerificationResult
+
+  """Submitted at"""
+  submittedAt: DateTime
+
+  """Reviewed at"""
+  reviewedAt: DateTime
+
+  """Approved at"""
+  approvedAt: DateTime
+
+  """Applicant notes"""
+  applicantNotes: String
+
+  """Created at"""
+  createdAt: DateTime!
+
+  """Updated at"""
+  updatedAt: DateTime!
+}
+
+"""
+Application list
+"""
+type WholesaleApplicationList {
+  """Applications"""
+  items: [WholesaleApplication!]!
+
+  """Total count"""
+  totalCount: Int!
+}
+
+"""
+Application submission result
+"""
+type ApplicationSubmissionResult {
+  """Application"""
+  application: WholesaleApplication!
+
+  """Success message"""
+  message: String!
+}
+
+"""
+Application review result
+"""
+type ApplicationReviewResult {
+  """Application"""
+  application: WholesaleApplication!
+
+  """Success message"""
+  message: String!
+}
+
+# ========================================
+# INPUT TYPES
+# ========================================
+
+"""
+Business address input
+"""
+input BusinessAddressInput {
+  street: String!
+  street2: String
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+"""
+Uploaded document input
+"""
+input UploadedDocumentInput {
+  id: ID!
+  filename: String!
+  url: String!
+  size: Int!
+  mimeType: String!
+  uploadedAt: DateTime!
+  documentType: String!
+}
+
+"""
+Create wholesale application input
+"""
+input CreateWholesaleApplicationInput {
+  """Business legal name"""
+  businessName: String!
+
+  """Business type"""
+  businessType: BusinessType!
+
+  """Tax ID / EIN"""
+  taxId: String
+
+  """Business address"""
+  businessAddress: BusinessAddressInput!
+
+  """Years in operation"""
+  yearsInOperation: Int
+
+  """Website URL"""
+  websiteUrl: String
+
+  """Phone number"""
+  phoneNumber: String!
+
+  """License documents"""
+  licenseDocuments: [UploadedDocumentInput!]!
+
+  """Location photos"""
+  locationPhotos: [UploadedDocumentInput!]!
+
+  """Wholesale paperwork signed"""
+  wholesalePaperworkSigned: Boolean!
+
+  """Applicant notes"""
+  applicantNotes: String
+}
+
+"""
+Update wholesale application input
+"""
+input UpdateWholesaleApplicationInput {
+  """Business legal name"""
+  businessName: String
+
+  """Business type"""
+  businessType: BusinessType
+
+  """Tax ID / EIN"""
+  taxId: String
+
+  """Business address"""
+  businessAddress: BusinessAddressInput
+
+  """Years in operation"""
+  yearsInOperation: Int
+
+  """Website URL"""
+  websiteUrl: String
+
+  """Phone number"""
+  phoneNumber: String
+
+  """License documents"""
+  licenseDocuments: [UploadedDocumentInput!]
+
+  """Location photos"""
+  locationPhotos: [UploadedDocumentInput!]
+
+  """Wholesale paperwork signed"""
+  wholesalePaperworkSigned: Boolean
+
+  """Applicant notes"""
+  applicantNotes: String
+}
+
+"""
+Review wholesale application input
+"""
+input ReviewWholesaleApplicationInput {
+  """New status"""
+  status: ApplicationStatus!
+
+  """Review notes"""
+  reviewNotes: String
+
+  """Rejection reason (required if rejecting)"""
+  rejectionReason: String
+}
+
+"""
+Pagination input
+"""
+input ApplicationPaginationInput {
+  """Number of items to skip"""
+  skip: Int
+
+  """Number of items to take"""
+  take: Int
+}
+
+"""
+Application filters
+"""
+input ApplicationFiltersInput {
+  """Filter by status"""
+  status: ApplicationStatus
+
+  """Filter by business type"""
+  businessType: BusinessType
+
+  """Search by business name"""
+  businessName: String
+}
+
+# ========================================
+# QUERIES
+# ========================================
+
+extend type Query {
+  """
+  Get my wholesale application (if exists)
+  """
+  myWholesaleApplication: WholesaleApplication
+
+  """
+  Get wholesale application by ID (curator only)
+  """
+  wholesaleApplication(id: ID!): WholesaleApplication
+
+  """
+  Get all wholesale applications (curator only)
+  """
+  wholesaleApplications(
+    pagination: ApplicationPaginationInput
+    filters: ApplicationFiltersInput
+  ): WholesaleApplicationList!
+
+  """
+  Get pending applications count (curator only)
+  """
+  pendingApplicationsCount: Int!
+}
+
+# ========================================
+# MUTATIONS
+# ========================================
+
+extend type Mutation {
+  """
+  Create wholesale application
+  """
+  createWholesaleApplication(
+    input: CreateWholesaleApplicationInput!
+  ): ApplicationSubmissionResult!
+
+  """
+  Update wholesale application (before submission)
+  """
+  updateWholesaleApplication(
+    id: ID!
+    input: UpdateWholesaleApplicationInput!
+  ): WholesaleApplication!
+
+  """
+  Submit wholesale application for review
+  """
+  submitWholesaleApplication(id: ID!): ApplicationSubmissionResult!
+
+  """
+  Review wholesale application (curator only)
+  """
+  reviewWholesaleApplication(
+    id: ID!
+    input: ReviewWholesaleApplicationInput!
+  ): ApplicationReviewResult!
+
+  """
+  Withdraw wholesale application
+  """
+  withdrawWholesaleApplication(id: ID!): WholesaleApplication!
+
+  """
+  Request third-party license verification (curator only)
+  """
+  requestLicenseVerification(applicationId: ID!): WholesaleApplication!
+}

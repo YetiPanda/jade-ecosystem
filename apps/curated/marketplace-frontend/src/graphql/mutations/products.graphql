@@ -1,0 +1,17 @@
+# Create Mock Product Mutation
+mutation CreateMockProduct($vendorOrganizationId: ID!) {
+  createMockProduct(vendorOrganizationId: $vendorOrganizationId) {
+    success
+    product {
+      id
+      vendureProductId
+      tensorGenerated
+      embeddingGenerated
+      createdAt
+    }
+    errors {
+      code
+      message
+    }
+  }
+}

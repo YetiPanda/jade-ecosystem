@@ -1,0 +1,227 @@
+# Checkout mutations for marketplace
+
+mutation Checkout($spaOrganizationId: ID!, $input: CheckoutInput!) {
+  checkout(spaOrganizationId: $spaOrganizationId, input: $input) {
+    success
+    message
+    order {
+      id
+      orderNumber
+      spaOrganizationId
+      placedByUserId
+      placedAt
+      fulfillmentStatus
+      paymentStatus
+      total
+      itemCount
+      vendorCount
+      vendorOrders {
+        vendorId
+        vendorName
+        orderLineIds
+        subtotal
+        shippingCost
+        vendorTotal
+        fulfillmentStatus
+        trackingNumber
+        estimatedDelivery
+        shippedAt
+      }
+      lines {
+        id
+        productVariant {
+          id
+          name
+        }
+        quantity
+        unitPrice
+        lineTotal
+      }
+      shippingAddress {
+        firstName
+        lastName
+        company
+        street
+        street2
+        city
+        state
+        zipCode
+        country
+        phone
+      }
+      billingAddress {
+        firstName
+        lastName
+        company
+        street
+        street2
+        city
+        state
+        zipCode
+        country
+        phone
+      }
+      subtotal
+      tax
+      shipping
+      discount
+      total
+      notes
+      fulfilledAt
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation UpdateShippingAddress($input: AddressInput!) {
+  updateShippingAddress(input: $input) {
+    success
+    message
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation UpdateBillingAddress($input: AddressInput!) {
+  updateBillingAddress(input: $input) {
+    success
+    message
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation AddPaymentMethod($input: PaymentMethodInput!) {
+  addPaymentMethod(input: $input) {
+    success
+    message
+    paymentMethodId
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation ProcessPayment($paymentMethodId: ID!, $amount: Int!) {
+  processPayment(paymentMethodId: $paymentMethodId, amount: $amount) {
+    success
+    message
+    transactionId
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation CancelOrder($orderId: ID!, $reason: String) {
+  cancelOrder(orderId: $orderId, reason: $reason) {
+    success
+    message
+    order {
+      id
+      orderNumber
+      fulfillmentStatus
+      paymentStatus
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation Reorder($orderId: ID!) {
+  reorder(orderId: $orderId) {
+    success
+    message
+    cart {
+      orderId
+      items {
+        id
+        productId
+        productName
+        variantId
+        variantName
+        quantity
+        unitPrice
+        appliedTier {
+          minQuantity
+          unitPrice
+          discountPercentage
+        }
+        lineTotal
+      }
+      vendorCarts {
+        vendorId
+        vendorName
+        subtotal
+        items {
+          productName
+          quantity
+          lineTotal
+        }
+      }
+      totalItems
+      subtotal
+      total
+    }
+    unavailableItems {
+      productId
+      productName
+      reason
+    }
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation RequestReturn($orderId: ID!, $lineIds: [ID!]!, $reason: String!) {
+  requestReturn(orderId: $orderId, lineIds: $lineIds, reason: $reason) {
+    success
+    message
+    returnRequestId
+    errors {
+      code
+      message
+      field
+    }
+  }
+}
+
+mutation TrackOrder($orderId: ID!) {
+  trackOrder(orderId: $orderId) {
+    order {
+      id
+      orderNumber
+      fulfillmentStatus
+      vendorOrders {
+        vendorId
+        vendorName
+        fulfillmentStatus
+        trackingNumber
+        carrier
+        estimatedDelivery
+        shippedAt
+        deliveredAt
+      }
+    }
+  }
+}

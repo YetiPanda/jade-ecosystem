@@ -1,0 +1,422 @@
+# Product Taxonomy System
+# Feature: Week 3 - Advanced Product Taxonomy
+# Date: 2025-11-07
+
+# Covers sophisticated product classification with:
+# - Hierarchical categories (3 levels)
+# - Multi-select functions and concerns
+# - Professional-grade metadata
+# - Taxonomy completeness scoring
+
+#######################################
+# Taxonomy Queries
+#######################################
+
+extend type Query {
+  """
+  Get all product categories (hierarchical)
+  Returns root categories with subcategories nested
+  """
+  productCategories(
+    level: Int
+    parentId: ID
+    includeInactive: Boolean
+  ): [ProductCategory!]!
+
+  """
+  Get single category by ID or slug
+  """
+  productCategory(id: ID, slug: String): ProductCategory
+
+  """
+  Get single category by slug
+  """
+  productCategoryBySlug(slug: String!): ProductCategory
+
+  """
+  Get all product functions
+  For multi-select in product creation
+  """
+  productFunctions(
+    categoryId: ID
+    includeInactive: Boolean
+  ): [ProductFunction!]!
+
+  """Get single product function by ID"""
+  productFunction(id: ID!): ProductFunction
+
+  """
+  Get all skin concerns
+  For multi-select in product creation
+  """
+  skinConcerns(
+    includeInactive: Boolean
+  ): [SkinConcern!]!
+
+  """Get single skin concern by ID"""
+  skinConcern(id: ID!): SkinConcern
+
+  """
+  Get all product formats (cream, gel, serum, etc.)
+  """
+  productFormats(
+    category: String
+    includeInactive: Boolean
+  ): [ProductFormat!]!
+
+  """Get single product format by ID"""
+  productFormat(id: ID!): ProductFormat
+
+  """
+  Get all target areas (face, eye, body, etc.)
+  """
+  targetAreas(
+    includeInactive: Boolean
+  ): [TargetArea!]!
+
+  """Get single target area by ID"""
+  targetArea(id: ID!): TargetArea
+
+  """
+  Get all product regions (K-Beauty, J-Beauty, etc.)
+  """
+  productRegions(
+    includeInactive: Boolean
+  ): [ProductRegion!]!
+
+  """Get single product region by ID"""
+  productRegion(id: ID!): ProductRegion
+
+  """
+  Get product taxonomy data for a specific product
+  """
+  productTaxonomy(productId: ID!): ProductTaxonomy
+
+  """
+  Get all product taxonomies with optional filter
+  """
+  productTaxonomies(filter: TaxonomyFilterInput): [ProductTaxonomy!]!
+
+  """
+  Get all taxonomy filter options for UI dropdowns
+  """
+  taxonomyFilterOptions: TaxonomyFilterOptions!
+
+  """
+  Get taxonomy completeness statistics
+  For quality control dashboard
+  """
+  taxonomyStats: TaxonomyStats!
+}
+
+#######################################
+# Taxonomy Mutations
+#######################################
+
+extend type Mutation {
+  """
+  Create new product taxonomy
+  """
+  createProductTaxonomy(input: ProductTaxonomyInput!): ProductTaxonomy!
+
+  """
+  Create or update product taxonomy
+  Used by vendors during product submission
+  """
+  updateProductTaxonomy(input: ProductTaxonomyInput!): ProductTaxonomy!
+
+  """
+  Delete product taxonomy
+  """
+  deleteProductTaxonomy(productId: ID!): Boolean!
+
+  """
+  Bulk update taxonomy for multiple products
+  Admin only - for data cleanup
+  """
+  bulkUpdateTaxonomy(updates: [BulkTaxonomyUpdate!]!): BulkTaxonomyResult!
+
+  """
+  Generate embeddings for all products (admin utility)
+  """
+  generateAllProductEmbeddings: Int!
+}
+
+#######################################
+# Taxonomy Types
+#######################################
+"""
+Product Category - Hierarchical (3 levels)
+Level 1: Main (Skincare, Body Care, Supplements)
+Level 2: Sub (Cleansers, Serums, Moisturizers)
+Level 3: Micro (Foaming Cleansers, Cream Cleansers)
+"""
+type ProductCategory {
+  id: ID!
+  name: String!
+  parent: ProductCategory
+  children: [ProductCategory!]!
+  level: Int! # 1, 2, or 3
+  description: String
+  seoSlug: String!
+  displayOrder: Int!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  # Computed fields
+  productCount: Int!
+  fullPath: String! # e.g., "Skincare > Serums > Vitamin C Serums"
+}
+"""
+Product Function - Multi-select
+Examples: Hydrating, Exfoliating, Anti-Aging, Brightening
+"""
+type ProductFunction {
+  id: ID!
+  name: String!
+  description: String
+  categoryCompatibility: [ID!] # Categories this function applies to
+  displayOrder: Int!
+  isActive: Boolean!
+  createdAt: DateTime!
+
+  # Computed
+  productCount: Int!
+}
+"""
+Skin Concern - What skin issues the product addresses
+Examples: Acne, Aging, Hyperpigmentation, Dryness
+"""
+type SkinConcern {
+  id: ID!
+  name: String!
+  description: String
+  severityLevels: [ConcernSeverity!] # Mild, Moderate, Severe
+  relatedIngredients: [String!] # Common ingredients for this concern
+  displayOrder: Int!
+  isActive: Boolean!
+  createdAt: DateTime!
+
+  # Computed
+  productCount: Int!
+}
+
+enum ConcernSeverity {
+  MILD
+  MODERATE
+  SEVERE
+}
+"""
+Product Format - Physical form of product
+Examples: Cream, Gel, Serum, Oil, Balm, Foam
+"""
+type ProductFormat {
+  id: ID!
+  name: String!
+  category: String # skincare, supplements, etc.
+  description: String
+  isActive: Boolean!
+  createdAt: DateTime!
+
+  # Computed
+  productCount: Int!
+}
+"""
+Target Area - Body area for application
+Examples: Face, Eye Area, Lips, Neck, Body
+"""
+type TargetArea {
+  id: ID!
+  name: String!
+  description: String
+  isActive: Boolean!
+  createdAt: DateTime!
+
+  # Computed
+  productCount: Int!
+}
+"""
+Product Region - Geographic origin/style
+Examples: K-Beauty, J-Beauty, French Pharmacy, USA
+"""
+type ProductRegion {
+  id: ID!
+  name: String!
+  countryCode: String
+  description: String
+  isActive: Boolean!
+  createdAt: DateTime!
+
+  # Computed
+  productCount: Int!
+}
+"""
+Product Taxonomy - Complete classification for a product
+"""
+type ProductTaxonomy {
+  id: ID!
+  productId: ID!
+
+  # Main classification
+  category: ProductCategory
+  primaryFunctions: [ProductFunction!]!
+  skinConcerns: [SkinConcern!]!
+  targetAreas: [TargetArea!]!
+
+  # Product details
+  productFormat: ProductFormat
+  region: ProductRegion
+
+  # Usage metadata
+  usageTime: UsageTime!
+  professionalLevel: ProfessionalLevel!
+  protocolRequired: Boolean!
+  formulationBase: String
+
+  # Quality metrics
+  taxonomyCompletenessScore: Int! # 0-100, auto-calculated
+  lastReviewedAt: DateTime
+  reviewedBy: ID
+
+  # Timestamps
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+"""
+Usage Time - When to use the product
+"""
+enum UsageTime {
+  MORNING
+  EVENING
+  ANYTIME
+  NIGHT_ONLY
+  POST_TREATMENT
+}
+"""
+Professional Level - Who can use/purchase
+"""
+enum ProfessionalLevel {
+  OTC # Over-the-counter, anyone can buy
+  PROFESSIONAL # Licensed professionals only
+  MEDICAL_GRADE # Medical professionals
+  IN_OFFICE_ONLY # Clinic/spa use only, not for retail
+}
+"""
+Taxonomy completeness statistics
+For quality control dashboard
+"""
+type TaxonomyStats {
+  totalProducts: Int!
+  productsWithTaxonomy: Int!
+  productsWithoutTaxonomy: Int!
+  averageCompletenessScore: Float!
+
+  # Breakdown by completeness score
+  scoreDistribution: ScoreDistribution!
+
+  # Category coverage
+  categoryCoverage: [CategoryCoverage!]!
+
+  # Data quality issues
+  missingCategories: Int!
+  missingFunctions: Int!
+  missingFormats: Int!
+  needsReview: Int!
+}
+
+type ScoreDistribution {
+  excellent: Int! # 90-100
+  good: Int! # 70-89
+  fair: Int! # 50-69
+  poor: Int! # 0-49
+}
+
+type CategoryCoverage {
+  category: ProductCategory!
+  productCount: Int!
+  averageScore: Float!
+}
+
+#######################################
+# Input Types
+#######################################
+"""
+Filter input for taxonomy queries
+"""
+input TaxonomyFilterInput {
+  categoryIds: [ID!]
+  functionIds: [ID!]
+  concernIds: [ID!]
+  professionalLevels: [ProfessionalLevel!]
+  minCompletenessScore: Int
+  maxCompletenessScore: Int
+  protocolRequired: Boolean
+}
+
+"""
+Taxonomy filter options for UI dropdowns
+"""
+type TaxonomyFilterOptions {
+  categories: [ProductCategory!]!
+  functions: [ProductFunction!]!
+  concerns: [SkinConcern!]!
+  formats: [ProductFormat!]!
+  targetAreas: [TargetArea!]!
+  regions: [ProductRegion!]!
+  professionalLevels: [ProfessionalLevel!]!
+  usageTimes: [UsageTime!]!
+}
+
+"""
+Input for creating/updating product taxonomy
+"""
+input ProductTaxonomyInput {
+  productId: ID!
+
+  # Main classification
+  categoryId: ID
+  primaryFunctionIds: [ID!]
+  skinConcernIds: [ID!]
+  targetAreaIds: [ID!]
+
+  # Product details
+  productFormatId: ID
+  regionId: ID
+
+  # Usage metadata
+  usageTime: UsageTime
+  professionalLevel: ProfessionalLevel
+  protocolRequired: Boolean
+  formulationBase: String
+}
+"""
+Bulk taxonomy update for admin operations
+"""
+input BulkTaxonomyUpdate {
+  productId: ID!
+  categoryId: ID
+  primaryFunctionIds: [ID!]
+  # ... other fields as needed
+}
+
+type BulkTaxonomyResult {
+  success: Boolean!
+  updatedCount: Int!
+  errors: [BulkTaxonomyError!]
+}
+
+type BulkTaxonomyError {
+  productId: ID!
+  message: String!
+}
+
+#######################################
+# Extend Product Type
+# Extend the Product type with taxonomy field
+#######################################
+
+extend type Product {
+  """Complete taxonomy classification for this product"""
+  taxonomy: ProductTaxonomy
+}
