@@ -11,6 +11,7 @@ export function DashboardLayout() {
     { path: '/orders', label: 'Orders', icon: '📦' },
     { path: '/products', label: 'Products', icon: '🧴' },
     { path: '/analytics', label: 'Analytics', icon: '📈' },
+    { path: '/discovery', label: 'Discovery', icon: '🔍' },
     { path: '/messages', label: 'Messages', icon: '💬' },
     { path: '/settings', label: 'Settings', icon: '⚙️' },
   ];

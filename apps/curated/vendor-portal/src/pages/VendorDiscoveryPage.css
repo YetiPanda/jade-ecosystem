@@ -1,0 +1,139 @@
+.vendor-discovery-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.discovery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    'visibility visibility recommendations'
+    'chart chart recommendations'
+    'stats stats stats'
+    'products products products';
+  gap: 1.5rem;
+}
+
+.grid-visibility {
+  grid-area: visibility;
+}
+
+.grid-chart {
+  grid-area: chart;
+}
+
+.grid-recommendations {
+  grid-area: recommendations;
+}
+
+.grid-stats {
+  grid-area: stats;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.grid-products {
+  grid-area: products;
+}
+
+/* Stat Cards */
+.stat-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.stat-change {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-change.positive {
+  color: #22c55e;
+}
+
+.stat-change.positive::before {
+  content: '↑';
+}
+
+.stat-change.negative {
+  color: #ef4444;
+}
+
+.stat-change.negative::before {
+  content: '↓';
+}
+
+.stat-change.neutral {
+  color: #888;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .discovery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'visibility visibility'
+      'chart recommendations'
+      'stats stats'
+      'products products';
+  }
+}
+
+@media (max-width: 968px) {
+  .discovery-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'visibility'
+      'stats'
+      'chart'
+      'recommendations'
+      'products';
+  }
+
+  .grid-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .vendor-discovery-page {
+    gap: 1.5rem;
+  }
+
+  .discovery-grid {
+    gap: 1rem;
+  }
+
+  .grid-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}

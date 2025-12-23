@@ -10,6 +10,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { OrdersPage } from './pages/OrdersPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
+import { VendorDiscoveryPage } from './pages/VendorDiscoveryPage';
 import { MessagesPage } from './pages/MessagesPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -36,6 +37,7 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="discovery" element={<VendorDiscoveryPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
