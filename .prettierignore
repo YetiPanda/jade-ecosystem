@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production
+dist/
+build/
+.next/
+out/
+
+# Turbo
+.turbo/
+
+# Coverage
+coverage/
+
+# Misc
+.cache/
+pnpm-lock.yaml
+*.log
+
+# Auto-generated
+*.generated.ts
+*.generated.tsx
