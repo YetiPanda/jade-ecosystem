@@ -1,0 +1,30 @@
+{
+  "name": "curated-vendor-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "JADE Vendor Portal - Feature 011",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.11.11",
+    "@jade/ui": "workspace:*",
+    "@jade/feature-flags": "workspace:*",
+    "graphql": "^16.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.9.3",
+    "vite": "^6.0.7"
+  }
+}
