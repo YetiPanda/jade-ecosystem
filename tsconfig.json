@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@jade/ui": ["./packages/jade-ui/src"],
+      "@jade/auth": ["./packages/jade-auth/src"],
+      "@jade/config": ["./packages/jade-config/src"],
+      "@jade/analytics": ["./packages/jade-analytics/src"],
+      "@jade/ska-ontology": ["./packages/ska-ontology"],
+      "@jade/shared-types": ["./packages/shared-types/src"],
+      "@jade/shared-layouts": ["./packages/shared-layouts/src"],
+      "@jade/shared-utils": ["./packages/shared-utils/src"],
+      "@jade/ui-components": ["./packages/ui-components/src"],
+      "@jade/vector-db": ["./packages/vector-db/src"]
+    }
+  },
+  "files": [],
+  "references": []
+}

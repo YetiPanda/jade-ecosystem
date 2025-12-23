@@ -1,0 +1,35 @@
+
+> jade-ecosystem@ build /Users/jessegarza/JADE/jade-ecosystem
+> turbo run build
+
+• turbo 2.7.1
+  x Found `pipeline` field instead of `tasks`.
+    ,-[turbo.json:4:15]
+  3 |       "globalDependencies": ["**/.env.*local"],
+  4 | ,->   "pipeline": {
+  5 | |       "build": {
+  6 | |         "dependsOn": ["^build"],
+  7 | |         "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+  8 | |       },
+  9 | |       "dev": {
+ 10 | |         "cache": false,
+ 11 | |         "persistent": true
+ 12 | |       },
+ 13 | |       "lint": {
+ 14 | |         "outputs": []
+ 15 | |       },
+ 16 | |       "test": {
+ 17 | |         "dependsOn": ["build"],
+ 18 | |         "outputs": ["coverage/**"]
+ 19 | |       },
+ 20 | |       "typecheck": {
+ 21 | |         "dependsOn": ["^build"],
+ 22 | |         "outputs": []
+ 23 | |       }
+ 24 | |->   }
+    : `---- Rename `pipeline` field to `tasks`
+ 25 |     }
+    `----
+  help: Changed in 2.0: `pipeline` has been renamed to `tasks`.
+
+ ELIFECYCLE  Command failed with exit code 1.
