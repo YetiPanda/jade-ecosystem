@@ -368,3 +368,50 @@ export {
   type SidebarMenuSubButtonProps,
   type SidebarProviderProps,
 } from './Sidebar';
+
+export {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+  useChart,
+  type ChartConfig,
+  type ChartContainerProps,
+  type ChartTooltipContentProps,
+  type ChartLegendContentProps,
+} from './Chart';
+
+export {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+  type PaginationProps,
+  type PaginationContentProps,
+  type PaginationItemProps,
+  type PaginationLinkProps,
+  type PaginationPreviousProps,
+  type PaginationNextProps,
+  type PaginationEllipsisProps,
+} from './Pagination';
+
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  useCarousel,
+  type CarouselApi,
+  type CarouselProps,
+  type CarouselComponentProps,
+  type CarouselContentProps,
+  type CarouselItemProps,
+  type CarouselPreviousProps,
+  type CarouselNextProps,
+} from './Carousel';

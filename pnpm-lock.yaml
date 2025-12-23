@@ -451,6 +451,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
+      embla-carousel-react:
+        specifier: ^8.6.0
+        version: 8.6.0(react@18.3.1)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@18.3.1)(react@18.3.1)
@@ -460,6 +463,9 @@ importers:
       react-hook-form:
         specifier: ^7.51.0
         version: 7.69.0(react@18.3.1)
+      recharts:
+        specifier: ^3.3.0
+        version: 3.6.0(@types/react@18.3.27)(react-dom@18.3.1)(react-is@19.2.3)(react@18.3.1)(redux@5.0.1)
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.6.0
