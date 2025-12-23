@@ -92,3 +92,20 @@ export function formatCurrency(cents: number): string {
 export function formatPercentage(value: number): string {
   return `${value.toFixed(1)}%`;
 }
+
+/**
+ * Revenue time-series data point for charts
+ */
+export interface RevenueDataPoint {
+  date: string;              // ISO 8601 date
+  revenue: number;           // Revenue in cents
+  orders: number;            // Number of orders on this date
+}
+
+/**
+ * Chart data for dashboard visualizations
+ */
+export interface DashboardChartData {
+  revenueTimeSeries: RevenueDataPoint[];
+  ordersTimeSeries: RevenueDataPoint[];
+}
