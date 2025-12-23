@@ -125,11 +125,11 @@ jade-ecosystem/
 │
 ├── packages/                 # Shared libraries
 │   ├── ska-ontology/         # Semantic Knowledge Atoms
+│   ├── vector-db/            # Vector database integration
 │   ├── jade-ui/              # Design system & components
-│   ├── jade-auth/            # Authentication utilities
-│   ├── jade-analytics/       # Event tracking
-│   ├── jade-config/          # Shared configuration
-│   └── jade-graphql-types/   # Generated TypeScript types
+│   ├── feature-flags/        # Feature flag management
+│   ├── shared-types/         # Shared TypeScript types
+│   └── (future packages...)  # Auth, analytics, config
 │
 ├── services/                 # Shared microservices (Future)
 │   ├── identity-service/
@@ -156,32 +156,44 @@ jade-ecosystem/
 Shared design system and component library used across all applications.
 
 - Design tokens (colors, spacing, typography)
-- Base components (Button, Input, Card, Modal)
-- Layout components
-- React hooks
+- Base components (Button, Input, Card, Modal, etc.)
+- Layout components (Container, Grid, Stack)
+- React hooks (useToast, useModal, etc.)
+- **Status**: Production-ready
 
-### @jade/auth
-Unified authentication across all JADE applications.
+### @jade/feature-flags
+Runtime feature flag management for controlling app visibility and features.
 
-- AWS Cognito integration
-- AuthProvider React context
-- Authentication guards
-- User session management
+- FeatureFlagsManager with app visibility controls
+- Environment variable support (FEATURE_FLAG_*)
+- TypeScript types for type-safe feature checks
+- Singleton pattern for global configuration
+- **Status**: Production-ready
 
 ### @jade/ska-ontology
 Semantic Knowledge Atoms for AI governance and ingredient intelligence.
 
-- SKA meta-schema
+- SKA meta-schema (ska-meta-schema.ttl)
 - Regulatory compliance atoms (NIST, ISO 42001, EU AI Act)
 - Agentic extension for appreciating assets
 - SPARQL query utilities
+- **Status**: Production-ready
 
-### @jade/graphql-types
-Auto-generated TypeScript types from GraphQL schemas.
+### @jade/vector-db
+Vector database integration for semantic search and AI features.
 
-- Shared types (User, Asset, Address)
-- Application-specific types
-- Type-safe GraphQL queries
+- pgvector integration
+- Embedding generation utilities
+- Semantic search queries
+- **Status**: Active development
+
+### @jade/shared-types
+Shared TypeScript types and GraphQL schemas.
+
+- Common domain types
+- GraphQL type definitions
+- Generated TypeScript from GraphQL
+- **Status**: Active development
 
 ---
 
@@ -243,10 +255,16 @@ Vendor-facing features for brand identity, analytics, order management, and mess
 [View Feature 011 Specs →](./specs/011-vendor-portal/)
 
 ### Feature 012: Ecosystem Separation
-**Status**: Phase 1 - Monorepo Shell (IN PROGRESS)
-**Branch**: `feature/012-ecosystem-separation`
+**Status**: ✅ COMPLETED
+**Completion Date**: December 23, 2025
 
-Transforming the JADE POC into a scalable monorepo with three independently deployable applications.
+Successfully transformed the JADE POC into a production-ready monorepo with:
+
+- Three independently deployable applications (Curated, Aura, Sanctuary)
+- Shared component library (@jade/ui)
+- Feature flag system (@jade/feature-flags)
+- Complete CI/CD infrastructure with GitHub Actions
+- Branch protection and code ownership policies
 
 [View Feature 012 Specs →](./specs/012-ecosystem-separation/)
 
@@ -282,13 +300,36 @@ Refs: feature-number
 
 ## Deployment
 
-Each application has an independent deployment pipeline:
+### CI/CD Infrastructure
 
-- **Curated**: `.github/workflows/deploy-curated.yml`
-- **Aura**: `.github/workflows/deploy-aura.yml`
-- **Sanctuary**: `.github/workflows/deploy-sanctuary.yml`
+All applications use GitHub Actions for continuous integration and deployment.
 
-All deployments use Turborepo remote caching for optimal build performance.
+**Continuous Integration** (`.github/workflows/ci.yml`):
+
+- Runs on all pull requests and pushes to `main`
+- Parallel jobs: lint, typecheck, build, test
+- Turborepo remote caching for fast builds
+- Required status checks before merge
+
+**Deployment Workflows**:
+
+- **Curated**: `.github/workflows/deploy-curated.yml` (Vercel + Northflank)
+- **Aura**: `.github/workflows/deploy-aura.yml` (Vercel)
+- **Sanctuary**: `.github/workflows/deploy-sanctuary.yml` (Vercel)
+
+**Deployment Protection**:
+
+- GitHub Environments with required approvals
+- Environment-specific secrets
+- Path-based deployment triggers (only deploy changed apps)
+- Deployment only from `main` branch
+
+**Documentation**:
+
+- [Secrets Configuration](.github/SECRETS.md)
+- [Branch Protection](.github/BRANCH_PROTECTION.md)
+- [CI/CD Testing Guide](.github/CI_CD_TESTING.md)
+- [Code Owners](.github/CODEOWNERS)
 
 ---
 

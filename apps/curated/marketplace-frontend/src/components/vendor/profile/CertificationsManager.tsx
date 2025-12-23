@@ -22,11 +22,11 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@jade/ui/components';
+import { Input } from '@jade/ui/components';
+import { Label } from '@jade/ui/components';
+import { Badge } from '@jade/ui/components';
+import { Alert, AlertDescription } from '@jade/ui/components';
 import {
   Dialog,
   DialogContent,
@@ -34,14 +34,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@jade/ui/components';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@jade/ui/components';
 import {
   ADD_CERTIFICATION_MUTATION,
   REMOVE_CERTIFICATION_MUTATION,

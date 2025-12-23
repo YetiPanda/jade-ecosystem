@@ -1,0 +1,253 @@
+.export-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.export-modal {
+  width: 90%;
+  max-width: 600px;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.export-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #333;
+  background-color: #1f1f1f;
+}
+
+.export-modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.export-close-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.375rem;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-close-btn:hover {
+  background-color: #252525;
+  color: #fff;
+}
+
+.export-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.export-conversation-info h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 0.5rem 0;
+}
+
+.export-conversation-info p {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin: 0.25rem 0;
+}
+
+.export-order-num {
+  font-family: 'Courier New', monospace;
+  color: #646cff;
+}
+
+.export-format-selection h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 1rem 0;
+}
+
+.export-format-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.export-format-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: #1f1f1f;
+  border: 2px solid #333;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-format-option:hover {
+  background-color: #252525;
+  border-color: #444;
+}
+
+.export-format-option input[type='radio'] {
+  margin-top: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #646cff;
+}
+
+.export-format-option input[type='radio']:checked ~ .format-option-content {
+  color: #fff;
+}
+
+.export-format-option:has(input:checked) {
+  background-color: rgba(100, 108, 255, 0.1);
+  border-color: #646cff;
+}
+
+.format-option-content {
+  flex: 1;
+}
+
+.format-option-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.format-option-description {
+  font-size: 0.8125rem;
+  color: #888;
+  line-height: 1.4;
+}
+
+.export-modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #333;
+  background-color: #1f1f1f;
+}
+
+.export-cancel-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: #aaa;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-cancel-btn:hover:not(:disabled) {
+  background-color: #252525;
+  color: #fff;
+  border-color: #444;
+}
+
+.export-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.export-download-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background-color: #646cff;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.export-download-btn:hover:not(:disabled) {
+  background-color: #5558dd;
+}
+
+.export-download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .export-modal {
+    width: 95%;
+  }
+
+  .export-modal-header,
+  .export-modal-body,
+  .export-modal-footer {
+    padding: 1rem;
+  }
+
+  .export-modal-footer {
+    flex-direction: column;
+  }
+
+  .export-cancel-btn,
+  .export-download-btn {
+    width: 100%;
+  }
+}

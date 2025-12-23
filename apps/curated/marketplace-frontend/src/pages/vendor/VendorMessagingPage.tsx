@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { MessageSquare, Settings } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@jade/ui/components';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@jade/ui/components';
 import { ConversationList } from '@/components/vendor/messaging/ConversationList';
 import { ChatPanel } from '@/components/vendor/messaging/ChatPanel';
 import { NotificationSettings } from '@/components/vendor/messaging/NotificationSettings';

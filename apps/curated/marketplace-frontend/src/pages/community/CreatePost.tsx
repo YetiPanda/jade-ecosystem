@@ -22,10 +22,10 @@ import {
   Save,
   Send,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { Badge } from '../../components/ui/badge';
-import { Input } from '../../components/ui/Input';
+import { Input } from '@jade/ui/components';
 import { Textarea } from '../../components/ui/textarea';
 import { Label } from '../../components/ui/label';
 import {

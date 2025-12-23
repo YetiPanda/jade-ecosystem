@@ -10,17 +10,17 @@
 import React, { useState } from 'react';
 import { Bell, Mail, Volume2, Clock } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '@jade/ui/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
+import { Label } from '@jade/ui/components';
+import { Switch } from '@jade/ui/components';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@jade/ui/components';
 
 interface NotificationPreferences {
   emailEnabled: boolean;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { colors, spacing, fontSize, fontWeight, semanticColors } from '../src/tokens';
+import { colors, spacing, fontSize, fontWeight, fontFamily, semanticColors } from '../src/tokens';
 
 describe('Design Tokens', () => {
   describe('Colors', () => {
@@ -65,7 +65,6 @@ describe('Design Tokens', () => {
     });
 
     it('should have font family definitions', () => {
-      const { fontFamily } = require('../src/tokens/typography');
       expect(fontFamily.sans).toContain('Inter');
       expect(fontFamily.mono).toContain('monospace');
     });

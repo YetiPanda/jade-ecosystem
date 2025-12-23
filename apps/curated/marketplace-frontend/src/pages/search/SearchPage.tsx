@@ -10,8 +10,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Search as SearchIcon, Sparkles, SlidersHorizontal, X } from 'lucide-react';
 import { SearchBar } from '../../components/search/SearchBar';
 import { useSearchProducts, useSearchProductsBySemantic } from '../../hooks/useTaxonomy';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 
 export const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();

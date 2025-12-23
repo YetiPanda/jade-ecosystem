@@ -11,9 +11,9 @@ import React, { useState, useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import { Send, Paperclip, X, Loader2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@jade/ui/components';
+import { Textarea } from '@jade/ui/components';
+import { Alert, AlertDescription } from '@jade/ui/components';
 import { SEND_MESSAGE_MUTATION } from '@/graphql/queries/messaging';
 
 interface MessageAttachment {

@@ -11,7 +11,7 @@ import React, { lazy, Suspense } from 'react';
 import { Bell, Search, Settings, Loader2, MessageSquare, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { Button } from '../../components/ui/Button';
+import { Button } from '@jade/ui/components';
 import { Badge } from '../../components/ui/badge';
 import { PortalNavigation } from '../../components/vendor/PortalNavigation';
 import { VendorPortalProvider, useVendorPortal } from '../../contexts/VendorPortalContext';

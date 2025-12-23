@@ -8,9 +8,9 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@jade/ui/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
+import { Alert, AlertDescription } from '@jade/ui/components';
 import { Loader2, Store, Palette, Award, Info } from 'lucide-react';
 
 import { BrandIdentityForm } from '@/components/vendor/profile/BrandIdentityForm';

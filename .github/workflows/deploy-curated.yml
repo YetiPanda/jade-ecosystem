@@ -1,0 +1,91 @@
+name: Deploy Curated
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/curated/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-curated-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-frontend:
+    name: Deploy Curated Frontend
+    runs-on: ubuntu-latest
+    environment:
+      name: curated-production
+      url: https://curated.jade-beauty.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Curated frontend
+        run: pnpm --filter curated-marketplace-frontend build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          VITE_API_URL: ${{ secrets.CURATED_API_URL }}
+          VITE_GRAPHQL_URL: ${{ secrets.CURATED_GRAPHQL_URL }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_CURATED_PROJECT_ID }}
+          working-directory: apps/curated/marketplace-frontend
+          vercel-args: '--prod'
+
+  deploy-backend:
+    name: Deploy Curated Backend
+    runs-on: ubuntu-latest
+    environment:
+      name: curated-backend
+      url: https://api.curated.jade-beauty.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Curated backend
+        run: pnpm --filter curated-vendure-backend build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Deploy to Northflank
+        run: |
+          curl -X POST "https://api.northflank.com/v1/projects/${{ secrets.NORTHFLANK_PROJECT_ID }}/services/${{ secrets.NORTHFLANK_CURATED_SERVICE_ID }}/deploy" \
+            -H "Authorization: Bearer ${{ secrets.NORTHFLANK_API_TOKEN }}" \
+            -H "Content-Type: application/json"

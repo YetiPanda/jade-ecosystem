@@ -1,0 +1,67 @@
+# CODEOWNERS
+#
+# This file defines code ownership for the JADE ecosystem.
+# Code owners are automatically requested for review when someone opens a pull request.
+#
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership - fallback for all files
+* @jade-team/maintainers
+
+# CI/CD and Infrastructure
+/.github/ @jade-team/devops
+/turbo.json @jade-team/devops
+/.npmrc @jade-team/devops
+/pnpm-workspace.yaml @jade-team/devops
+
+# Specifications
+/specs/ @jade-team/product @jade-team/maintainers
+
+# Shared Packages
+/packages/ @jade-team/platform
+
+## UI Component Library
+/packages/jade-ui/ @jade-team/design @jade-team/frontend
+
+## Feature Flags
+/packages/feature-flags/ @jade-team/platform
+
+## SKA Ontology
+/packages/ska-ontology/ @jade-team/data @jade-team/ai
+
+## Vector Database
+/packages/vector-db/ @jade-team/data @jade-team/ai
+
+# Applications
+
+## Curated Marketplace
+/apps/curated/ @jade-team/curated
+
+### Curated Frontend
+/apps/curated/marketplace-frontend/ @jade-team/curated @jade-team/frontend
+
+### Curated Backend (Vendure)
+/apps/curated/vendure-backend/ @jade-team/curated @jade-team/backend
+
+### Vendor Portal
+/apps/curated/vendor-portal/ @jade-team/curated @jade-team/frontend
+
+## Aura Spa Dashboard
+/apps/aura/ @jade-team/aura @jade-team/frontend
+
+## Sanctuary Community
+/apps/sanctuary/ @jade-team/sanctuary @jade-team/frontend
+
+# Documentation
+/README.md @jade-team/maintainers
+/CONTRIBUTING.md @jade-team/maintainers
+/DEVELOPMENT.md @jade-team/devops @jade-team/maintainers
+/CLAUDE.md @jade-team/maintainers
+
+# Configuration Files
+*.config.js @jade-team/devops
+*.config.ts @jade-team/devops
+tsconfig*.json @jade-team/platform
+.eslintrc* @jade-team/platform
+.prettierrc* @jade-team/platform
+tailwind.config.js @jade-team/design @jade-team/frontend

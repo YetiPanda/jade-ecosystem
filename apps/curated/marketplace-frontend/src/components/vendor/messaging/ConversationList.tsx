@@ -12,10 +12,10 @@ import { useQuery } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Search, Archive, Loader2 } from 'lucide-react';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
+import { Badge } from '@jade/ui/components';
+import { ScrollArea } from '@jade/ui/components';
 import { UnreadBadge } from './UnreadBadge';
 import { VENDOR_CONVERSATIONS_QUERY } from '@/graphql/queries/messaging';
 

@@ -1,0 +1,308 @@
+.table-container {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.table-header {
+  margin-bottom: 1.5rem;
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.table-subtitle {
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Table Styles */
+.spa-leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.spa-leaderboard-table thead th {
+  text-align: left;
+  padding: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #333;
+}
+
+.spa-leaderboard-table tbody td {
+  padding: 1rem 0.75rem;
+  color: #aaa;
+  border-bottom: 1px solid #252525;
+}
+
+/* Column Widths */
+.col-rank {
+  width: 60px;
+}
+
+.col-expand {
+  width: 50px;
+  text-align: center;
+}
+
+/* Row Styles */
+.spa-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.spa-row:hover {
+  background-color: #1f1f1f;
+}
+
+.spa-row.expanded {
+  background-color: #1f1f1f;
+  border-bottom: none;
+}
+
+/* Rank Badge */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, #646cff 0%, #5558dd 100%);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 50%;
+  font-size: 0.875rem;
+}
+
+.spa-row:nth-child(1) .rank-badge {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #1a1a1a;
+}
+
+.spa-row:nth-child(3) .rank-badge {
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  color: #1a1a1a;
+}
+
+.spa-row:nth-child(5) .rank-badge {
+  background: linear-gradient(135deg, #cd7f32 0%, #e09142 100%);
+  color: #1a1a1a;
+}
+
+/* Spa Name Cell */
+.spa-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.spa-name {
+  color: #fff;
+  font-weight: 500;
+}
+
+.spa-id {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Orders Badge */
+.orders-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #252525;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: #aaa;
+}
+
+/* Reorder Badge */
+.reorder-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.reorder-badge.high {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.reorder-badge.medium {
+  background-color: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+}
+
+.reorder-badge.low {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Expand Icon */
+.expand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #252525;
+  border-radius: 0.25rem;
+  color: #888;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.spa-row:hover .expand-icon {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+/* Detail Row */
+.spa-detail-row {
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #252525;
+}
+
+.spa-detail-row td {
+  padding: 0;
+  border-bottom: none;
+}
+
+.spa-detail-panel {
+  padding: 1.5rem;
+  border-top: 1px solid #252525;
+}
+
+.spa-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.spa-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.spa-detail-label {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.spa-detail-value {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Error State */
+.table-error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #ef4444;
+}
+
+.table-error p:first-child {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.table-error-detail {
+  font-size: 0.875rem;
+  color: #aaa;
+}
+
+/* Empty State */
+.table-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #888;
+}
+
+.table-empty p {
+  font-size: 0.875rem;
+}
+
+/* Loading Skeleton */
+.table-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  width: 200px;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.skeleton-subtitle {
+  height: 1rem;
+  width: 300px;
+  border-radius: 0.25rem;
+}
+
+.skeleton-row {
+  height: 4rem;
+  width: 100%;
+  border-radius: 0.25rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 0%, #252525 50%, #1a1a1a 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 1rem;
+  }
+
+  .spa-leaderboard-table {
+    font-size: 0.75rem;
+  }
+
+  .spa-leaderboard-table thead th,
+  .spa-leaderboard-table tbody td {
+    padding: 0.5rem;
+  }
+
+  .spa-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

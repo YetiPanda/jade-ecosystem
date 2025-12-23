@@ -10,9 +10,9 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Loader2, Save, Check } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@jade/ui/components';
+import { Badge } from '@jade/ui/components';
+import { Alert, AlertDescription } from '@jade/ui/components';
 import { UPDATE_VENDOR_PROFILE_MUTATION } from '@/graphql/queries/vendor-profile';
 
 // Value categories and options (from backend VendorValueSchema)

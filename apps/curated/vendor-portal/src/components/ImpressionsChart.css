@@ -1,0 +1,134 @@
+.impressions-chart-container {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.chart-legend-custom {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-label {
+  font-size: 0.8125rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background-color: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.tooltip-date {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.tooltip-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.375rem;
+}
+
+.tooltip-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.tooltip-value {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Loading Skeleton */
+.skeleton-chart {
+  pointer-events: none;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  width: 140px;
+  border-radius: 0.25rem;
+}
+
+.skeleton-legend {
+  height: 1.5rem;
+  width: 300px;
+  border-radius: 0.25rem;
+}
+
+.skeleton-chart-area {
+  height: 300px;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 0%, #252525 50%, #1a1a1a 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .impressions-chart-container {
+    padding: 1rem;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .chart-legend-custom {
+    gap: 1rem;
+  }
+}
