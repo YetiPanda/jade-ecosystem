@@ -11,8 +11,8 @@
 
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   Package,

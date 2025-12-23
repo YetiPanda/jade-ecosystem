@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { MessageSquare, Settings } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@jade/ui/components';
 import {
   Dialog,
   DialogContent,

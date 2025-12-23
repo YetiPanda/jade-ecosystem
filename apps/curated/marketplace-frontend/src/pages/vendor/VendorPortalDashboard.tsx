@@ -9,8 +9,8 @@
  */
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { MetricCard, MetricCardGrid } from '../../components/vendor/MetricCard';
 import { DateRangePicker, DateRange } from '../../components/vendor/DateRangePicker';
 import { RevenueChart } from '../../components/vendor/RevenueChart';

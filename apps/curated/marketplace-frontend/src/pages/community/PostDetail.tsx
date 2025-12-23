@@ -28,8 +28,8 @@ import {
   Edit,
   Link2,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { Badge } from '../../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Skeleton } from '../../components/ui/skeleton';

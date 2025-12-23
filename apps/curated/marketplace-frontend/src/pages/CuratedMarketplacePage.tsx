@@ -8,8 +8,8 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '../graphql/generated';
-import { Card, CardContent } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Card, CardContent } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { SearchBar } from '../components/search/SearchBar';
 import { ArrowRight, Sparkles, ShieldCheck, Truck, Search as SearchIcon, Star, Award } from 'lucide-react';
 import { getMockFeaturedBrands, getMockBestsellers, getMockNewArrivals, getEditorialContent } from '../utils/homepageTransforms';

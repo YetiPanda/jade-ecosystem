@@ -7,8 +7,8 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useGetProductWithFullDetailsQuery } from '../../graphql/generated';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { ProgressiveDisclosure } from '../../components/products/ProgressiveDisclosure';
 import { SimilarProducts } from '../../components/products/SimilarProducts';
 

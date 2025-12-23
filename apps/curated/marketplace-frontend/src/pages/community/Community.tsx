@@ -24,10 +24,10 @@ import {
   Sparkles,
   CheckCircle,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { Badge } from '../../components/ui/badge';
-import { Input } from '../../components/ui/Input';
+import { Input } from '@jade/ui/components';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Skeleton } from '../../components/ui/skeleton';

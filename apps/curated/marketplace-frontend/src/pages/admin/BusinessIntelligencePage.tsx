@@ -5,8 +5,8 @@
  */
 
 import { useState } from 'react';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import { AppBreadcrumb } from '../../components/ui/AppBreadcrumb';
 import { MetricCard } from '../../components/analytics/MetricCard';
 import { FinancialMetrics } from '../../components/analytics/FinancialMetrics';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Button } from '@jade/ui/components';
+import { Input } from '@jade/ui/components';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = React.useState('');

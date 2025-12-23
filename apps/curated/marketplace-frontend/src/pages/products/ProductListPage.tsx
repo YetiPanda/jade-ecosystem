@@ -7,8 +7,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useGetProductsQuery } from '../../graphql/generated';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 
 export const ProductListPage: React.FC = () => {
   const { data, loading, error, fetchMore } = useGetProductsQuery({

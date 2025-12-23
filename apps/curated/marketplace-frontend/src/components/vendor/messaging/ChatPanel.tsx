@@ -11,7 +11,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Loader2, MoreVertical, Archive, Flag, Wifi, WifiOff } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@jade/ui/components';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   DropdownMenu,

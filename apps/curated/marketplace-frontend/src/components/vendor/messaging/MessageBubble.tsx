@@ -10,7 +10,7 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { File, Download, Flag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@jade/ui/components';
 import { Badge } from '@/components/ui/badge';
 
 interface MessageAttachment {

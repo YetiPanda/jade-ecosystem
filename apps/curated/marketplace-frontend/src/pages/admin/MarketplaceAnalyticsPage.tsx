@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card } from '@jade/ui/components';
+import { Button } from '@jade/ui/components';
 import {
   RevenueChart,
   CategoryDistributionChart,

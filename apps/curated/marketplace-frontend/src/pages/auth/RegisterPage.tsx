@@ -7,9 +7,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/Card';
+import { Button } from '@jade/ui/components';
+import { Input } from '@jade/ui/components';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@jade/ui/components';
 import { UserRole } from '../../graphql/generated';
 
 export const RegisterPage: React.FC = () => {
