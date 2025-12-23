@@ -517,6 +517,18 @@ importers:
         specifier: '>=5.0.0'
         version: 5.9.3
 
+  packages/feature-flags:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(typescript@5.9.3)
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
   packages/jade-ui:
     dependencies:
       '@radix-ui/react-checkbox':
