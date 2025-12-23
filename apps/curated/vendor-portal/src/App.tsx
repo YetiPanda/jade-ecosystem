@@ -14,6 +14,8 @@ import { VendorDiscoveryPage } from './pages/VendorDiscoveryPage';
 import { MessagesPage } from './pages/MessagesPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { VendorApplicationPage } from './pages/VendorApplicationPage';
+import { VendorOnboardingPage } from './pages/VendorOnboardingPage';
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
           <Route path="discovery" element={<VendorDiscoveryPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="application" element={<VendorApplicationPage />} />
+          <Route path="onboarding" element={<VendorOnboardingPage />} />
         </Route>
 
         {/* 404 */}
