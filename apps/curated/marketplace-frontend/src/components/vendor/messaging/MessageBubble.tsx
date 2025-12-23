@@ -11,7 +11,7 @@ import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { File, Download, Flag } from 'lucide-react';
 import { Button } from '@jade/ui/components';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@jade/ui/components';
 
 interface MessageAttachment {
   url: string;

@@ -12,7 +12,7 @@ import { Bell, Mail, Volume2, Clock } from 'lucide-react';
 
 import { Button } from '@jade/ui/components';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@jade/ui/components';
-import { Label } from '@/components/ui/label';
+import { Label } from '@jade/ui/components';
 import { Switch } from '@/components/ui/switch';
 import {
   Select,
@@ -20,7 +20,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@jade/ui/components';
 
 interface NotificationPreferences {
   emailEnabled: boolean;

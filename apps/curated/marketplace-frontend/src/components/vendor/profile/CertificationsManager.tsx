@@ -24,9 +24,9 @@ import {
 
 import { Button } from '@jade/ui/components';
 import { Input } from '@jade/ui/components';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Label } from '@jade/ui/components';
+import { Badge } from '@jade/ui/components';
+import { Alert, AlertDescription } from '@jade/ui/components';
 import {
   Dialog,
   DialogContent,
@@ -41,7 +41,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@jade/ui/components';
 import {
   ADD_CERTIFICATION_MUTATION,
   REMOVE_CERTIFICATION_MUTATION,

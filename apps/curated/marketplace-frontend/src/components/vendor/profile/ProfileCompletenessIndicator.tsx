@@ -9,7 +9,7 @@
 import React from 'react';
 import { Card, CardContent } from '@jade/ui/components';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@jade/ui/components';
 import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 
 interface ProfileCompleteness {

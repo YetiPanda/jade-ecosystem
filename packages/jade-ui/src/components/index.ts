@@ -44,3 +44,48 @@ export {
   type DialogTitleProps,
   type DialogDescriptionProps,
 } from './Dialog';
+
+export {
+  Badge,
+  badgeVariants,
+  type BadgeProps,
+} from './Badge';
+
+export {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  type AlertProps,
+  type AlertTitleProps,
+  type AlertDescriptionProps,
+} from './Alert';
+
+export {
+  Label,
+  type LabelProps,
+} from './Label';
+
+export {
+  Textarea,
+  type TextareaProps,
+} from './Textarea';
+
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  type SelectTriggerProps,
+  type SelectContentProps,
+  type SelectLabelProps,
+  type SelectItemProps,
+  type SelectSeparatorProps,
+  type SelectScrollUpButtonProps,
+  type SelectScrollDownButtonProps,
+} from './Select';
