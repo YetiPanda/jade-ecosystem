@@ -1,0 +1,214 @@
+.orders-list-container {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.orders-table-wrapper {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.orders-table thead th {
+  text-align: left;
+  padding: 1rem 0.75rem;
+  font-weight: 600;
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #333;
+  background-color: #1f1f1f;
+}
+
+.orders-table tbody td {
+  padding: 1.25rem 0.75rem;
+  color: #aaa;
+  border-bottom: 1px solid #252525;
+}
+
+.order-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.order-row:hover {
+  background-color: #1f1f1f;
+}
+
+.order-row:last-child td {
+  border-bottom: none;
+}
+
+/* Column Widths */
+.col-order-number {
+  width: 120px;
+}
+
+.col-date {
+  width: 160px;
+}
+
+.col-items {
+  width: 140px;
+}
+
+.col-total {
+  width: 120px;
+}
+
+.col-status {
+  width: 140px;
+}
+
+.col-actions {
+  width: 100px;
+  text-align: right;
+}
+
+/* Cell Content */
+.order-number {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #646cff;
+}
+
+.order-date {
+  color: #aaa;
+  font-size: 0.875rem;
+}
+
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.customer-name {
+  color: #fff;
+  font-weight: 500;
+}
+
+.customer-id {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.items-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #252525;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: #aaa;
+  margin-right: 0.375rem;
+}
+
+.items-count {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.order-view-btn {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #646cff;
+  border: 1px solid #646cff;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.order-view-btn:hover {
+  background-color: rgba(100, 108, 255, 0.1);
+  border-color: #5558dd;
+  color: #5558dd;
+}
+
+/* Empty State */
+.orders-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #888;
+}
+
+.orders-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+.orders-empty h3 {
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.orders-empty p {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Loading Skeleton */
+.skeleton-row {
+  cursor: default;
+  pointer-events: none;
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 80%;
+  border-radius: 0.25rem;
+}
+
+.skeleton-badge {
+  height: 1.75rem;
+  width: 100px;
+  border-radius: 1rem;
+}
+
+.skeleton-button {
+  height: 2rem;
+  width: 70px;
+  border-radius: 0.375rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1a1a1a 0%, #252525 50%, #1a1a1a 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .orders-table {
+    font-size: 0.8125rem;
+  }
+
+  .orders-table thead th,
+  .orders-table tbody td {
+    padding: 0.875rem 0.5rem;
+  }
+
+  .customer-id,
+  .items-count {
+    display: none;
+  }
+}
